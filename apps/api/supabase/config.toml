@@ -2,27 +2,32 @@ project_id = "create-v1"
 
 [api]
 enabled = true
-port = 54321
+port = 55321
 schemas = ["public", "storage"]
 extra_search_path = ["public"]
 max_rows = 100
 
 [auth]
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://localhost:3000", "http://localhost:54321/auth/v1/callback"]
+additional_redirect_urls = ["https://localhost:3000", "http://localhost:55321/auth/v1/callback"]
 jwt_expiry = 36000
 
 [db]
-port = 54322
+port = 55322
 
 [studio]
-port = 54323
+port = 55323
 
 [auth.external.google]
 enabled = true
 client_id = "env(GOOGLE_CLIENT_ID)"
 secret = "env(GOOGLE_SECRET)"
-redirect_uri = "http://localhost:54321/auth/v1/callback"
+redirect_uri = "http://localhost:55321/auth/v1/callback"
+
+[inbucket]
+port = 55324
+smtp_port = 55325
+pop3_port = 55326
 
 [auth.email]
 double_confirm_changes = true
@@ -31,6 +36,6 @@ enable_signup = true
 
 [analytics]
 enabled = true
-port = 54327
-vector_port = 54328
+port = 55327
+vector_port = 55328
 backend = "postgres"

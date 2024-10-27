@@ -101,6 +101,16 @@ cp apps/app/.env.example apps/app/.env
 cp apps/web/.env.example apps/web/.env
 ```
 
+3. Apply Supabase and Prisma DB migrations
+
+```sh
+cd apps/api
+bunx supabase start
+bunx prisma migrate resolve --applied 0_init_prisma_db_pull
+bunx prisma migrate dev
+cd ../..
+```
+
 4. Start the development server from either bun or turbo:
 
 ```ts

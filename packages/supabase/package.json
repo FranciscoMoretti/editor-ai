@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@prisma/client": "^5.21.1",
     "@supabase/ssr": "^0.5.1",
     "@v1/logger": "workspace:*",
     "react": "^18.3.1",
