@@ -101,7 +101,9 @@ cp apps/app/.env.example apps/app/.env
 cp apps/web/.env.example apps/web/.env
 ```
 
-3. Apply Supabase and Prisma DB migrations
+3. Apply Supabase and Prisma DB migrations 
+
+First, fill the `DATABASE_URL` in the `.env` file of the `api` app.
 
 ```sh
 cd apps/api
