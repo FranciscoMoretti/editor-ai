@@ -1,8 +1,6 @@
 import { logger } from "@v1/logger";
 import { createClient } from "@v1/supabase/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@v1/supabase/lib/prisma";
 
 export async function getUser() {
   const supabase = createClient();

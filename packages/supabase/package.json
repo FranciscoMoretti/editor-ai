@@ -26,6 +26,7 @@
     "./mutations": "./src/mutations/index.ts",
     "./middleware": "./src/clients/middleware.ts",
     "./queries": "./src/queries/index.ts",
-    "./types": "./src/types/index.ts"
+    "./types": "./src/types/index.ts",
+    "./lib/prisma": "./src/lib/prisma.ts"
   }
 }

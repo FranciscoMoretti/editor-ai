@@ -1,12 +1,13 @@
+import { Prisma } from "@prisma/client";
 import { logger } from "@v1/logger";
-import { createClient } from "@v1/supabase/server";
-import type { Database, Tables, TablesUpdate } from "../types";
+import { prisma } from "@v1/supabase/lib/prisma";
 
-export async function updateUser(userId: string, data: TablesUpdate<"users">) {
-  const supabase = createClient();
-
+export async function updateUser(userId: string, data: Prisma.public_usersUpdateInput) {
   try {
-    const result = await supabase.from("users").update(data).eq("id", userId);
+    const result = await prisma.public_users.update({
+      where: { id: userId },
+      data,
+    });
 
     return result;
   } catch (error) {
