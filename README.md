@@ -30,7 +30,6 @@ Everything you need to build a production ready SaaS, it's a opinionated stack b
 [Upstash](https://upstash.com/) - Cache and rate limiting<br>
 [React Email](https://react.email/) - Email templates<br>
 [Resend](https://resend.com/) - Email delivery<br>
-[i18n](https://next-international.vercel.app/) - Internationalization<br>
 [Sentry](https://sentry.io/) - Error handling/monitoring<br>
 [Dub](https://dub.sh/) - Sharable links<br>
 [Trigger.dev](https://trigger.dev/) - Background jobs<br>
