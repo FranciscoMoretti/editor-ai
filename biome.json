@@ -9,11 +9,14 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "noSvgWithoutTitle": "off"
+        "noSvgWithoutTitle": "off",
+        "useKeyWithClickEvents": "off"
       },
       "style": {
         "noNonNullAssertion": "off",
-        "useImportType": "off"
+        "useImportType": "off",
+        "noUselessElse": "off",
+        "useSelfClosingElements": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "off"

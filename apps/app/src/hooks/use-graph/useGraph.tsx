@@ -64,7 +64,7 @@ function removeCodeBlockFormatting(text: string): string {
   // Check if the text matches the code block pattern
   const match = text.match(codeBlockRegex);
 
-  if (match) {
+  if (match?.[1]) {
     // If it matches, return the content inside the code block
     return match[1].trim();
   } else {
@@ -127,9 +127,9 @@ export function useGraph(useGraphInput: UseGraphInput) {
     if (!currentContent) return;
     if (
       (artifact.contents.length === 1 &&
-        artifact.contents[0].type === "text" &&
-        !artifact.contents[0].fullMarkdown) ||
-      (artifact.contents[0].type === "code" && !artifact.contents[0].code)
+        artifact.contents[0]!.type === "text" &&
+        !artifact.contents[0]!.fullMarkdown) ||
+      (artifact.contents[0]!.type === "code" && !artifact.contents[0]!.code)
     ) {
       // If the artifact has only one content and it's empty, we shouldn't update the state
       return;
@@ -701,7 +701,7 @@ export function useGraph(useGraphInput: UseGraphInput) {
                 args: { sharedRunURL },
                 id: sharedRunURL
                   ?.split("https://smith.langchain.com/public/")[1]
-                  .split("/")[0],
+                  ?.split("/")[0],
               };
               const castMsg = msg as AIMessage;
               const newMessageWithToolCall = new AIMessage({

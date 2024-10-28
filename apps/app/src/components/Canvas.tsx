@@ -3,7 +3,6 @@
 import { ContentComposerChatInterface } from "@/components/ContentComposer";
 import { ArtifactRenderer } from "@/components/artifacts/ArtifactRenderer";
 import { useGraph } from "@/hooks/use-graph/useGraph";
-import { useToast } from "@v1/ui/use-toast";
 import { useStore } from "@/hooks/useStore";
 import { useThread } from "@/hooks/useThread";
 import { getLanguageTemplate } from "@/lib/get_language_template";
@@ -15,6 +14,7 @@ import type {
 } from "@/types";
 import type { User } from "@supabase/supabase-js";
 import { cn } from "@v1/ui/cn";
+import { useToast } from "@v1/ui/use-toast";
 import { useEffect, useState } from "react";
 
 interface CanvasProps {
@@ -89,7 +89,7 @@ export function Canvas(props: CanvasProps) {
   }, [threadId]);
 
   useEffect(() => {
-    if (typeof window == "undefined" || !props.user.id || userThreads.length)
+    if (typeof window === "undefined" || !props.user.id || userThreads.length)
       return;
     getUserThreads(props.user.id);
   }, [props.user.id]);

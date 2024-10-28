@@ -119,11 +119,11 @@ export const FullPrompt = (props: FullPromptProps) => {
           highlight={highlightPrefix}
           isVisible={props.customQuickAction.includePrefix}
         />
-        {`<custom-instructions>`}
+        {"<custom-instructions>"}
         <br />
         {props.customQuickAction.prompt}
         <br />
-        {`</custom-instructions>`}
+        {"</custom-instructions>"}
         <HighlightToDeleteText
           text={`\n\n${REFLECTIONS_QUICK_ACTION_PROMPT}`}
           onClick={() => props.setIncludeReflections(false)}
@@ -136,7 +136,7 @@ export const FullPrompt = (props: FullPromptProps) => {
           highlight={highlightRecentHistory}
           isVisible={props.customQuickAction.includeRecentHistory}
         />
-        {`\n\n`}
+        {"\n\n"}
         {CUSTOM_QUICK_ACTION_ARTIFACT_CONTENT_PROMPT}
       </p>
     </div>

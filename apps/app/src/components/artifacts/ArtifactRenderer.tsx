@@ -97,6 +97,11 @@ export function ArtifactRenderer(props: ArtifactRendererProps) {
         const rects = range.getClientRects();
         const firstRect = rects[0];
         const lastRect = rects[rects.length - 1];
+
+        if (!firstRect || !lastRect) {
+          return;
+        }
+
         const contentRect = contentRef.current.getBoundingClientRect();
 
         const boxWidth = 400; // Approximate width of the selection box
@@ -254,6 +259,11 @@ export function ArtifactRenderer(props: ArtifactRendererProps) {
 
               for (let i = 0; i < rects.length; i++) {
                 const rect = rects[i];
+
+                if (!rect) {
+                  continue;
+                }
+
                 const highlightEl = document.createElement("div");
                 highlightEl.className =
                   "absolute bg-[#3597934d] pointer-events-none";
