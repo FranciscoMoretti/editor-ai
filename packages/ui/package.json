@@ -20,14 +20,15 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwindcss": "^3.4.10",
+    "tailwind-scrollbar": "^3.1.0",
     "typescript": "^5.5.4"
   },
   "exports": {
     "./globals.css": "./src/globals.css",
     "./cn": "./src/utils/cn.ts",
-    "./markdown-text": "./src/components/assistant-ui/markdown-text.tsx",
-    "./syntax-highlighter": "./src/components/assistant-ui/syntax-highlighter.tsx",
-    "./tooltip-icon-button": "./src/components/assistant-ui/tooltip-icon-button.tsx",
+    "./assistant-ui/markdown-text": "./src/components/assistant-ui/markdown-text.tsx",
+    "./assistant-ui/syntax-highlighter": "./src/components/assistant-ui/syntax-highlighter.tsx",
+    "./assistant-ui/tooltip-icon-button": "./src/components/assistant-ui/tooltip-icon-button.tsx",
     "./avatar": "./src/components/avatar.tsx",
     "./button": "./src/components/button.tsx",
     "./checkbox": "./src/components/checkbox.tsx",
@@ -76,6 +77,7 @@
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
     "tailwind-merge": "^2.5.2",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss-animate": "^1.0.7"
   }
 }

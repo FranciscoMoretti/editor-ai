@@ -77,7 +77,14 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwind-scrollbar-hide"),
+    require("tailwindcss-animate"),
+    require("@assistant-ui/react/tailwindcss")({
+      components: ["thread"],
+    }),
+    require("tailwind-scrollbar"),
+  ],
 } satisfies Config;
 
 export default config;

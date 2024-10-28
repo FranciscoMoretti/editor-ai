@@ -2,14 +2,14 @@
 
 import { forwardRef } from "react";
 
-import { Button, type ButtonProps } from "@/components/button";
+import { cn } from "../../utils/cn";
+import { Button, type ButtonProps } from "../button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/tooltip";
-import { cn } from "@/utils/cn";
+} from "../tooltip";
 
 export type TooltipIconButtonProps = ButtonProps & {
   tooltip: string | React.ReactNode;

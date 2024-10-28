@@ -12,13 +12,18 @@
         "noSvgWithoutTitle": "off"
       },
       "style": {
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "useImportType": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "off"
       },
       "complexity": {
         "noForEach": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off"
       }
     }
   },

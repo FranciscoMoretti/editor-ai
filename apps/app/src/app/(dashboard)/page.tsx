@@ -1,20 +1,28 @@
+"use client";
 import { SignOut } from "@/components/sign-out";
 import { getUser } from "@v1/supabase/queries";
 
-export const metadata = {
-  title: "Home",
-};
+import { Canvas } from "@/components/Canvas";
+import { CanvasLoading } from "@/components/CanvasLoading";
+import { useUser } from "@/hooks/useUser";
+import { addAssistantIdToUser } from "@/lib/add_assistant_id_to_user";
+import { useEffect } from "react";
 
-export default async function Page() {
-  const { data } = await getUser();
+export default function Home() {
+  const { user, getUser } = useUser();
 
-  return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <p>{`Hello ${data?.user?.email}!`}</p>
+  useEffect(() => {
+    getUser();
+  }, []);
 
-        <SignOut />
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    if (typeof window === "undefined" || !user) return;
+    addAssistantIdToUser();
+  }, [user]);
+
+  if (!user) {
+    return <CanvasLoading />;
+  }
+
+  return <Canvas user={user} />;
 }

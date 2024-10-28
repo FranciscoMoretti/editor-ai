@@ -11,9 +11,9 @@ import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
-import { SyntaxHighlighter } from "@/components/assistant-ui/syntax-highlighter";
-import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
-import { cn } from "@/utils/cn";
+import { cn } from "../../utils/cn";
+import { SyntaxHighlighter } from "./syntax-highlighter";
+import { TooltipIconButton } from "./tooltip-icon-button";
 
 import "katex/dist/katex.min.css";
 
