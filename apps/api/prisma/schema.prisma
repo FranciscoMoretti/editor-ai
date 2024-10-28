@@ -399,3 +399,84 @@ model public_users {
   @@map("users")
   @@schema("public")
 }
+
+
+enum ThreadStatus {
+  idle        @map("idle")
+  busy        @map("busy")
+  interrupted @map("interrupted")
+  error       @map("error")
+
+  @@schema("public")
+}
+
+enum RunStatus {
+  pending     @map("pending")
+  error       @map("error")
+  success     @map("success")
+  timeout     @map("timeout")
+  interrupted @map("interrupted")
+
+  @@schema("public")
+}
+
+enum MultitaskStrategy {
+  reject    @map("reject")
+  rollback  @map("rollback")
+  interrupt @map("interrupt")
+  enqueue   @map("enqueue")
+
+  @@schema("public")
+}
+
+model threads {
+  thread_id  String       @id @db.Uuid
+  created_at DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at DateTime     @default(now()) @db.Timestamptz(6)
+  metadata   Json
+  status     ThreadStatus
+  values     Json
+
+  @@schema("public")
+}
+
+model configs {
+  config_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tags String[]
+  recursion_limit Int
+  configurable Json
+
+  // FK relation to assistants
+  assistants asssitant[]
+
+  @@schema("public")
+}
+
+
+model asssitant {
+  assistant_id String @id @db.Uuid
+  graph_id String
+  config_id String
+  config configs @relation(fields: [config_id], references: [config_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_assistant_config")
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  metadata Json
+  version Int
+  name String
+
+  @@schema("public")
+}
+
+model runs {
+  run_id             String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  thread_id          String            @db.Uuid
+  assistant_id       String            @db.Uuid
+  created_at         DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime          @default(now()) @db.Timestamptz(6)
+  status             RunStatus
+  metadata           Json
+  kwargs             Json
+  multitask_strategy MultitaskStrategy
+
+  @@schema("public")
+}

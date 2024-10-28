@@ -311,6 +311,47 @@ Table users {
   Note: 'This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
 }
 
+Table threads {
+  thread_id String [pk]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [default: `now()`, not null]
+  metadata Json [not null]
+  status ThreadStatus [not null]
+  values Json [not null]
+}
+
+Table configs {
+  config_id String [pk]
+  tags String[] [not null]
+  recursion_limit Int [not null]
+  configurable Json [not null]
+  assistants asssitant [not null]
+}
+
+Table asssitant {
+  assistant_id String [pk]
+  graph_id String [not null]
+  config_id String [not null]
+  config configs [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [default: `now()`, not null]
+  metadata Json [not null]
+  version Int [not null]
+  name String [not null]
+}
+
+Table runs {
+  run_id String [pk]
+  thread_id String [not null]
+  assistant_id String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [default: `now()`, not null]
+  status RunStatus [not null]
+  metadata Json [not null]
+  kwargs Json [not null]
+  multitask_strategy MultitaskStrategy [not null]
+}
+
 Enum aal_level {
   aal1
   aal2
@@ -342,6 +383,28 @@ Enum one_time_token_type {
   phone_change_token
 }
 
+Enum ThreadStatus {
+  idle
+  busy
+  interrupted
+  error
+}
+
+Enum RunStatus {
+  pending
+  error
+  success
+  timeout
+  interrupted
+}
+
+Enum MultitaskStrategy {
+  reject
+  rollback
+  interrupt
+  enqueue
+}
+
 Ref: identities.user_id > users.id [delete: Cascade]
 
 Ref: mfa_amr_claims.session_id > sessions.id [delete: Cascade]
@@ -367,3 +430,5 @@ Ref: sso_domains.sso_provider_id > sso_providers.id [delete: Cascade]
 Ref: posts.user_id > users.id [delete: Cascade]
 
 Ref: users.id - users.id [delete: Cascade]
+
+Ref: asssitant.config_id > configs.config_id [delete: Cascade]
