@@ -1,5 +1,5 @@
 {
-  "name": "@v1/api",
+  "name": "@v1/db",
   "private": true,
   "scripts": {
     "dev": "supabase start",
@@ -11,8 +11,8 @@
     "generate:prisma": "prisma generate"
   },
   "dependencies": {
-    "supabase": "^1.191.3",
-    "prisma": "^5.21.1"
+    "prisma": "^5.21.1",
+    "supabase": "^1.191.3"
   },
   "devDependencies": {
     "prisma-dbml-generator": "^0.12.0"
