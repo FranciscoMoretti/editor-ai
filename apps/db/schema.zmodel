@@ -15,12 +15,12 @@ plugin zod {
 }
 
 plugin trpc {
-    provider = '@zenstackhq/trpc'
-    output = 'server/routers/generated'
-    version = "v11"
-    importCreateRouter = "../../_app"
-    importProcedure = "../../_app"
-    generateClientHelpers = 'next'
+  provider = '@zenstackhq/trpc'
+  output = 'server/routers/generated'
+  version = "v11"
+  importCreateRouter = "../../_app"
+  importProcedure = "../../_app"
+  generateClientHelpers = 'next'
 }
 
 
@@ -36,7 +36,6 @@ model audit_log_entries {
 
   @@index([instance_id], map: "audit_logs_instance_id_idx")
   @@schema("auth")
-  @@ignore
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -61,8 +60,6 @@ model flow_state {
   @@index([auth_code], map: "idx_auth_code")
   @@index([user_id, authentication_method], map: "idx_user_id_auth_method")
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -84,8 +81,6 @@ model identities {
   @@index([email])
   @@index([user_id])
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -99,8 +94,6 @@ model instances {
   updated_at      DateTime? @db.Timestamptz(6)
 
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -116,8 +109,6 @@ model mfa_amr_claims {
 
   @@unique([session_id, authentication_method], map: "mfa_amr_claims_session_id_authentication_method_pkey")
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -134,8 +125,6 @@ model mfa_challenges {
 
   @@index([created_at(sort: Desc)], map: "mfa_challenge_created_at_idx")
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -159,8 +148,6 @@ model mfa_factors {
   @@index([user_id, created_at], map: "factor_id_created_at_idx")
   @@index([user_id])
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -180,8 +167,6 @@ model one_time_tokens {
   @@index([relates_to], map: "one_time_tokens_relates_to_hash_idx", type: Hash)
   @@index([token_hash], map: "one_time_tokens_token_hash_hash_idx", type: Hash)
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -205,8 +190,6 @@ model refresh_tokens {
   @@index([session_id, revoked])
   @@index([updated_at(sort: Desc)])
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -227,8 +210,6 @@ model saml_providers {
 
   @@index([sso_provider_id])
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -251,8 +232,6 @@ model saml_relay_states {
   @@index([for_email])
   @@index([sso_provider_id])
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -262,7 +241,6 @@ model schema_migrations {
   version String @id @db.VarChar(255)
 
   @@schema("auth")
-
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -288,8 +266,6 @@ model sessions {
   @@index([user_id])
   @@index([user_id, created_at], map: "user_id_created_at_idx")
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -307,8 +283,6 @@ model sso_domains {
 
   @@index([sso_provider_id])
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -326,8 +300,6 @@ model sso_providers {
   sso_domains       sso_domains[]
 
   @@schema("auth")
-  @@ignore
-
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -381,7 +353,6 @@ model sso_providers {
   @@index([instance_id])
   @@index([is_anonymous])
   @@schema("auth")
-  @@ignore
 }
 
 /// @@Gen.model(hide: true)
@@ -457,7 +428,7 @@ model public_users {
   updated_at DateTime? @default(now()) @db.Timestamptz(6)
   posts      posts[]
   // NOTE: Relationship is disabled and fileds get updated in middleware instead
-  // users      users     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_auth_user") @@ignore
+  // users      users     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_auth_user") // @@ignore
 
   @@map("users")
   @@schema("public")
@@ -504,26 +475,26 @@ model threads {
 }
 
 model configs {
-  config_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tags String[]
+  config_id       String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tags            String[]
   recursion_limit Int
-  configurable Json
-  assistants asssitant[]
+  configurable    Json
+  assistants      asssitant[]
 
   @@schema("public")
 }
 
 
 model asssitant {
-  assistant_id String @id @db.Uuid
-  graph_id String
-  config_id String @db.Uuid
-  config configs @relation(fields: [config_id], references: [config_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_assistant_config")
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @db.Timestamptz(6)
-  metadata Json
-  version Int
-  name String
+  assistant_id String   @id @db.Uuid
+  graph_id     String
+  config_id    String   @db.Uuid
+  config       configs  @relation(fields: [config_id], references: [config_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_assistant_config")
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @db.Timestamptz(6)
+  metadata     Json
+  version      Int
+  name         String
 
   @@schema("public")
 }
