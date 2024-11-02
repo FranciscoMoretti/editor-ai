@@ -14,10 +14,7 @@ generator client {
   previewFeatures = ["multiSchema"]
 }
 
-generator dbml {
-  provider = "prisma-dbml-generator"
-}
-
+/// @@Gen.model(hide: true)
 enum aal_level {
   aal1
   aal2
@@ -26,6 +23,7 @@ enum aal_level {
   @@schema("auth")
 }
 
+/// @@Gen.model(hide: true)
 enum code_challenge_method {
   s256
   plain
@@ -33,6 +31,7 @@ enum code_challenge_method {
   @@schema("auth")
 }
 
+/// @@Gen.model(hide: true)
 enum factor_status {
   unverified
   verified
@@ -40,6 +39,7 @@ enum factor_status {
   @@schema("auth")
 }
 
+/// @@Gen.model(hide: true)
 enum factor_type {
   totp
   webauthn
@@ -48,6 +48,7 @@ enum factor_type {
   @@schema("auth")
 }
 
+/// @@Gen.model(hide: true)
 enum one_time_token_type {
   confirmation_token
   reauthentication_token
@@ -89,6 +90,7 @@ enum MultitaskStrategy {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model audit_log_entries {
   instance_id String?   @db.Uuid()
   id          String    @id() @db.Uuid()
@@ -97,11 +99,13 @@ model audit_log_entries {
   ip_address  String    @default("") @db.VarChar(64)
 
   @@index([instance_id], map: "audit_logs_instance_id_idx")
+  @@ignore()
   @@schema("auth")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model flow_state {
   id                     String                @id() @db.Uuid()
   user_id                String?               @db.Uuid()
@@ -120,11 +124,13 @@ model flow_state {
   @@index([created_at(sort: Desc)])
   @@index([auth_code], map: "idx_auth_code")
   @@index([user_id, authentication_method], map: "idx_user_id_auth_method")
+  @@ignore()
   @@schema("auth")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model identities {
   provider_id     String
   user_id         String    @db.Uuid()
@@ -140,11 +146,13 @@ model identities {
   @@unique([provider_id, provider], map: "identities_provider_id_provider_unique")
   @@index([email])
   @@index([user_id])
+  @@ignore()
   @@schema("auth")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model instances {
   id              String    @id() @db.Uuid()
   uuid            String?   @db.Uuid()
@@ -152,11 +160,13 @@ model instances {
   created_at      DateTime? @db.Timestamptz(6)
   updated_at      DateTime? @db.Timestamptz(6)
 
+  @@ignore()
   @@schema("auth")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model mfa_amr_claims {
   session_id            String   @db.Uuid()
   created_at            DateTime @db.Timestamptz(6)
@@ -166,11 +176,13 @@ model mfa_amr_claims {
   sessions              sessions @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([session_id, authentication_method], map: "mfa_amr_claims_session_id_authentication_method_pkey")
+  @@ignore()
   @@schema("auth")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model mfa_challenges {
   id          String      @id() @db.Uuid()
   factor_id   String      @db.Uuid()
@@ -181,11 +193,13 @@ model mfa_challenges {
   mfa_factors mfa_factors @relation(fields: [factor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mfa_challenges_auth_factor_id_fkey")
 
   @@index([created_at(sort: Desc)], map: "mfa_challenge_created_at_idx")
+  @@ignore()
   @@schema("auth")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model mfa_factors {
   id                 String           @id() @db.Uuid()
   user_id            String           @db.Uuid()
@@ -203,11 +217,13 @@ model mfa_factors {
   @@unique([user_id, phone], map: "unique_verified_phone_factor")
   @@index([user_id, created_at], map: "factor_id_created_at_idx")
   @@index([user_id])
+  @@ignore()
   @@schema("auth")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model one_time_tokens {
   id         String              @id() @db.Uuid()
   user_id    String              @db.Uuid()
@@ -221,11 +237,13 @@ model one_time_tokens {
   @@unique([user_id, token_type])
   @@index([relates_to], map: "one_time_tokens_relates_to_hash_idx", type: Hash)
   @@index([token_hash], map: "one_time_tokens_token_hash_hash_idx", type: Hash)
+  @@ignore()
   @@schema("auth")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model refresh_tokens {
   instance_id String?   @db.Uuid()
   id          BigInt    @id() @default(autoincrement())
@@ -243,12 +261,14 @@ model refresh_tokens {
   @@index([parent])
   @@index([session_id, revoked])
   @@index([updated_at(sort: Desc)])
+  @@ignore()
   @@schema("auth")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model saml_providers {
   id                String        @id() @db.Uuid()
   sso_provider_id   String        @db.Uuid()
@@ -262,12 +282,14 @@ model saml_providers {
   sso_providers     sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([sso_provider_id])
+  @@ignore()
   @@schema("auth")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model saml_relay_states {
   id              String        @id() @db.Uuid()
   sso_provider_id String        @db.Uuid()
@@ -283,11 +305,13 @@ model saml_relay_states {
   @@index([created_at(sort: Desc)])
   @@index([for_email])
   @@index([sso_provider_id])
+  @@ignore()
   @@schema("auth")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model schema_migrations {
   version String @id() @db.VarChar(255)
 
@@ -296,6 +320,7 @@ model schema_migrations {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// @@Gen.model(hide: true)
 model sessions {
   id             String           @id() @db.Uuid()
   user_id        String           @db.Uuid()
@@ -315,6 +340,7 @@ model sessions {
   @@index([not_after(sort: Desc)])
   @@index([user_id])
   @@index([user_id, created_at], map: "user_id_created_at_idx")
+  @@ignore()
   @@schema("auth")
 }
 
@@ -322,6 +348,7 @@ model sessions {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+/// @@Gen.model(hide: true)
 model sso_domains {
   id              String        @id() @db.Uuid()
   sso_provider_id String        @db.Uuid()
@@ -331,6 +358,7 @@ model sso_domains {
   sso_providers   sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([sso_provider_id])
+  @@ignore()
   @@schema("auth")
 }
 
@@ -338,6 +366,7 @@ model sso_domains {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+/// @@Gen.model(hide: true)
 model sso_providers {
   id                String              @id() @db.Uuid()
   resource_id       String?
@@ -347,6 +376,7 @@ model sso_providers {
   saml_relay_states saml_relay_states[]
   sso_domains       sso_domains[]
 
+  @@ignore()
   @@schema("auth")
 }
 
@@ -354,6 +384,7 @@ model sso_providers {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+/// @@Gen.model(hide: true)
 model users {
   instance_id                 String?           @db.Uuid()
   id                          String            @id() @db.Uuid()
@@ -394,10 +425,10 @@ model users {
   mfa_factors                 mfa_factors[]
   one_time_tokens             one_time_tokens[]
   sessions                    sessions[]
-  users                       public_users?
 
   @@index([instance_id])
   @@index([is_anonymous])
+  @@ignore()
   @@schema("auth")
 }
 
@@ -424,7 +455,6 @@ model public_users {
   created_at DateTime? @default(now()) @db.Timestamptz(6)
   updated_at DateTime? @default(now()) @db.Timestamptz(6)
   posts      posts[]
-  users      users     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_auth_user")
 
   @@map("users")
   @@schema("public")
