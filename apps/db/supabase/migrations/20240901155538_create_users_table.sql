@@ -5,8 +5,7 @@ create table public.users (
     full_name text,
     avatar_url text,
     created_at timestamp with time zone default now(),
-    updated_at timestamp with time zone default now(),
-    constraint fk_auth_user foreign key (id) references auth.users(id) on delete cascade
+    updated_at timestamp with time zone default now()
 );
 
 -- enable row level security (rls)

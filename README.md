@@ -107,7 +107,7 @@ First, fill the `DATABASE_URL` in the `.env` file of the `api` app.
 ```sh
 cd apps/api
 bunx supabase start
-bunx prisma migrate resolve --applied 0_init_prisma_db_pull
+bunx prisma migrate resolve --applied 0_init
 bunx prisma migrate dev
 cd ../..
 ```
