@@ -29,6 +29,12 @@
     "@langchain/langgraph": "^0.2.18",
     "@langchain/langgraph-sdk": "^0.0.17",
     "@langchain/openai": "^0.3.11",
+    "@tanstack/react-query": "^5.59.17",
+    "@tanstack/react-query-devtools": "^5.59.19",
+    "@trpc/client": "^11.0.0-rc.608",
+    "@trpc/next": "^11.0.0-rc.608",
+    "@trpc/react-query": "^11.0.0-rc.608",
+    "@trpc/server": "^11.0.0-rc.608",
     "@types/lodash": "^4.17.12",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@uiw/react-codemirror": "^4.23.5",
@@ -50,6 +56,8 @@
     "nuqs": "^1.18.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "server-only": "^0.0.1",
+    "superjson": "^2.2.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
