@@ -1,4 +1,8 @@
+import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatOpenAI } from "@langchain/openai";
+import { z } from "zod";
+import { getArtifactContent } from "../../../hooks/use-graph/utils";
+import { formatArtifactContentWithTemplate } from "../../utils";
 import {
   CURRENT_ARTIFACT_PROMPT,
   NO_ARTIFACT_PROMPT,
@@ -7,15 +11,12 @@ import {
   ROUTE_QUERY_PROMPT,
 } from "../prompts";
 import { OpenCanvasGraphAnnotation } from "../state";
-import { z } from "zod";
-import { formatArtifactContentWithTemplate } from "../../utils";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
 
 /**
  * Routes to the proper node in the graph based on the user's query.
  */
 export const generatePath = async (
-  state: typeof OpenCanvasGraphAnnotation.State
+  state: typeof OpenCanvasGraphAnnotation.State,
 ) => {
   if (state.highlightedCode) {
     return {
@@ -65,31 +66,34 @@ export const generatePath = async (
     "{artifactOptions}",
     currentArtifactContent
       ? ROUTE_QUERY_OPTIONS_HAS_ARTIFACTS
-      : ROUTE_QUERY_OPTIONS_NO_ARTIFACTS
+      : ROUTE_QUERY_OPTIONS_NO_ARTIFACTS,
   )
     .replace(
       "{recentMessages}",
       state.messages
         .slice(-3)
         .map((message) => `${message.getType()}: ${message.content}`)
-        .join("\n\n")
+        .join("\n\n"),
     )
     .replace(
       "{currentArtifactPrompt}",
       currentArtifactContent
         ? formatArtifactContentWithTemplate(
             CURRENT_ARTIFACT_PROMPT,
-            currentArtifactContent
+            currentArtifactContent,
           )
-        : NO_ARTIFACT_PROMPT
+        : NO_ARTIFACT_PROMPT,
     );
 
   const artifactRoute = currentArtifactContent
     ? "rewriteArtifact"
     : "generateArtifact";
 
+  // const modelWithTool = new ChatAnthropic({
+  //   model: "claude-3-5-sonnet-20240620",
   const modelWithTool = new ChatOpenAI({
     model: "gpt-4o-mini",
+
     temperature: 0,
   }).withStructuredOutput(
     z.object({
@@ -99,15 +103,20 @@ export const generatePath = async (
     }),
     {
       name: "route_query",
-    }
+    },
   );
 
-  const result = await modelWithTool.invoke([
+  const result = await modelWithTool.invoke(
+    [
+      {
+        role: "user",
+        content: formattedPrompt,
+      },
+    ],
     {
-      role: "user",
-      content: formattedPrompt,
+      timeout: 10000,
     },
-  ]);
+  );
 
   return {
     next: result.route,

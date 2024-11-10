@@ -31,7 +31,7 @@ const cleanState = (_: typeof OpenCanvasGraphAnnotation.State) => {
   };
 };
 
-const builder = new StateGraph(OpenCanvasGraphAnnotation)
+export const builder = new StateGraph(OpenCanvasGraphAnnotation)
   // Start node & edge
   .addNode("generatePath", generatePath)
   .addEdge(START, "generatePath")

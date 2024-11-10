@@ -1,11 +1,13 @@
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { Client } from "@langchain/langgraph-sdk";
 import { OpenCanvasGraphAnnotation } from "../state";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
 
 export const reflectNode = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ) => {
+  return {};
+  // TODO: Re-enable reflextion
   const langGraphClient = new Client({
     apiUrl: `http://localhost:${process.env.PORT}`,
     defaultHeaders: {
@@ -49,7 +51,7 @@ export const reflectNode = async (
       // if the user is actively engaging in a conversation. This saves us $$ and
       // can help reduce the occurrence of duplicate memories.
       afterSeconds: 15,
-    }
+    },
   );
 
   return {};
