@@ -1,12 +1,8 @@
+import { BaseMessage } from "@langchain/core/messages";
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { ChatOpenAI } from "@langchain/openai";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
-import {
-  CUSTOM_QUICK_ACTION_ARTIFACT_CONTENT_PROMPT,
-  CUSTOM_QUICK_ACTION_ARTIFACT_PROMPT_PREFIX,
-  CUSTOM_QUICK_ACTION_CONVERSATION_CONTEXT,
-  REFLECTIONS_QUICK_ACTION_PROMPT,
-} from "../prompts";
-import { ensureStoreInConfig, formatReflections } from "../../utils";
+import { getArtifactContent } from "../../../hooks/use-graph/utils";
+import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
 import {
   ArtifactCodeV3,
   ArtifactMarkdownV3,
@@ -14,22 +10,26 @@ import {
   CustomQuickAction,
   Reflections,
 } from "../../../types";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { BaseMessage } from "@langchain/core/messages";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
-import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
+import { ensureStoreInConfig, formatReflections } from "../../utils";
+import {
+  CUSTOM_QUICK_ACTION_ARTIFACT_CONTENT_PROMPT,
+  CUSTOM_QUICK_ACTION_ARTIFACT_PROMPT_PREFIX,
+  CUSTOM_QUICK_ACTION_CONVERSATION_CONTEXT,
+  REFLECTIONS_QUICK_ACTION_PROMPT,
+} from "../prompts";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 const formatMessages = (messages: BaseMessage[]): string =>
   messages
     .map(
       (msg) =>
-        `<${msg.getType()}>\n${msg.content as string}\n</${msg.getType()}>`
+        `<${msg.getType()}>\n${msg.content as string}\n</${msg.getType()}>`,
     )
     .join("\n");
 
 export const customAction = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   if (!state.customQuickActionId) {
     throw new Error("No custom quick action ID found.");
@@ -67,7 +67,7 @@ export const customAction = async (
   ] as CustomQuickAction | undefined;
   if (!customQuickAction) {
     throw new Error(
-      `No custom quick action found from ID ${state.customQuickActionId}`
+      `No custom quick action found from ID ${state.customQuickActionId}`,
     );
   }
 
@@ -80,7 +80,7 @@ export const customAction = async (
     const memoriesAsString = formatReflections(memories.value as Reflections);
     const reflectionsPrompt = REFLECTIONS_QUICK_ACTION_PROMPT.replace(
       "{reflections}",
-      memoriesAsString
+      memoriesAsString,
     );
     formattedPrompt += `\n\n${reflectionsPrompt}`;
   }
@@ -93,7 +93,7 @@ export const customAction = async (
     const formattedConversationHistory =
       CUSTOM_QUICK_ACTION_CONVERSATION_CONTEXT.replace(
         "{conversation}",
-        formatMessages(state.messages.slice(-5))
+        formatMessages(state.messages.slice(-5)),
       );
     formattedPrompt += `\n\n${formattedConversationHistory}`;
   }

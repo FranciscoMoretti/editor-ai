@@ -3,7 +3,7 @@ import { procedure } from "@/server/api/trpc";
 import { checkMutate, checkRead } from "./generated/helper";
 /* eslint-disable */
 import { db } from "./generated/routers";
-import { PostsInputSchema } from "./generated_zod/input";
+import { PostsInputSchema } from "./generated_zod/input/PostsInput.schema";
 
 export default function createRouter() {
   return createTRPCRouter({

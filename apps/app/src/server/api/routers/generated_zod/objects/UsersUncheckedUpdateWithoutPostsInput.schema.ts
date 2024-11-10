@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdateOperationsInput.schema';
 import { NullableStringFieldUpdateOperationsInputObjectSchema } from './NullableStringFieldUpdateOperationsInput.schema';
 import { NullableDateTimeFieldUpdateOperationsInputObjectSchema } from './NullableDateTimeFieldUpdateOperationsInput.schema';
-import { AsssitantUncheckedUpdateManyWithoutUsersNestedInputObjectSchema } from './AsssitantUncheckedUpdateManyWithoutUsersNestedInput.schema';
+import { AsssitantsUncheckedUpdateManyWithoutUsersNestedInputObjectSchema } from './AsssitantsUncheckedUpdateManyWithoutUsersNestedInput.schema';
 
 import type { Prisma } from '@zenstackhq/runtime/models';
 
@@ -19,5 +19,5 @@ export const UsersUncheckedUpdateWithoutPostsInputObjectSchema: SchemaType = z.o
     z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema),
     z.null()]).optional().nullable(), updated_at: z.union([z.union([z.date(), z.string().datetime().optional()]),
     z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema),
-    z.null()]).optional().nullable(), assistants: z.lazy(() => AsssitantUncheckedUpdateManyWithoutUsersNestedInputObjectSchema).optional()
+    z.null()]).optional().nullable(), assistants: z.lazy(() => AsssitantsUncheckedUpdateManyWithoutUsersNestedInputObjectSchema).optional()
 }).strict() as SchemaType;

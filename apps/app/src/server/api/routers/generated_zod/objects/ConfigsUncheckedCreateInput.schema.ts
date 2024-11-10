@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import { ConfigsCreatetagsInputObjectSchema } from './ConfigsCreatetagsInput.schema';
 import { JsonNullValueInputSchema } from '../enums/JsonNullValueInput.schema';
-import { AsssitantUncheckedCreateNestedManyWithoutConfigInputObjectSchema } from './AsssitantUncheckedCreateNestedManyWithoutConfigInput.schema';
+import { AsssitantsUncheckedCreateNestedManyWithoutConfigInputObjectSchema } from './AsssitantsUncheckedCreateNestedManyWithoutConfigInput.schema';
 
 import type { Prisma } from '@zenstackhq/runtime/models';
 
@@ -14,7 +14,7 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 
 type SchemaType = z.ZodType<Prisma.configsUncheckedCreateInput>;
 export const ConfigsUncheckedCreateInputObjectSchema: SchemaType = z.object({
-    config_id: z.string().optional(), tags: z.union([z.lazy(() => ConfigsCreatetagsInputObjectSchema),
+    config_id: z.string().optional(), user_id: z.string().optional(), tags: z.union([z.lazy(() => ConfigsCreatetagsInputObjectSchema),
     z.string().array()]).optional(), recursion_limit: z.number(), configurable: z.union([z.lazy(() => JsonNullValueInputSchema),
-        jsonSchema]), assistants: z.lazy(() => AsssitantUncheckedCreateNestedManyWithoutConfigInputObjectSchema).optional()
+        jsonSchema]), assistants: z.lazy(() => AsssitantsUncheckedCreateNestedManyWithoutConfigInputObjectSchema).optional()
 }).strict() as SchemaType;

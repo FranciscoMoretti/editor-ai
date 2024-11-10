@@ -13,7 +13,7 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 
 type SchemaType = z.ZodType<Prisma.threadsCreateManyInput>;
 export const ThreadsCreateManyInputObjectSchema: SchemaType = z.object({
-    thread_id: z.string(), created_at: z.union([z.date().optional(), z.string().datetime().optional()]), updated_at: z.union([z.date().optional(), z.string().datetime().optional()]), metadata: z.union([z.lazy(() => JsonNullValueInputSchema),
-        jsonSchema]), status: z.lazy(() => ThreadStatusSchema), values: z.union([z.lazy(() => JsonNullValueInputSchema),
-            jsonSchema])
+    thread_id: z.string().optional(), user_id: z.string().optional(), created_at: z.union([z.date().optional(), z.string().datetime().optional()]), updated_at: z.union([z.date().optional(), z.string().datetime().optional()]), metadata: z.union([z.lazy(() => JsonNullValueInputSchema),
+        jsonSchema]), status: z.lazy(() => ThreadStatusSchema).optional(), values: z.union([z.lazy(() => JsonNullValueInputSchema),
+            jsonSchema]).optional()
 }).strict() as SchemaType;

@@ -3,7 +3,7 @@ export * from './PostsScalarFieldEnum.schema';
 export * from './UsersScalarFieldEnum.schema';
 export * from './ThreadsScalarFieldEnum.schema';
 export * from './ConfigsScalarFieldEnum.schema';
-export * from './AsssitantScalarFieldEnum.schema';
+export * from './AsssitantsScalarFieldEnum.schema';
 export * from './RunsScalarFieldEnum.schema';
 export * from './SortOrder.schema';
 export * from './JsonNullValueInput.schema';

@@ -8,7 +8,7 @@ import { ClientType as PostsClientType } from "./Posts.react.type";
 import { ClientType as UsersClientType } from "./Users.react.type";
 import { ClientType as ThreadsClientType } from "./Threads.react.type";
 import { ClientType as ConfigsClientType } from "./Configs.react.type";
-import { ClientType as AsssitantClientType } from "./Asssitant.react.type";
+import { ClientType as AsssitantsClientType } from "./Asssitants.react.type";
 import { ClientType as RunsClientType } from "./Runs.react.type";
 
 export function createTRPCReact<
@@ -25,6 +25,6 @@ export interface ClientType<AppRouter extends AnyRouter> {
     users: UsersClientType<AppRouter>;
     threads: ThreadsClientType<AppRouter>;
     configs: ConfigsClientType<AppRouter>;
-    asssitant: AsssitantClientType<AppRouter>;
+    asssitants: AsssitantsClientType<AppRouter>;
     runs: RunsClientType<AppRouter>;
 }

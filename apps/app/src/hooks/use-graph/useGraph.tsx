@@ -6,6 +6,7 @@ import {
 } from "@/lib/artifact_content_types";
 import { setCookie } from "@/lib/cookies";
 import { reverseCleanContent } from "@/lib/normalize_string";
+import { api } from "@/trpc/react";
 import type {
   ArtifactLengthOptions,
   ArtifactToolResponse,
@@ -21,6 +22,7 @@ import type {
 import { AIMessage, type BaseMessage } from "@langchain/core/messages";
 import { parsePartialJson } from "@langchain/core/output_parsers";
 import type { Thread } from "@langchain/langgraph-sdk";
+import { skipToken } from "@tanstack/react-query";
 import { useToast } from "@v1/ui/use-toast";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
@@ -79,6 +81,8 @@ export interface UseGraphInput {
   assistantId: string | undefined;
 }
 
+const useGraphStream = (useGraphInput: UseGraphInput) => {};
+
 export function useGraph(useGraphInput: UseGraphInput) {
   const { toast } = useToast();
   const { shareRun } = useRuns();
@@ -99,6 +103,24 @@ export function useGraph(useGraphInput: UseGraphInput) {
   const [isArtifactSaved, setIsArtifactSaved] = useState(true);
   const [threadSwitched, setThreadSwitched] = useState(false);
   const [firstTokenReceived, setFirstTokenReceived] = useState(false);
+  const { mutateAsync: threadUpdateMutation } =
+    api.threads.update.useMutation();
+  const [runStreamInput, setRunStreamInput] = useState<GraphInput | undefined>(
+    undefined,
+  );
+  const { data: runStreamSubscription } = api.runs.stream.useSubscription(
+    !!useGraphInput.threadId && !!useGraphInput.assistantId && !!runStreamInput
+      ? {
+          thread_id: useGraphInput.threadId,
+          assistant_id: useGraphInput.assistantId,
+          input: runStreamInput ?? {},
+          stream_mode: "events",
+        }
+      : skipToken,
+  );
+
+  console.log("runStreamInput", runStreamInput);
+  console.log("runStreamSubscription", runStreamSubscription);
 
   // Very hacky way of ensuring updateState is not called when a thread is switched
   useEffect(() => {
@@ -152,10 +174,12 @@ export function useGraph(useGraphInput: UseGraphInput) {
   ) => {
     if (isStreaming) return;
     try {
-      const client = createClient();
-      await client.threads.updateState(threadId, {
-        values: {
-          artifact: artifactToUpdate,
+      await threadUpdateMutation({
+        where: {
+          thread_id: threadId,
+        },
+        data: {
+          values: JSON.parse(JSON.stringify({ artifact: artifactToUpdate })),
         },
       });
       setIsArtifactSaved(true);
@@ -174,6 +198,7 @@ export function useGraph(useGraphInput: UseGraphInput) {
 
   const streamMessageV2 = async (params: GraphInput) => {
     setFirstTokenReceived(false);
+    console.log("StreamMessageV2", params);
 
     if (!useGraphInput.threadId) {
       toast({
@@ -193,8 +218,6 @@ export function useGraph(useGraphInput: UseGraphInput) {
       });
       return undefined;
     }
-
-    const client = createClient();
 
     // TODO: update to properly pass the highlight data back
     // one field for highlighted text, and one for code
@@ -231,21 +254,19 @@ export function useGraph(useGraphInput: UseGraphInput) {
       });
       return;
     }
+    console.log("setting run stream input", input);
+
+    setRunStreamInput(input);
 
     setIsStreaming(true);
+    // TODO: FIX HERE: The stream should be handled in a separate method
+    return;
     // The root level run ID of this stream
     let runId = "";
     let followupMessageId = "";
     // let lastMessage: AIMessage | undefined = undefined;
     try {
-      const stream = client.runs.stream(
-        useGraphInput.threadId,
-        useGraphInput.assistantId,
-        {
-          input,
-          streamMode: "events",
-        },
-      );
+      const stream = runStreamSubscription;
 
       // Variables to keep track of content specific to this stream
       const prevCurrentContent = artifact
@@ -677,6 +698,7 @@ export function useGraph(useGraphInput: UseGraphInput) {
       console.error("Failed to stream message", e);
     } finally {
       setSelectedBlocks(undefined);
+      setRunStreamInput(undefined);
       setIsStreaming(false);
     }
 

@@ -39,7 +39,6 @@ export interface ContentComposerChatInterfaceProps {
   userThreads: ThreadType[];
   switchSelectedThread: (thread: ThreadType) => void;
   deleteThread: (id: string) => Promise<void>;
-  getUserThreads: (id: string) => Promise<void>;
   userId: string;
 }
 
@@ -51,6 +50,7 @@ export function ContentComposerChatInterface(
   const [isRunning, setIsRunning] = useState(false);
 
   async function onNew(message: AppendMessage): Promise<void> {
+    console.log("onNew", message);
     if (message.content?.[0]?.type !== "text") {
       toast({
         title: "Only text messages are supported",
@@ -68,14 +68,12 @@ export function ContentComposerChatInterface(
       });
 
       setMessages((prevMessages) => [...prevMessages, humanMessage]);
-
       await streamMessage({
         messages: [convertToOpenAIFormat(humanMessage)],
       });
     } finally {
       setIsRunning(false);
       // Re-fetch threads so that the current thread's title is updated.
-      await props.getUserThreads(props.userId);
     }
   }
 

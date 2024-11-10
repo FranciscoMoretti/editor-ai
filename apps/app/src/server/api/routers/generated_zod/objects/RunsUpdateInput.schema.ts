@@ -19,6 +19,7 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 type SchemaType = z.ZodType<Prisma.runsUpdateInput>;
 export const RunsUpdateInputObjectSchema: SchemaType = z.object({
     run_id: z.union([z.string(),
+    z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(), user_id: z.union([z.string(),
     z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(), thread_id: z.union([z.string(),
     z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(), assistant_id: z.union([z.string(),
     z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(), created_at: z.union([z.union([z.date(), z.string().datetime().optional()]),

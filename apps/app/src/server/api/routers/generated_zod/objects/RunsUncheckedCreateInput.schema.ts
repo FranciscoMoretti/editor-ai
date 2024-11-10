@@ -14,7 +14,7 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 
 type SchemaType = z.ZodType<Prisma.runsUncheckedCreateInput>;
 export const RunsUncheckedCreateInputObjectSchema: SchemaType = z.object({
-    run_id: z.string().optional(), thread_id: z.string(), assistant_id: z.string(), created_at: z.union([z.date().optional(), z.string().datetime().optional()]), updated_at: z.union([z.date().optional(), z.string().datetime().optional()]), status: z.lazy(() => RunStatusSchema), metadata: z.union([z.lazy(() => JsonNullValueInputSchema),
+    run_id: z.string().optional(), user_id: z.string().optional(), thread_id: z.string(), assistant_id: z.string(), created_at: z.union([z.date().optional(), z.string().datetime().optional()]), updated_at: z.union([z.date().optional(), z.string().datetime().optional()]), status: z.lazy(() => RunStatusSchema), metadata: z.union([z.lazy(() => JsonNullValueInputSchema),
         jsonSchema]), kwargs: z.union([z.lazy(() => JsonNullValueInputSchema),
             jsonSchema]), multitask_strategy: z.lazy(() => MultitaskStrategySchema)
 }).strict() as SchemaType;

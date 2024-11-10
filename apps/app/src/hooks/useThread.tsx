@@ -4,29 +4,62 @@ import {
   THREAD_ID_COOKIE_NAME,
 } from "@/constants";
 import { getCookie, setCookie } from "@/lib/cookies";
-import type { Thread } from "@langchain/langgraph-sdk";
+import { api } from "@/trpc/react";
 import { useState } from "react";
-import { createClient } from "./utils";
+
+import { ThreadsSchema } from "@/server/api/routers/generated_zod/models/Threads.schema";
+import { z } from "zod";
+type Thread = z.infer<typeof ThreadsSchema>;
 
 export function useThread(userId: string) {
   const [assistantId, setAssistantId] = useState<string>();
   const [threadId, setThreadId] = useState<string>();
-  const [userThreads, setUserThreads] = useState<Thread[]>([]);
-  const [isUserThreadsLoading, setIsUserThreadsLoading] = useState(false);
+
+  const { data: userThreads = [], isLoading: isUserThreadsLoading } =
+    api.threads.findMany.useQuery(
+      {
+        take: 100,
+      },
+      {
+        enabled: !!userId,
+        select: (threads) => {
+          if (threads.length === 0) return [];
+
+          // TODO: Re enable filter
+          return threads;
+
+          const lastInArray = threads[0];
+          const allButLast = threads.slice(1);
+          const filteredThreads = allButLast.filter(
+            (thread) => thread.values && Object.keys(thread.values).length > 0,
+          );
+
+          return [...filteredThreads, lastInArray];
+        },
+      },
+    );
+
+  const { mutateAsync: createThreadMutation } =
+    api.threads.create.useMutation();
+  const { mutateAsync: createAssistantMutation } =
+    api.assitants.create.useMutation();
+  const { mutateAsync: deleteThreadMutation } =
+    api.threads.delete.useMutation();
 
   const createThread = async (
     supabaseUserId: string,
   ): Promise<Thread | undefined> => {
-    const client = createClient();
     try {
-      const thread = await client.threads.create({
+      const thread = await createThreadMutation({
         metadata: {
           supabase_user_id: supabaseUserId,
         },
       });
+      if (!thread) {
+        return;
+      }
       setThreadId(thread.thread_id);
       setCookie(THREAD_ID_COOKIE_NAME, thread.thread_id);
-      await getUserThreads(userId);
       return thread;
     } catch (e) {
       console.error("Failed to create thread", e);
@@ -34,16 +67,20 @@ export function useThread(userId: string) {
   };
 
   const getOrCreateAssistant = async () => {
+    console.log("getOrCreateAssistant");
     const assistantIdCookie = getCookie(ASSISTANT_ID_COOKIE);
+    // TODO: This fails if assistant was deleted (should query as well)
     if (assistantIdCookie) {
       setAssistantId(assistantIdCookie);
       return;
     }
-    const client = createClient();
     try {
-      const assistant = await client.assistants.create({
-        graphId: "agent",
+      const assistant = await createAssistantMutation({
+        graph_id: "open_canvas",
       });
+      if (!assistant) {
+        return;
+      }
       setAssistantId(assistant.assistant_id);
       setCookie(ASSISTANT_ID_COOKIE, assistant.assistant_id);
     } catch (e) {
@@ -51,40 +88,17 @@ export function useThread(userId: string) {
     }
   };
 
-  const getUserThreads = async (id: string) => {
-    setIsUserThreadsLoading(true);
-    try {
-      const client = createClient();
-
-      const userThreads = await client.threads.search({
-        metadata: {
-          supabase_user_id: id,
-        },
-        limit: 100,
-      });
-
-      if (userThreads.length > 0) {
-        const lastInArray = userThreads[0];
-        const allButLast = userThreads.slice(1, userThreads.length);
-        const filteredThreads = allButLast.filter(
-          (thread) => thread.values && Object.keys(thread.values).length > 0,
-        );
-        setUserThreads([...filteredThreads, lastInArray]);
-      }
-    } finally {
-      setIsUserThreadsLoading(false);
-    }
-  };
-
   const searchOrCreateThread = async (id: string) => {
     const threadIdCookie = getCookie(THREAD_ID_COOKIE_NAME);
     if (!threadIdCookie) {
+      console.log("creating thread 1");
       await createThread(id);
       return;
     }
 
     // Thread ID is in cookies.
     const thread = await getThreadById(threadIdCookie);
+    console.log("thread", thread);
     if (
       thread &&
       (!thread?.values || Object.keys(thread.values).length === 0)
@@ -94,6 +108,7 @@ export function useThread(userId: string) {
       return threadIdCookie;
     } else {
       // Current thread has activity. Create a new thread.
+      console.log("creating thread 2");
       await createThread(id);
       return;
     }
@@ -105,20 +120,22 @@ export function useThread(userId: string) {
       return;
     }
 
-    const client = createClient();
     const processedThreadIds = new Set<string>();
 
     const fetchAndDeleteThreads = async (offset = 0) => {
-      const userThreads = await client.threads.search({
-        metadata: {
-          supabase_user_id: userId,
-        },
-        limit: 100,
-        offset: offset,
-      });
+      // TODO: Figure out how to delete with pagination
+      // const { data: userThreads } = await api.threads.findMany.useQuery({
+      //   take: 100,
+      //   skip: offset,
+      // });
+      if (!userThreads) {
+        return;
+      }
 
-      const threadsToDelete = userThreads.filter(
+      // TOOD: Fix model typing errors
+      const threadsToDelete = userThreads.filter<Thread>(
         (thread) =>
+          thread &&
           !thread.values &&
           thread.thread_id !== threadId &&
           !processedThreadIds.has(thread.thread_id),
@@ -128,7 +145,11 @@ export function useThread(userId: string) {
         const deleteBatch = async (threadIds: string[]) => {
           await Promise.all(
             threadIds.map(async (threadId) => {
-              await client.threads.delete(threadId);
+              await deleteThreadMutation({
+                where: {
+                  thread_id: threadId,
+                },
+              });
               processedThreadIds.add(threadId);
             }),
           );
@@ -136,7 +157,7 @@ export function useThread(userId: string) {
 
         // Create an array of unique thread IDs
         const uniqueThreadIds = Array.from(
-          new Set(threadsToDelete.map((thread) => thread.thread_id)),
+          new Set(threadsToDelete.map((thread) => thread?.thread_id)),
         );
 
         // Process unique thread IDs in batches of 10
@@ -165,8 +186,9 @@ export function useThread(userId: string) {
 
   const getThreadById = async (id: string): Promise<Thread | undefined> => {
     try {
-      const client = createClient();
-      return await client.threads.get(id);
+      console.log("userThreads", userThreads);
+      console.log("id", id);
+      return userThreads.find((thread) => thread?.thread_id === id);
     } catch (e) {
       console.error(`Failed to get thread with ID ${id}`, e);
     }
@@ -176,22 +198,20 @@ export function useThread(userId: string) {
     if (!userId) {
       throw new Error("User ID not found");
     }
-    setUserThreads((prevThreads) => {
-      const newThreads = prevThreads.filter(
-        (thread) => thread.thread_id !== id,
-      );
-      return newThreads;
-    });
     if (id === threadId) {
       clearMessages();
       // Create a new thread. Use .then to avoid blocking the UI.
       // Once completed, `createThread` will re-fetch all user
       // threads to update UI.
+      console.log("deleting thread 1");
       void createThread(userId);
     }
-    const client = createClient();
     try {
-      await client.threads.delete(id);
+      await deleteThreadMutation({
+        where: {
+          thread_id: id,
+        },
+      });
     } catch (e) {
       console.error(`Failed to delete thread with ID ${id}`, e);
     }
@@ -203,7 +223,6 @@ export function useThread(userId: string) {
     assistantId,
     createThread,
     searchOrCreateThread,
-    getUserThreads,
     userThreads,
     isUserThreadsLoading,
     deleteThread,

@@ -1,10 +1,10 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
-import createasssitantRouter from "./routers/generated/routers/asssitant.router";
+import createasssitantRouter from "./routers/asssitants.router";
 import createconfigsRouter from "./routers/generated/routers/configs.router";
-import createrunsRouter from "./routers/generated/routers/runs.router";
-import createthreadsRouter from "./routers/generated/routers/threads.router";
 import createusersRouter from "./routers/generated/routers/users.router";
 import createpostsRouter from "./routers/posts.router";
+import createrunsRouter from "./routers/runs.router";
+import createthreadsRouter from "./routers/threads.router";
 /**
  * This is the primary router for your server.
  *
@@ -16,7 +16,7 @@ export const appRouter = createTRPCRouter({
   users: createusersRouter(),
   threads: createthreadsRouter(),
   configs: createconfigsRouter(),
-  asssitant: createasssitantRouter(),
+  assitants: createasssitantRouter(),
   runs: createrunsRouter(),
 });
 

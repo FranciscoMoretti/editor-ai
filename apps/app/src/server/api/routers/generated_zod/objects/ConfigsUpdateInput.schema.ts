@@ -4,7 +4,7 @@ import { StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdat
 import { ConfigsUpdatetagsInputObjectSchema } from './ConfigsUpdatetagsInput.schema';
 import { IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { JsonNullValueInputSchema } from '../enums/JsonNullValueInput.schema';
-import { AsssitantUpdateManyWithoutConfigNestedInputObjectSchema } from './AsssitantUpdateManyWithoutConfigNestedInput.schema';
+import { AsssitantsUpdateManyWithoutConfigNestedInputObjectSchema } from './AsssitantsUpdateManyWithoutConfigNestedInput.schema';
 
 import type { Prisma } from '@zenstackhq/runtime/models';
 
@@ -17,8 +17,9 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 type SchemaType = z.ZodType<Prisma.configsUpdateInput>;
 export const ConfigsUpdateInputObjectSchema: SchemaType = z.object({
     config_id: z.union([z.string(),
+    z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(), user_id: z.union([z.string(),
     z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(), tags: z.union([z.lazy(() => ConfigsUpdatetagsInputObjectSchema),
     z.string().array()]).optional(), recursion_limit: z.union([z.number(),
     z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(), configurable: z.union([z.lazy(() => JsonNullValueInputSchema),
-        jsonSchema]).optional(), assistants: z.lazy(() => AsssitantUpdateManyWithoutConfigNestedInputObjectSchema).optional()
+        jsonSchema]).optional(), assistants: z.lazy(() => AsssitantsUpdateManyWithoutConfigNestedInputObjectSchema).optional()
 }).strict() as SchemaType;

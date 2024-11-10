@@ -43,19 +43,19 @@ model posts {
 
   // zenstack auth for everyone to be able to read
   @@allow('read', true)
-  @@allow('create,update,delete', auth() != null && user_id == auth().id)  // Add this line
+  @@allow('create,update,delete', auth() != null && user_id == auth().id)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model users {
-  id         String      @id @db.Uuid
-  email      String      @unique
+  id         String       @id @db.Uuid
+  email      String       @unique
   full_name  String?
   avatar_url String?
-  created_at DateTime?   @default(now()) @db.Timestamptz(6)
-  updated_at DateTime?   @default(now()) @db.Timestamptz(6)
+  created_at DateTime?    @default(now()) @db.Timestamptz(6)
+  updated_at DateTime?    @default(now()) @db.Timestamptz(6)
   posts      posts[]
-  assistants asssitant[]
+  assistants asssitants[]
   
   // @@map("users")
   @@auth()
@@ -78,6 +78,7 @@ enum RunStatus {
   success     @map("success")
   timeout     @map("timeout")
   interrupted @map("interrupted")
+  running     @map("running")
 
   @@schema("public")
 }
@@ -91,46 +92,55 @@ enum MultitaskStrategy {
   @@schema("public")
 }
 
+
 model threads {
-  thread_id  String       @id @db.Uuid
+  thread_id  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String       @default(auth().id) @omit
   created_at DateTime     @default(now()) @db.Timestamptz(6)
   updated_at DateTime     @default(now()) @db.Timestamptz(6)
   metadata   Json
-  status     ThreadStatus
-  values     Json
+  status     ThreadStatus @default(idle)
+  values     Json         @default("{}")
+
+
+  @@allow('all', auth() != null && user_id == auth().id)
 
   @@schema("public")
 }
 
 model configs {
-  config_id       String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  config_id       String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String       @default(auth().id) @omit
   tags            String[]
   recursion_limit Int
   configurable    Json
-  assistants      asssitant[]
+  assistants      asssitants[]
 
+  @@allow('all', auth() != null && user_id == auth().id)
   @@schema("public")
 }
 
 
-model asssitant {
-  assistant_id String   @id @db.Uuid
+model asssitants {
+  assistant_id String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String   @db.Uuid
   graph_id     String
   config_id    String   @db.Uuid
   config       configs  @relation(fields: [config_id], references: [config_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_assistant_config")
   created_at   DateTime @default(now()) @db.Timestamptz(6)
   updated_at   DateTime @default(now()) @db.Timestamptz(6)
-  metadata     Json
-  version      Int
-  name         String
-  user_id      String   @db.Uuid
+  metadata     Json     @default("{}")
+  version      Int      @default(1)
+  name         String   @default("Untitled")
   users        users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_assistant_user")
 
+  @@allow('all', auth() != null && user_id == auth().id)
   @@schema("public")
 }
 
 model runs {
   run_id             String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id            String            @default(auth().id) @omit
   thread_id          String            @db.Uuid
   assistant_id       String            @db.Uuid
   created_at         DateTime          @default(now()) @db.Timestamptz(6)
@@ -140,5 +150,6 @@ model runs {
   kwargs             Json
   multitask_strategy MultitaskStrategy
 
+  @@allow('all', auth() != null && user_id == auth().id)
   @@schema("public")
 }

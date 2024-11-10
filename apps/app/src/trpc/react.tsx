@@ -3,7 +3,12 @@
 import { type AppRouter } from "@/server/api/root";
 import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
+import {
+  loggerLink,
+  splitLink,
+  unstable_httpBatchStreamLink,
+} from "@trpc/client";
+import { unstable_httpSubscriptionLink as httpSubscriptionLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { useState } from "react";
@@ -21,6 +26,8 @@ const getQueryClient = () => {
   return (clientQueryClientSingleton ??= createQueryClient());
 };
 
+// NOTE: This type overried to the generated routers type to preserve prisma selection through trpc
+// TODO: This doesn't work correctyl at the moment (is it due to custom router? Bad imports? )
 export const api = createTRPCReact<AppRouter>();
 
 /**
@@ -49,13 +56,13 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             (op.direction === "down" && op.result instanceof Error),
         }),
         unstable_httpBatchStreamLink({
-          transformer: SuperJSON,
           url: `${getBaseUrl()}/api/trpc`,
           headers: () => {
             const headers = new Headers();
             headers.set("x-trpc-source", "nextjs-react");
             return headers;
           },
+          transformer: SuperJSON,
         }),
       ],
     }),

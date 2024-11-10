@@ -31,7 +31,6 @@ export function Canvas(props: CanvasProps) {
     deleteThread,
     userThreads,
     isUserThreadsLoading,
-    getUserThreads,
     setThreadId,
     getOrCreateAssistant,
     clearThreadsWithNoValues,
@@ -71,8 +70,10 @@ export function Canvas(props: CanvasProps) {
   });
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || isUserThreadsLoading) return;
 
+    console.log("threadId", threadId);
+    console.log("assistantId", assistantId);
     if (!threadId) {
       searchOrCreateThread(props.user.id);
     }
@@ -80,19 +81,13 @@ export function Canvas(props: CanvasProps) {
     if (!assistantId) {
       getOrCreateAssistant();
     }
-  }, []);
+  }, [isUserThreadsLoading]);
 
   useEffect(() => {
     if (!threadId) return;
     // Clear threads with no values
     clearThreadsWithNoValues(props.user.id);
   }, [threadId]);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !props.user.id || userThreads.length)
-      return;
-    getUserThreads(props.user.id);
-  }, [props.user.id]);
 
   useEffect(() => {
     if (!assistantId || typeof window === "undefined") return;
@@ -166,7 +161,6 @@ export function Canvas(props: CanvasProps) {
       >
         <ContentComposerChatInterface
           userId={props.user.id}
-          getUserThreads={getUserThreads}
           isUserThreadsLoading={isUserThreadsLoading}
           userThreads={userThreads}
           switchSelectedThread={(thread) => {

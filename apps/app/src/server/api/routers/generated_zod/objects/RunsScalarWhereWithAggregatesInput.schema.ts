@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { z } from 'zod';
 import { UuidWithAggregatesFilterObjectSchema } from './UuidWithAggregatesFilter.schema';
+import { StringWithAggregatesFilterObjectSchema } from './StringWithAggregatesFilter.schema';
 import { DateTimeWithAggregatesFilterObjectSchema } from './DateTimeWithAggregatesFilter.schema';
 import { EnumRunStatusWithAggregatesFilterObjectSchema } from './EnumRunStatusWithAggregatesFilter.schema';
 import { RunStatusSchema } from '../enums/RunStatus.schema';
@@ -15,6 +16,7 @@ export const RunsScalarWhereWithAggregatesInputObjectSchema: SchemaType = z.obje
     AND: z.union([z.lazy(() => RunsScalarWhereWithAggregatesInputObjectSchema),
     z.lazy(() => RunsScalarWhereWithAggregatesInputObjectSchema).array()]).optional(), OR: z.lazy(() => RunsScalarWhereWithAggregatesInputObjectSchema).array().optional(), NOT: z.union([z.lazy(() => RunsScalarWhereWithAggregatesInputObjectSchema),
     z.lazy(() => RunsScalarWhereWithAggregatesInputObjectSchema).array()]).optional(), run_id: z.union([z.lazy(() => UuidWithAggregatesFilterObjectSchema),
+    z.string()]).optional(), user_id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema),
     z.string()]).optional(), thread_id: z.union([z.lazy(() => UuidWithAggregatesFilterObjectSchema),
     z.string()]).optional(), assistant_id: z.union([z.lazy(() => UuidWithAggregatesFilterObjectSchema),
     z.string()]).optional(), created_at: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema),

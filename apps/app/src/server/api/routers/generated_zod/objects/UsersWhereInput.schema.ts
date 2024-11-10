@@ -5,7 +5,7 @@ import { StringFilterObjectSchema } from './StringFilter.schema';
 import { StringNullableFilterObjectSchema } from './StringNullableFilter.schema';
 import { DateTimeNullableFilterObjectSchema } from './DateTimeNullableFilter.schema';
 import { PostsListRelationFilterObjectSchema } from './PostsListRelationFilter.schema';
-import { AsssitantListRelationFilterObjectSchema } from './AsssitantListRelationFilter.schema';
+import { AsssitantsListRelationFilterObjectSchema } from './AsssitantsListRelationFilter.schema';
 
 import type { Prisma } from '@zenstackhq/runtime/models';
 
@@ -23,5 +23,5 @@ export const UsersWhereInputObjectSchema: SchemaType = z.object({
     z.union([z.date(), z.string().datetime().optional()]),
     z.null()]).optional().nullable(), updated_at: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema),
     z.union([z.date(), z.string().datetime().optional()]),
-    z.null()]).optional().nullable(), posts: z.lazy(() => PostsListRelationFilterObjectSchema).optional(), assistants: z.lazy(() => AsssitantListRelationFilterObjectSchema).optional()
+    z.null()]).optional().nullable(), posts: z.lazy(() => PostsListRelationFilterObjectSchema).optional(), assistants: z.lazy(() => AsssitantsListRelationFilterObjectSchema).optional()
 }).strict() as SchemaType;

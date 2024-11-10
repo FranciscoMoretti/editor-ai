@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { SortOrderSchema } from '../enums/SortOrder.schema';
 import { SortOrderInputObjectSchema } from './SortOrderInput.schema';
 import { PostsOrderByRelationAggregateInputObjectSchema } from './PostsOrderByRelationAggregateInput.schema';
-import { AsssitantOrderByRelationAggregateInputObjectSchema } from './AsssitantOrderByRelationAggregateInput.schema';
+import { AsssitantsOrderByRelationAggregateInputObjectSchema } from './AsssitantsOrderByRelationAggregateInput.schema';
 
 import type { Prisma } from '@zenstackhq/runtime/models';
 
@@ -13,5 +13,5 @@ export const UsersOrderByWithRelationInputObjectSchema: SchemaType = z.object({
     z.lazy(() => SortOrderInputObjectSchema)]).optional(), avatar_url: z.union([z.lazy(() => SortOrderSchema),
     z.lazy(() => SortOrderInputObjectSchema)]).optional(), created_at: z.union([z.lazy(() => SortOrderSchema),
     z.lazy(() => SortOrderInputObjectSchema)]).optional(), updated_at: z.union([z.lazy(() => SortOrderSchema),
-    z.lazy(() => SortOrderInputObjectSchema)]).optional(), posts: z.lazy(() => PostsOrderByRelationAggregateInputObjectSchema).optional(), assistants: z.lazy(() => AsssitantOrderByRelationAggregateInputObjectSchema).optional()
+    z.lazy(() => SortOrderInputObjectSchema)]).optional(), posts: z.lazy(() => PostsOrderByRelationAggregateInputObjectSchema).optional(), assistants: z.lazy(() => AsssitantsOrderByRelationAggregateInputObjectSchema).optional()
 }).strict() as SchemaType;

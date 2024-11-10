@@ -13,7 +13,7 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 
 type SchemaType = z.ZodType<Prisma.configsCreateWithoutAssistantsInput>;
 export const ConfigsCreateWithoutAssistantsInputObjectSchema: SchemaType = z.object({
-    config_id: z.string().optional(), tags: z.union([z.lazy(() => ConfigsCreatetagsInputObjectSchema),
+    config_id: z.string().optional(), user_id: z.string().optional(), tags: z.union([z.lazy(() => ConfigsCreatetagsInputObjectSchema),
     z.string().array()]).optional(), recursion_limit: z.number(), configurable: z.union([z.lazy(() => JsonNullValueInputSchema),
         jsonSchema])
 }).strict() as SchemaType;

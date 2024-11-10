@@ -4,6 +4,7 @@ import { RunStatusSchema } from '../enums/RunStatus.schema';
 import { MultitaskStrategySchema } from '../enums/MultitaskStrategy.schema';
 const baseSchema = z.object({
     run_id: z.string().uuid(),
+    user_id: z.string().optional(),
     thread_id: z.string().uuid(),
     assistant_id: z.string().uuid(),
     created_at: z.coerce.date().default(() => new Date()),
@@ -18,7 +19,9 @@ const baseSchema = z.object({
 /**
  * `runs` schema excluding foreign keys and relations.
  */
-export const RunsScalarSchema = baseSchema;
+export const RunsScalarSchema = baseSchema.omit({
+    user_id: true,
+});
 
 
 /**
@@ -40,6 +43,7 @@ export const RunsPrismaCreateSchema = baseSchema.partial().passthrough();
  */
 export const RunsPrismaUpdateSchema = z.object({
     run_id: z.string().uuid(),
+    user_id: z.string().optional(),
     thread_id: z.string().uuid(),
     assistant_id: z.string().uuid(),
     created_at: z.coerce.date().default(() => new Date()),
@@ -55,7 +59,7 @@ export const RunsPrismaUpdateSchema = z.object({
  * `runs` schema for create operations excluding foreign keys and relations.
  */
 export const RunsCreateScalarSchema = baseSchema.partial({
-    run_id: true, created_at: true, updated_at: true
+    run_id: true, user_id: true, created_at: true, updated_at: true
 });
 
 
@@ -63,7 +67,7 @@ export const RunsCreateScalarSchema = baseSchema.partial({
  * `runs` schema for create operations including scalar fields, foreign key fields, and validations.
  */
 export const RunsCreateSchema = baseSchema.partial({
-    run_id: true, created_at: true, updated_at: true
+    run_id: true, user_id: true, created_at: true, updated_at: true
 });
 
 

@@ -16,6 +16,7 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 type SchemaType = z.ZodType<Prisma.configsUncheckedUpdateWithoutAssistantsInput>;
 export const ConfigsUncheckedUpdateWithoutAssistantsInputObjectSchema: SchemaType = z.object({
     config_id: z.union([z.string(),
+    z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(), user_id: z.union([z.string(),
     z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(), tags: z.union([z.lazy(() => ConfigsUpdatetagsInputObjectSchema),
     z.string().array()]).optional(), recursion_limit: z.union([z.number(),
     z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(), configurable: z.union([z.lazy(() => JsonNullValueInputSchema),

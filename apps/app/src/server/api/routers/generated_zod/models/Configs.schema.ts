@@ -2,6 +2,7 @@
 import { z } from 'zod';
 const baseSchema = z.object({
     config_id: z.string().uuid(),
+    user_id: z.string().optional(),
     tags: z.array(z.string()),
     recursion_limit: z.number(),
     configurable: z.any(),
@@ -15,7 +16,9 @@ const relationSchema = z.object({
 /**
  * `configs` schema excluding foreign keys and relations.
  */
-export const ConfigsScalarSchema = baseSchema;
+export const ConfigsScalarSchema = baseSchema.omit({
+    user_id: true,
+});
 
 
 /**
@@ -37,6 +40,7 @@ export const ConfigsPrismaCreateSchema = baseSchema.partial().passthrough();
  */
 export const ConfigsPrismaUpdateSchema = z.object({
     config_id: z.string().uuid(),
+    user_id: z.string().optional(),
     tags: z.array(z.string()),
     recursion_limit: z.union([z.number(), z.record(z.unknown())]),
     configurable: z.any()
@@ -47,7 +51,7 @@ export const ConfigsPrismaUpdateSchema = z.object({
  * `configs` schema for create operations excluding foreign keys and relations.
  */
 export const ConfigsCreateScalarSchema = baseSchema.partial({
-    config_id: true, tags: true
+    config_id: true, user_id: true, tags: true
 });
 
 
@@ -55,7 +59,7 @@ export const ConfigsCreateScalarSchema = baseSchema.partial({
  * `configs` schema for create operations including scalar fields, foreign key fields, and validations.
  */
 export const ConfigsCreateSchema = baseSchema.partial({
-    config_id: true, tags: true
+    config_id: true, user_id: true, tags: true
 });
 
 
