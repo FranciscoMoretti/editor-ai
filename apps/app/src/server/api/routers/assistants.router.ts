@@ -5,26 +5,26 @@ import { z } from "zod";
 import { checkMutate, checkRead } from "./generated/helper";
 /* eslint-disable */
 import { db } from "./generated/routers";
+import { AsssitantsPrismaUpdateSchema } from "./generated_zod/models/Asssitants.schema";
 
 export default function createRouter() {
   return createTRPCRouter({
     create: procedure
-      .input(
-        z.object({
-          graph_id: z.string(),
-          name: z.string().optional(),
-        }),
-      )
+      .input(AsssitantsInputSchema.create)
       .mutation(async ({ ctx, input }) => {
         return await db(ctx).$transaction(async (tx) => {
-          const config = await checkMutate(
-            tx.configs.create({
-              data: {
-                configurable: {},
-                recursion_limit: 10,
-              },
-            }),
-          );
+          let config = undefined;
+          if (input.data.config?.create) {
+            config = await checkMutate(
+              tx.configs.create({ data: input.data.config?.create }),
+            );
+          } else {
+            config = await checkRead(
+              tx.configs.findFirst({
+                where: { config_id: input.data.config?.connect?.config_id },
+              }),
+            );
+          }
 
           if (!config) {
             throw new Error("Failed to create config");
@@ -34,8 +34,8 @@ export default function createRouter() {
             tx.asssitants.create({
               data: {
                 user_id: ctx.user.id,
-                name: input.name,
-                graph_id: input.graph_id,
+                name: input.data.name,
+                graph_id: input.data.graph_id,
                 config_id: config.config_id,
               },
             }),
@@ -98,15 +98,38 @@ export default function createRouter() {
       ),
 
     update: procedure
-      .input(AsssitantsInputSchema.update)
-      .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).asssitants.update(input as any)),
-      ),
+      .input(
+        AsssitantsPrismaUpdateSchema.omit({ assistant_id: true })
+          .merge(
+            z.object({
+              assistant_id: z.string().uuid(),
+            }),
+          )
+          .merge(z.object({ config: z.object({ configurable: z.any() }) })),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const { config, ...rest } = input;
+        return await db(ctx).$transaction(async (tx) => {
+          const res = await checkMutate(
+            tx.asssitants.update({
+              where: { assistant_id: input.assistant_id },
+              data: rest,
+            }),
+          );
+          const configRes = await checkMutate(
+            tx.configs.update({
+              where: { config_id: res?.config_id },
+              data: config,
+            }),
+          );
+          return res;
+        });
+      }),
 
     upsert: procedure
       .input(AsssitantsInputSchema.upsert)
       .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).asssitants.upsert(input as any)),
+        checkMutate(db(ctx).asssitants.upsert(input)),
       ),
 
     count: procedure

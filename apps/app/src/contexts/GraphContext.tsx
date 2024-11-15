@@ -1,4 +1,13 @@
-import { DEFAULT_INPUTS, THREAD_ID_COOKIE_NAME } from "@/constants";
+import {
+  ALL_MODEL_NAMES,
+  DEFAULT_INPUTS,
+  DEFAULT_MODEL_NAME,
+  THREAD_ID_COOKIE_NAME,
+} from "@/constants";
+import { useAssistants } from "@/hooks/useAssistants";
+import { useRuns } from "@/hooks/useRuns";
+import { useThread } from "@/hooks/useThread";
+import { useUser } from "@/hooks/useUser";
 import {
   isArtifactCodeContent,
   isArtifactMarkdownContent,
@@ -6,9 +15,8 @@ import {
 } from "@/lib/artifact_content_types";
 import { setCookie } from "@/lib/cookies";
 import { reverseCleanContent } from "@/lib/normalize_string";
-import { StreamEvent } from "@/tests/types";
 import { api } from "@/trpc/react";
-import type {
+import {
   ArtifactLengthOptions,
   ArtifactToolResponse,
   ArtifactType,
@@ -27,22 +35,65 @@ import {
   type BaseMessage,
 } from "@langchain/core/messages";
 import { parsePartialJson } from "@langchain/core/output_parsers";
-import type { Thread } from "@langchain/langgraph-sdk";
-import { skipToken } from "@tanstack/react-query";
-// import { DEFAULT_ARTIFACTS, DEFAULT_MESSAGES } from "@/lib/dummy";
+import { Thread } from "@langchain/langgraph-sdk";
 import { useToast } from "@v1/ui/use-toast";
 import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
-import { useRuns } from "../useRuns";
-import { createClient } from "./../utils";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   convertToArtifactV3,
   createNewGeneratedArtifactFromTool,
+  removeCodeBlockFormatting,
   replaceOrInsertMessageChunk,
   updateHighlightedCode,
   updateHighlightedMarkdown,
   updateRewrittenArtifact,
 } from "./utils";
+
+interface GraphData {
+  runId: string | undefined;
+  isStreaming: boolean;
+  selectedBlocks: TextHighlight | undefined;
+  messages: BaseMessage[];
+  artifact: ArtifactV3 | undefined;
+  updateRenderedArtifactRequired: boolean;
+  isArtifactSaved: boolean;
+  firstTokenReceived: boolean;
+  feedbackSubmitted: boolean;
+  setFeedbackSubmitted: Dispatch<SetStateAction<boolean>>;
+  setArtifact: Dispatch<SetStateAction<ArtifactV3 | undefined>>;
+  setSelectedBlocks: Dispatch<SetStateAction<TextHighlight | undefined>>;
+  setSelectedArtifact: (index: number) => void;
+  setMessages: Dispatch<SetStateAction<BaseMessage[]>>;
+  streamMessage: (params: GraphInput) => Promise<void>;
+  setArtifactContent: (index: number, content: string) => void;
+  clearState: () => void;
+  switchSelectedThread: (thread: Thread) => void;
+  setUpdateRenderedArtifactRequired: Dispatch<SetStateAction<boolean>>;
+}
+
+type UserDataContextType = ReturnType<typeof useUser>;
+
+type ThreadDataContextType = ReturnType<typeof useThread>;
+
+type AssistantsDataContextType = ReturnType<typeof useAssistants>;
+
+type GraphContentType = {
+  graphData: GraphData;
+  userData: UserDataContextType;
+  threadData: ThreadDataContextType;
+  assistantsData: AssistantsDataContextType;
+};
+
+const GraphContext = createContext<GraphContentType | undefined>(undefined);
 
 export interface GraphInput {
   messages?: Record<string, any>[];
@@ -64,30 +115,10 @@ export interface GraphInput {
   customQuickActionId?: string;
 }
 
-function removeCodeBlockFormatting(text: string): string {
-  if (!text) return text;
-  // Regular expression to match code blocks
-  const codeBlockRegex = /^```[\w-]*\n([\s\S]*?)\n```$/;
-
-  // Check if the text matches the code block pattern
-  const match = text.match(codeBlockRegex);
-
-  if (match?.[1]) {
-    // If it matches, return the content inside the code block
-    return match[1].trim();
-  } else {
-    // If it doesn't match, return the original text
-    return text;
-  }
-}
-
-export interface UseGraphInput {
-  userId: string;
-  threadId: string | undefined;
-  assistantId: string | undefined;
-}
-
-export function useGraph(useGraphInput: UseGraphInput) {
+export function GraphProvider({ children }: { children: ReactNode }) {
+  const userData = useUser();
+  const assistantsData = useAssistants();
+  const threadData = useThread();
   const { toast } = useToast();
   const { shareRun } = useRuns();
   const [messages, setMessages] = useState<BaseMessage[]>([]);
@@ -107,41 +138,193 @@ export function useGraph(useGraphInput: UseGraphInput) {
   const [isArtifactSaved, setIsArtifactSaved] = useState(true);
   const [threadSwitched, setThreadSwitched] = useState(false);
   const [firstTokenReceived, setFirstTokenReceived] = useState(false);
+  const [runId, setRunId] = useState<string>();
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const { mutateAsync: threadUpdateMutation } =
     api.threads.update.useMutation();
-  const [runStreamInput, setRunStreamInput] = useState<GraphInput | undefined>(
-    undefined,
-  );
-
-  // TODO: May be duplicated with runStreamInput
-  const [params, setParams] = useState<GraphInput | undefined>(undefined);
 
   const utils = api.useUtils();
 
-  const processStream = async (input: GraphInput) => {
-    // Fetch data using queryClient
-    if (!useGraphInput.threadId || !useGraphInput.assistantId || !input) {
+  useEffect(() => {
+    if (userData.user) return;
+    userData.getUser();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!userData.user) return;
+
+    if (!threadData.threadId) {
+      threadData.searchOrCreateThread(userData.user.id);
+    }
+
+    // Get or create a new assistant if there isn't one set in state, and we're not
+    // loading all assistants already.
+    if (
+      !assistantsData.selectedAssistant &&
+      !assistantsData.isLoadingAllAssistants
+    ) {
+      assistantsData.getOrCreateAssistant(userData.user.id);
+    }
+  }, [userData.user]);
+
+  // Very hacky way of ensuring updateState is not called when a thread is switched
+  useEffect(() => {
+    if (threadSwitched) {
+      const timer = setTimeout(() => {
+        setThreadSwitched(false);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [threadSwitched]);
+
+  useEffect(() => {
+    return () => {
+      debouncedAPIUpdate.cancel();
+    };
+  }, [debouncedAPIUpdate]);
+
+  useEffect(() => {
+    if (!threadData.threadId) return;
+    if (!messages.length || !artifact) return;
+    if (updateRenderedArtifactRequired || threadSwitched || isStreaming) return;
+    const currentIndex = artifact.currentIndex;
+    const currentContent = artifact.contents.find(
+      (c) => c.index === currentIndex,
+    );
+    if (!currentContent) return;
+    if (
+      (artifact.contents.length === 1 &&
+        artifact.contents[0].type === "text" &&
+        !artifact.contents[0].fullMarkdown) ||
+      (artifact.contents[0].type === "code" && !artifact.contents[0].code)
+    ) {
+      // If the artifact has only one content and it's empty, we shouldn't update the state
       return;
     }
 
-    const openCanvasResponse = await utils.runs.streamQuery.fetch({
-      thread_id: useGraphInput.threadId,
-      assistant_id: useGraphInput.assistantId,
-      input: input,
-      stream_mode: "events",
-    });
+    if (
+      !lastSavedArtifact.current ||
+      lastSavedArtifact.current.contents !== artifact.contents
+    ) {
+      setIsArtifactSaved(false);
+      // This means the artifact in state does not match the last saved artifact
+      // We need to update
+      debouncedAPIUpdate(artifact, threadData.threadId);
+    }
+  }, [artifact, threadData.threadId]);
 
+  const updateArtifact = async (
+    artifactToUpdate: ArtifactV3,
+    threadId: string,
+  ) => {
+    if (isStreaming) return;
+
+    try {
+      await threadUpdateMutation({
+        where: {
+          thread_id: threadId,
+        },
+        data: {
+          thread_id: threadId,
+          values: {
+            artifact: artifactToUpdate,
+          },
+        },
+      });
+      setIsArtifactSaved(true);
+      lastSavedArtifact.current = artifactToUpdate;
+    } catch (e) {
+      console.error("Failed to update artifact", e);
+      console.error("Artifact:", artifactToUpdate);
+    }
+  };
+
+  const clearState = () => {
+    setMessages([]);
+    setArtifact(undefined);
+    setFirstTokenReceived(true);
+  };
+
+  const streamMessageV2 = async (params: GraphInput) => {
+    setFirstTokenReceived(false);
+    if (!threadData.threadId) {
+      toast({
+        title: "Error",
+        description: "No thread ID found",
+        variant: "destructive",
+        duration: 5000,
+      });
+      return;
+    }
+    if (!assistantsData.selectedAssistant) {
+      toast({
+        title: "Error",
+        description: "No assistant ID found",
+        variant: "destructive",
+        duration: 5000,
+      });
+      return;
+    }
+
+    // TODO: update to properly pass the highlight data back
+
+    // one field for highlighted text, and one for code
+    const input = {
+      ...DEFAULT_INPUTS,
+      artifact,
+      ...params,
+      ...(selectedBlocks && {
+        highlightedText: selectedBlocks,
+      }),
+    };
+    // Add check for multiple defined fields
+    const fieldsToCheck = [
+      input.highlightedCode,
+      input.highlightedText,
+      input.language,
+      input.artifactLength,
+      input.regenerateWithEmojis,
+      input.readingLevel,
+      input.addComments,
+      input.addLogs,
+      input.fixBugs,
+      input.portLanguage,
+      input.customQuickActionId,
+    ];
+
+    if (fieldsToCheck.filter((field) => field !== undefined).length >= 2) {
+      toast({
+        title: "Error",
+        description:
+          "Can not use multiple fields (quick actions, highlights, etc.) at once. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
+      return;
+    }
+
+    setIsStreaming(true);
+    setRunId(undefined);
+    setFeedbackSubmitted(false);
     // The root level run ID of this stream
     let runId = "";
     let followupMessageId = "";
     // let lastMessage: AIMessage | undefined = undefined;
+
     try {
-      if (!openCanvasResponse) {
-        return;
-      }
-      const stream = openCanvasResponse as AsyncGenerator<{
-        data: StreamEvent;
-      }>;
+      const stream = await utils.runs.streamQuery.fetch({
+        thread_id: threadData.threadId,
+        assistant_id: assistantsData.selectedAssistant.assistant_id,
+        input,
+        stream_mode: "events",
+        config: {
+          configurable: {
+            customModelName: threadData.modelName,
+          },
+        },
+      });
 
       // Variables to keep track of content specific to this stream
       const prevCurrentContent = artifact
@@ -176,15 +359,21 @@ export function useGraph(useGraphInput: UseGraphInput) {
       let highlightedText: TextHighlight | undefined = undefined;
 
       for await (const chunk of stream) {
-        console.log("chunk", chunk);
-
         try {
           if (!runId && chunk.data?.metadata?.run_id) {
             runId = chunk.data.metadata.run_id;
+            setRunId(runId);
           }
+          const message = chunk.data.data.chunk?.message
+            ? ((await load(
+                JSON.stringify(chunk.data.data.chunk?.message),
+              )) as AIMessageChunk)
+            : undefined;
+
           if (chunk.data.event === "on_chain_start") {
             if (
-              chunk.data.metadata.langgraph_node === "updateHighlightedText"
+              // chunk.data.metadata.langgraph_node === "updateHighlightedText" ||
+              chunk.data.name === "LangGraph"
             ) {
               highlightedText = chunk.data.data?.input?.highlightedText;
             }
@@ -196,16 +385,12 @@ export function useGraph(useGraphInput: UseGraphInput) {
           ) {
             // These are generating new messages to insert to the chat window.
             if (
-              ["generateFollowup", "respondToQuery"].includes(
-                chunk.data.metadata.langgraph_node ?? "",
+              ["generateFollowup", "replyToGeneralInput"].includes(
+                chunk.data.metadata.langgraph_node,
               )
             ) {
-              const message = (await load(
-                JSON.stringify(chunk.data.data.chunk?.message),
-              )) as AIMessageChunk;
-
               if (!followupMessageId) {
-                followupMessageId = message.id ?? "";
+                followupMessageId = message.id;
               }
               setMessages((prevMessages) =>
                 replaceOrInsertMessageChunk(prevMessages, message),
@@ -213,11 +398,8 @@ export function useGraph(useGraphInput: UseGraphInput) {
             }
 
             if (chunk.data.metadata.langgraph_node === "generateArtifact") {
-              const message = (await load(
-                JSON.stringify(chunk.data.data.chunk?.message),
-              )) as AIMessageChunk;
               generateArtifactToolCallStr +=
-                message.tool_call_chunks?.[0]?.args;
+                message.tool_call_chunks?.[0]?.args || "";
               let newArtifactText: ArtifactToolResponse | undefined = undefined;
 
               // Attempt to parse the tool call chunk.
@@ -258,9 +440,6 @@ export function useGraph(useGraphInput: UseGraphInput) {
             if (
               chunk.data.metadata.langgraph_node === "updateHighlightedText"
             ) {
-              const message = (await load(
-                JSON.stringify(chunk.data.data.chunk?.message),
-              )) as AIMessageChunk;
               if (!message) {
                 continue;
               }
@@ -330,8 +509,11 @@ export function useGraph(useGraphInput: UseGraphInput) {
               const firstUpdateCopy = isFirstUpdate;
               setFirstTokenReceived(true);
               setArtifact((prev) => {
+                if (!prev) {
+                  throw new Error("No artifact found when updating markdown");
+                }
                 return updateHighlightedMarkdown(
-                  prev ?? artifact,
+                  prev,
                   `${updatedArtifactStartContent}${updatedArtifactRestContent}`,
                   newArtifactIndex,
                   prevCurrentContent,
@@ -354,7 +536,7 @@ export function useGraph(useGraphInput: UseGraphInput) {
                 });
                 return;
               }
-              if (!params?.highlightedCode) {
+              if (!params.highlightedCode) {
                 toast({
                   title: "Error",
                   description: "No highlighted code found",
@@ -364,13 +546,8 @@ export function useGraph(useGraphInput: UseGraphInput) {
                 return;
               }
 
-              const message = (await load(
-                JSON.stringify(chunk.data.data.chunk?.message),
-              )) as AIMessageChunk;
-
-              const partialUpdatedContent = message.content ?? "";
-              const { startCharIndex, endCharIndex } =
-                params?.highlightedCode ?? {};
+              const partialUpdatedContent = message?.content || "";
+              const { startCharIndex, endCharIndex } = params.highlightedCode;
 
               if (!prevCurrentContent) {
                 toast({
@@ -408,11 +585,14 @@ export function useGraph(useGraphInput: UseGraphInput) {
               const firstUpdateCopy = isFirstUpdate;
               setFirstTokenReceived(true);
               setArtifact((prev) => {
+                if (!prev) {
+                  throw new Error("No artifact found when updating markdown");
+                }
                 const content = removeCodeBlockFormatting(
                   `${updatedArtifactStartContent}${updatedArtifactRestContent}`,
                 );
                 return updateHighlightedCode(
-                  prev ?? artifact,
+                  prev,
                   content,
                   newArtifactIndex,
                   prevCurrentContent,
@@ -423,6 +603,10 @@ export function useGraph(useGraphInput: UseGraphInput) {
               if (isFirstUpdate) {
                 isFirstUpdate = false;
               }
+            }
+
+            if (chunk.data.metadata.langgraph_node === "rewriteArtifact") {
+              console.log(chunk.data);
             }
 
             if (
@@ -440,22 +624,19 @@ export function useGraph(useGraphInput: UseGraphInput) {
                 return;
               }
 
-              const message = (await load(
-                JSON.stringify(chunk.data.data.chunk?.message),
-              )) as AIMessageChunk;
-              newArtifactContent += message.content ?? "";
+              newArtifactContent += message?.content || "";
 
               // Ensure we have the language to update the artifact with
-              let artifactLanguage = params?.portLanguage || undefined;
+              let artifactLanguage = params.portLanguage || undefined;
               if (
                 !artifactLanguage &&
                 rewriteArtifactMeta.type === "code" &&
-                rewriteArtifactMeta.programmingLanguage
+                rewriteArtifactMeta.language
               ) {
                 // If the type is `code` we should have a programming language populated
                 // in the rewriteArtifactMeta and can use that.
                 artifactLanguage =
-                  rewriteArtifactMeta.programmingLanguage as ProgrammingLanguageOptions;
+                  rewriteArtifactMeta.language as ProgrammingLanguageOptions;
               } else if (!artifactLanguage) {
                 artifactLanguage =
                   (prevCurrentContent?.title as ProgrammingLanguageOptions) ??
@@ -465,6 +646,10 @@ export function useGraph(useGraphInput: UseGraphInput) {
               const firstUpdateCopy = isFirstUpdate;
               setFirstTokenReceived(true);
               setArtifact((prev) => {
+                if (!prev) {
+                  throw new Error("No artifact found when updating markdown");
+                }
+
                 let content = newArtifactContent;
                 if (!rewriteArtifactMeta) {
                   console.error(
@@ -477,7 +662,7 @@ export function useGraph(useGraphInput: UseGraphInput) {
                 }
 
                 return updateRewrittenArtifact({
-                  prevArtifact: prev ?? artifact,
+                  prevArtifact: prev,
                   newArtifactContent: content,
                   rewriteArtifactMeta: rewriteArtifactMeta,
                   prevCurrentContent,
@@ -517,14 +702,12 @@ export function useGraph(useGraphInput: UseGraphInput) {
                 });
                 return;
               }
-              const message = (await load(
-                JSON.stringify(chunk.data.data.chunk?.message),
-              )) as AIMessageChunk;
-              newArtifactContent += message.content ?? "";
+
+              newArtifactContent += message?.content || "";
 
               // Ensure we have the language to update the artifact with
               const artifactLanguage =
-                params?.portLanguage ||
+                params.portLanguage ||
                 (isArtifactCodeContent(prevCurrentContent)
                   ? prevCurrentContent.language
                   : "other");
@@ -541,6 +724,10 @@ export function useGraph(useGraphInput: UseGraphInput) {
               const firstUpdateCopy = isFirstUpdate;
               setFirstTokenReceived(true);
               setArtifact((prev) => {
+                if (!prev) {
+                  throw new Error("No artifact found when updating markdown");
+                }
+
                 let content = newArtifactContent;
                 if (artifactType === "code") {
                   content = removeCodeBlockFormatting(content);
@@ -552,7 +739,7 @@ export function useGraph(useGraphInput: UseGraphInput) {
                   rewriteArtifactMeta: {
                     type: artifactType,
                     title: prevCurrentContent.title,
-                    programmingLanguage: artifactLanguage,
+                    language: artifactLanguage,
                   },
                   prevCurrentContent,
                   newArtifactIndex,
@@ -567,19 +754,32 @@ export function useGraph(useGraphInput: UseGraphInput) {
             }
           }
 
-          if (chunk.data.event === "on_llm_end") {
+          if (
+            chunk.data.event === "on_llm_end" ||
+            chunk.data.event === "on_chain_end"
+          ) {
             if (
               chunk.data.metadata.langgraph_node === "rewriteArtifact" &&
               chunk.data.name === "optionally_update_artifact_meta"
             ) {
-              // TODO: Deserialize here as well
+              if (chunk.data.data.output.generations?.[0]?.[0].message) {
+                const rewriteArtifactMessage = await load(
+                  JSON.stringify(
+                    chunk.data.data.output.generations[0][0].message,
+                  ),
+                );
+                rewriteArtifactMeta = rewriteArtifactMessage.tool_calls[0].args;
+                console.log("rewriteArtifactMeta", rewriteArtifactMeta);
+              } else {
+                console.log("No message found in generation");
+              }
               rewriteArtifactMeta = chunk.data.data.output.tool_calls[0].args;
+              console.log("rewriteArtifactMeta2", rewriteArtifactMeta);
             }
             // if (chunk.data?.data.output && "type" in chunk.data.data.output && chunk.data.data.output.type === "ai") {
             //   lastMessage = new AIMessage({
             //     ...chunk.data.data.output,
             //   });
-            //   console.log("last message", lastMessage);
             // }
           }
         } catch (e) {
@@ -596,16 +796,8 @@ export function useGraph(useGraphInput: UseGraphInput) {
       console.error("Failed to stream message", e);
     } finally {
       setSelectedBlocks(undefined);
-
-      // TODO: Figure out if this is causing the streaming to stop!
-      // setRunStreamInput(undefined);
       setIsStreaming(false);
     }
-
-    // TODO:
-    // Implement an updateState call after streaming is done to update the state of the artifact
-    // with the full markdown content of the artifact if it's a text artifact. This is required so
-    // users can load the artifact in the future with proper markdown styling.
 
     if (runId) {
       // Chain `.then` to not block the stream
@@ -623,7 +815,7 @@ export function useGraph(useGraphInput: UseGraphInput) {
                 args: { sharedRunURL },
                 id: sharedRunURL
                   ?.split("https://smith.langchain.com/public/")[1]
-                  ?.split("/")[0],
+                  .split("/")[0],
               };
               const castMsg = msg as AIMessage;
               const newMessageWithToolCall = new AIMessage({
@@ -636,12 +828,13 @@ export function useGraph(useGraphInput: UseGraphInput) {
               });
               return newMessageWithToolCall;
             }
+
             return msg;
           });
           return newMsgs;
         });
 
-        // if (useGraphInput.threadId && lastMessage && lastMessage.id) {
+        // if (threadId && lastMessage && lastMessage.id) {
         //   // Update the state of the last message to include the run URL
         //   // for proper rendering when loading history.
         //   const newMessages = [new RemoveMessage({ id: lastMessage.id }), new AIMessage({
@@ -652,161 +845,15 @@ export function useGraph(useGraphInput: UseGraphInput) {
         //       langSmithRunURL: sharedRunURL,
         //     }
         //   })];
-        //   await client.threads.updateState(useGraphInput.threadId, {
+        //   await client.threads.updateState(threadId, {
         //     values: {
         //       messages: newMessages
         //     },
         //   });
-        //   const newState = await client.threads.getState(useGraphInput.threadId);
-        //   console.log("new state", newState.values);
+        //   const newState = await client.threads.getState(threadId);
         // }
       });
     }
-  };
-
-  // Very hacky way of ensuring updateState is not called when a thread is switched
-  // Very hacky way of ensuring updateState is not called when a thread is switched
-  useEffect(() => {
-    if (threadSwitched) {
-      const timer = setTimeout(() => {
-        setThreadSwitched(false);
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [threadSwitched]);
-
-  useEffect(() => {
-    return () => {
-      debouncedAPIUpdate.cancel();
-    };
-  }, [debouncedAPIUpdate]);
-
-  useEffect(() => {
-    if (!messages.length || !artifact || !useGraphInput.threadId) return;
-    if (updateRenderedArtifactRequired || threadSwitched || isStreaming) return;
-    const currentIndex = artifact.currentIndex;
-    const currentContent = artifact.contents.find(
-      (c) => c.index === currentIndex,
-    );
-    if (!currentContent) return;
-    if (
-      (artifact.contents.length === 1 &&
-        artifact.contents[0]!.type === "text" &&
-        !artifact.contents[0]!.fullMarkdown) ||
-      (artifact.contents[0]!.type === "code" && !artifact.contents[0]!.code)
-    ) {
-      // If the artifact has only one content and it's empty, we shouldn't update the state
-      return;
-    }
-
-    if (
-      !lastSavedArtifact.current ||
-      lastSavedArtifact.current.contents !== artifact.contents
-    ) {
-      setIsArtifactSaved(false);
-      // This means the artifact in state does not match the last saved artifact
-      // We need to update
-      debouncedAPIUpdate(artifact, useGraphInput.threadId);
-    }
-  }, [artifact]);
-
-  const updateArtifact = async (
-    artifactToUpdate: ArtifactV3,
-    threadId: string,
-  ) => {
-    if (isStreaming) return;
-    try {
-      await threadUpdateMutation({
-        where: {
-          thread_id: threadId,
-        },
-        data: {
-          values: JSON.parse(JSON.stringify({ artifact: artifactToUpdate })),
-        },
-      });
-      setIsArtifactSaved(true);
-      lastSavedArtifact.current = artifactToUpdate;
-    } catch (e) {
-      console.error("Failed to update artifact", e);
-      console.error("Artifact:", artifactToUpdate);
-    }
-  };
-
-  const clearState = () => {
-    setMessages([]);
-    setArtifact(undefined);
-    setFirstTokenReceived(true);
-  };
-
-  const streamMessageV2 = async (params: GraphInput) => {
-    setFirstTokenReceived(false);
-    console.log("StreamMessageV2", params);
-
-    if (!useGraphInput.threadId) {
-      toast({
-        title: "Error",
-        description: "Thread ID not found",
-        variant: "destructive",
-        duration: 5000,
-      });
-      return undefined;
-    }
-    if (!useGraphInput.assistantId) {
-      toast({
-        title: "Error",
-        description: "Assistant ID not found",
-        variant: "destructive",
-        duration: 5000,
-      });
-      return undefined;
-    }
-
-    // TODO: update to properly pass the highlight data back
-    // one field for highlighted text, and one for code
-    const input = {
-      ...DEFAULT_INPUTS,
-      artifact,
-      messages,
-      ...params,
-      ...(selectedBlocks && {
-        highlightedText: selectedBlocks,
-      }),
-    };
-    // Add check for multiple defined fields
-    const fieldsToCheck = [
-      input.highlightedCode,
-      input.highlightedText,
-      input.language,
-      input.artifactLength,
-      input.regenerateWithEmojis,
-      input.readingLevel,
-      input.addComments,
-      input.addLogs,
-      input.fixBugs,
-      input.portLanguage,
-      input.customQuickActionId,
-    ];
-
-    if (fieldsToCheck.filter((field) => field !== undefined).length >= 2) {
-      toast({
-        title: "Error",
-        description:
-          "Can not use multiple fields (quick actions, highlights, etc.) at once. Please try again.",
-        variant: "destructive",
-        duration: 5000,
-      });
-      return;
-    }
-    console.log("setting run stream input", input);
-
-    setRunStreamInput(input);
-    setParams(params);
-
-    setIsStreaming(true);
-    // TODO: FIX HERE: The stream should be handled in a separate method
-
-    processStream(input);
   };
 
   const setSelectedArtifact = (index: number) => {
@@ -860,14 +907,18 @@ export function useGraph(useGraphInput: UseGraphInput) {
     });
   };
 
-  const switchSelectedThread = (
-    thread: Thread,
-    setThreadId: (id: string) => void,
-  ) => {
+  const switchSelectedThread = (thread: Thread) => {
     setUpdateRenderedArtifactRequired(true);
     setThreadSwitched(true);
-    setThreadId(thread.thread_id);
+    threadData.setThreadId(thread.thread_id);
     setCookie(THREAD_ID_COOKIE_NAME, thread.thread_id);
+    if (thread.metadata?.customModelName) {
+      threadData.setModelName(
+        thread.metadata.customModelName as ALL_MODEL_NAMES,
+      );
+    } else {
+      threadData.setModelName(DEFAULT_MODEL_NAME);
+    }
 
     const castValues: {
       artifact: ArtifactV3 | undefined;
@@ -911,22 +962,44 @@ export function useGraph(useGraphInput: UseGraphInput) {
     );
   };
 
-  return {
-    isStreaming,
-    selectedBlocks,
-    messages,
-    artifact,
-    setArtifact,
-    setSelectedBlocks,
-    setSelectedArtifact,
-    setMessages,
-    streamMessage: streamMessageV2,
-    setArtifactContent,
-    clearState,
-    switchSelectedThread,
-    updateRenderedArtifactRequired,
-    setUpdateRenderedArtifactRequired,
-    isArtifactSaved,
-    firstTokenReceived,
+  const contextValue: GraphContentType = {
+    userData,
+    threadData,
+    assistantsData,
+    graphData: {
+      runId,
+      isStreaming,
+      selectedBlocks,
+      messages,
+      artifact,
+      updateRenderedArtifactRequired,
+      isArtifactSaved,
+      firstTokenReceived,
+      feedbackSubmitted,
+      setFeedbackSubmitted,
+      setArtifact,
+      setSelectedBlocks,
+      setSelectedArtifact,
+      setMessages,
+      streamMessage: streamMessageV2,
+      setArtifactContent,
+      clearState,
+      switchSelectedThread,
+      setUpdateRenderedArtifactRequired,
+    },
   };
+
+  return (
+    <GraphContext.Provider value={contextValue}>
+      {children}
+    </GraphContext.Provider>
+  );
+}
+
+export function useGraphContext() {
+  const context = useContext(GraphContext);
+  if (context === undefined) {
+    throw new Error("useGraphContext must be used within a GraphProvider");
+  }
+  return context;
 }

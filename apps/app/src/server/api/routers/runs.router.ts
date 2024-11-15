@@ -117,6 +117,13 @@ export default function createRouter() {
           assistant_id: z.string().uuid(),
           input: GraphInputSchema,
           stream_mode: StreamMode,
+          config: z
+            .object({
+              configurable: z.object({
+                customModelName: z.string().optional(),
+              }),
+            })
+            .default({ configurable: {} }),
         }),
       )
       .query(async function* ({ ctx, input }) {
@@ -159,6 +166,7 @@ export default function createRouter() {
           throw new Error("Failed to create run");
         }
 
+        // TODO here switch by graph_id
         if (true) {
           const graph = openCanvasGraph;
           try {
@@ -174,6 +182,7 @@ export default function createRouter() {
                 configurable: {
                   assistant_id: input.assistant_id,
                   run_id: run.run_id,
+                  ...input.config.configurable,
                 },
                 version: "v1",
               },
@@ -205,76 +214,6 @@ export default function createRouter() {
             },
           }),
         );
-      }),
-
-    stream: procedure
-      .input(
-        z.object({
-          thread_id: z.string(),
-          assistant_id: z.string(),
-          input: GraphInputSchema,
-          stream_mode: StreamMode,
-        }),
-      )
-      .subscription(async function* ({ ctx, input }) {
-        const thread = await checkRead(
-          db(ctx).threads.findUnique({
-            where: {
-              thread_id: input.thread_id,
-            },
-          }),
-        );
-
-        const assistant = await checkRead(
-          db(ctx).asssitants.findUnique({
-            where: {
-              assistant_id: input.assistant_id,
-            },
-          }),
-        );
-
-        if (!thread || !assistant) {
-          throw new Error("Thread or assistant not found");
-        }
-
-        if (assistant.graph_id === "open_canvas") {
-          const graph = openCanvasGraph;
-          try {
-            // TODO: FIX graph inputs
-
-            const stream =
-              input.stream_mode === "events"
-                ? await graph.streamEvents(
-                    {
-                      ...DEFAULT_INPUTS,
-                      artifact: "",
-                      ...input.input,
-                    },
-                    {
-                      configurable: {
-                        assistant_id: input.assistant_id,
-                      },
-                      version: "v1",
-                    },
-                  )
-                : await graph.stream(input.input, {
-                    configurable: {
-                      assistant_id: input.assistant_id,
-                    },
-                    streamMode: input.stream_mode,
-                  });
-
-            for await (const data of stream) {
-              yield { data };
-            }
-            console.log("Stream complete");
-          } catch (error) {
-            console.error("Stream error:", error);
-            throw error;
-          }
-        } else {
-          throw new Error("Graph not found");
-        }
       }),
     aggregate: procedure
       .input(RunsInputSchema.aggregate)

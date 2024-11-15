@@ -1,7 +1,6 @@
+import { getArtifactContent } from "@/contexts/utils";
 import { BaseMessage } from "@langchain/core/messages";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { ChatOpenAI } from "@langchain/openai";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
 import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
 import {
   ArtifactCodeV3,
@@ -10,6 +9,7 @@ import {
   CustomQuickAction,
   Reflections,
 } from "../../../types";
+import { getModelFromConfig } from "../../utils";
 import { ensureStoreInConfig, formatReflections } from "../../utils";
 import {
   CUSTOM_QUICK_ACTION_ARTIFACT_CONTENT_PROMPT,
@@ -35,8 +35,7 @@ export const customAction = async (
     throw new Error("No custom quick action ID found.");
   }
 
-  const smallModel = new ChatOpenAI({
-    model: "gpt-4o-mini",
+  const smallModel = await getModelFromConfig(config, {
     temperature: 0.5,
   });
 

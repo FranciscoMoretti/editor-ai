@@ -1,5 +1,5 @@
 import { MagicPencilSVG } from "@/components/icons/magic_pencil";
-import { GraphInput } from "@/hooks/use-graph/useGraph";
+import { GraphInput } from "@/contexts/GraphContext";
 import { cn } from "@/lib/utils";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { BookOpen, Languages, SlidersVertical, SmilePlus } from "lucide-react";
@@ -9,8 +9,8 @@ import { ReadingLevelOptions } from "./ReadingLevelOptions";
 import { TranslateOptions } from "./TranslateOptions";
 
 type SharedComponentProps = {
+  streamMessage: (params: GraphInput) => Promise<void>;
   handleClose: () => void;
-  streamMessage: (input: GraphInput) => Promise<void>;
 };
 
 type ToolbarOption = {
@@ -21,8 +21,8 @@ type ToolbarOption = {
 };
 
 export interface ActionsToolbarProps {
+  streamMessage: (params: GraphInput) => Promise<void>;
   isTextSelected: boolean;
-  streamMessage: (input: GraphInput) => Promise<void>;
 }
 
 const toolbarOptions: ToolbarOption[] = [
@@ -55,6 +55,7 @@ const toolbarOptions: ToolbarOption[] = [
 ];
 
 export function ActionsToolbar(props: ActionsToolbarProps) {
+  const { streamMessage } = props;
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeOption, setActiveOption] = useState<string | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -91,7 +92,7 @@ export function ActionsToolbar(props: ActionsToolbarProps) {
     if (optionId === "addEmojis") {
       setIsExpanded(false);
       setActiveOption(null);
-      await props.streamMessage({
+      await streamMessage({
         regenerateWithEmojis: true,
       });
     } else {

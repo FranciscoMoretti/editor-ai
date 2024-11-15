@@ -112,7 +112,7 @@ model configs {
   config_id       String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user_id         String       @default(auth().id) @omit
   tags            String[]
-  recursion_limit Int
+  recursion_limit Int          @default(10)
   configurable    Json
   assistants      asssitants[]
 
@@ -123,7 +123,7 @@ model configs {
 
 model asssitants {
   assistant_id String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id      String   @db.Uuid
+  user_id      String   @db.Uuid @default(auth().id) @omit
   graph_id     String
   config_id    String   @db.Uuid
   config       configs  @relation(fields: [config_id], references: [config_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_assistant_config")

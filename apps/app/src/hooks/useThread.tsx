@@ -1,104 +1,107 @@
 import {
-  ASSISTANT_ID_COOKIE,
+  ALL_MODEL_NAMES,
+  DEFAULT_MODEL_NAME,
   HAS_EMPTY_THREADS_CLEARED_COOKIE,
   THREAD_ID_COOKIE_NAME,
 } from "@/constants";
 import { getCookie, setCookie } from "@/lib/cookies";
 import { api } from "@/trpc/react";
+import { Metadata, Thread } from "@langchain/langgraph-sdk";
 import { useState } from "react";
 
-import { ThreadsSchema } from "@/server/api/routers/generated_zod/models/Threads.schema";
-import { z } from "zod";
-type Thread = z.infer<typeof ThreadsSchema>;
+function threadResponseToThread(
+  thread: Awaited<
+    ReturnType<ReturnType<typeof api.threads.create.useMutation>["mutateAsync"]>
+  > | null,
+): Thread | undefined {
+  if (!thread) {
+    return undefined;
+  }
 
-export function useThread(userId: string) {
-  const [assistantId, setAssistantId] = useState<string>();
+  return {
+    ...thread,
+    created_at: thread.created_at.toISOString(),
+    updated_at: thread.updated_at.toISOString(),
+    metadata: thread.metadata as Metadata,
+  };
+}
+
+// TODO: Update api usages in threads!
+export function useThread() {
   const [threadId, setThreadId] = useState<string>();
-
-  const { data: userThreads = [], isLoading: isUserThreadsLoading } =
-    api.threads.findMany.useQuery(
-      {
-        take: 100,
-      },
-      {
-        enabled: !!userId,
-        select: (threads) => {
-          if (threads.length === 0) return [];
-
-          // TODO: Re enable filter
-          return threads;
-
-          const lastInArray = threads[0];
-          const allButLast = threads.slice(1);
-          const filteredThreads = allButLast.filter(
-            (thread) => thread.values && Object.keys(thread.values).length > 0,
-          );
-
-          return [...filteredThreads, lastInArray];
-        },
-      },
-    );
-
+  const [userThreads, setUserThreads] = useState<Thread[]>([]);
+  const [isUserThreadsLoading, setIsUserThreadsLoading] = useState(false);
+  const [modelName, setModelName] =
+    useState<ALL_MODEL_NAMES>(DEFAULT_MODEL_NAME);
   const { mutateAsync: createThreadMutation } =
     api.threads.create.useMutation();
-  const { mutateAsync: createAssistantMutation } =
-    api.assitants.create.useMutation();
   const { mutateAsync: deleteThreadMutation } =
     api.threads.delete.useMutation();
+  const utils = api.useUtils();
 
   const createThread = async (
-    supabaseUserId: string,
+    customModelName: ALL_MODEL_NAMES = DEFAULT_MODEL_NAME,
+    userId: string,
   ): Promise<Thread | undefined> => {
+    console.log("creating thread!", customModelName);
     try {
       const thread = await createThreadMutation({
         metadata: {
-          supabase_user_id: supabaseUserId,
+          supabase_user_id: userId,
+          customModelName,
         },
-      });
+      }).then(threadResponseToThread);
       if (!thread) {
+        console.error("Failed to create thread");
         return;
       }
       setThreadId(thread.thread_id);
       setCookie(THREAD_ID_COOKIE_NAME, thread.thread_id);
+      setModelName(customModelName);
+      await getUserThreads(userId);
       return thread;
     } catch (e) {
       console.error("Failed to create thread", e);
     }
   };
 
-  const getOrCreateAssistant = async () => {
-    console.log("getOrCreateAssistant");
-    const assistantIdCookie = getCookie(ASSISTANT_ID_COOKIE);
-    // TODO: This fails if assistant was deleted (should query as well)
-    if (assistantIdCookie) {
-      setAssistantId(assistantIdCookie);
-      return;
-    }
+  const getUserThreads = async (userId: string) => {
+    setIsUserThreadsLoading(true);
     try {
-      const assistant = await createAssistantMutation({
-        graph_id: "open_canvas",
-      });
-      if (!assistant) {
-        return;
+      const userThreads = await utils.threads.findMany
+        .fetch({
+          // metadata: {
+          //   supabase_user_id: userId,
+          // },
+          take: 100,
+        })
+        .then((threads) => threads.map(threadResponseToThread))
+        .then((threads) =>
+          threads.filter<Thread>((thread) => thread !== undefined),
+        );
+
+      if (userThreads.length > 0) {
+        const lastInArray = userThreads[0];
+        const allButLast = userThreads.slice(1, userThreads.length);
+        const filteredThreads = allButLast.filter(
+          (thread) => thread.values && Object.keys(thread.values).length > 0,
+        );
+        setUserThreads([...filteredThreads, lastInArray]);
       }
-      setAssistantId(assistant.assistant_id);
-      setCookie(ASSISTANT_ID_COOKIE, assistant.assistant_id);
-    } catch (e) {
-      console.error("Failed to create assistant", e);
+    } finally {
+      setIsUserThreadsLoading(false);
     }
   };
 
-  const searchOrCreateThread = async (id: string) => {
+  const searchOrCreateThread = async (userId: string) => {
     const threadIdCookie = getCookie(THREAD_ID_COOKIE_NAME);
     if (!threadIdCookie) {
-      console.log("creating thread 1");
-      await createThread(id);
+      await createThread(modelName, userId);
       return;
     }
 
     // Thread ID is in cookies.
     const thread = await getThreadById(threadIdCookie);
-    console.log("thread", thread);
     if (
       thread &&
       (!thread?.values || Object.keys(thread.values).length === 0)
@@ -108,8 +111,7 @@ export function useThread(userId: string) {
       return threadIdCookie;
     } else {
       // Current thread has activity. Create a new thread.
-      console.log("creating thread 2");
-      await createThread(id);
+      await createThread(modelName, userId);
       return;
     }
   };
@@ -123,19 +125,21 @@ export function useThread(userId: string) {
     const processedThreadIds = new Set<string>();
 
     const fetchAndDeleteThreads = async (offset = 0) => {
-      // TODO: Figure out how to delete with pagination
-      // const { data: userThreads } = await api.threads.findMany.useQuery({
-      //   take: 100,
-      //   skip: offset,
-      // });
-      if (!userThreads) {
-        return;
-      }
+      const userThreads = await utils.threads.findMany
+        .fetch({
+          // metadata: {
+          //   supabase_user_id: userId,
+          // },
+          take: 100,
+          skip: offset,
+        })
+        .then((threads) => threads.map(threadResponseToThread))
+        .then((threads) =>
+          threads.filter<Thread>((thread) => thread !== undefined),
+        );
 
-      // TOOD: Fix model typing errors
-      const threadsToDelete = userThreads.filter<Thread>(
+      const threadsToDelete = userThreads.filter(
         (thread) =>
-          thread &&
           !thread.values &&
           thread.thread_id !== threadId &&
           !processedThreadIds.has(thread.thread_id),
@@ -157,7 +161,7 @@ export function useThread(userId: string) {
 
         // Create an array of unique thread IDs
         const uniqueThreadIds = Array.from(
-          new Set(threadsToDelete.map((thread) => thread?.thread_id)),
+          new Set(threadsToDelete.map((thread) => thread.thread_id)),
         );
 
         // Process unique thread IDs in batches of 10
@@ -186,25 +190,39 @@ export function useThread(userId: string) {
 
   const getThreadById = async (id: string): Promise<Thread | undefined> => {
     try {
-      console.log("userThreads", userThreads);
-      console.log("id", id);
-      return userThreads.find((thread) => thread?.thread_id === id);
+      const thread = await utils.threads.findUnique
+        .fetch({
+          where: {
+            thread_id: id,
+          },
+        })
+        .then(threadResponseToThread);
+      if (thread?.metadata && thread.metadata.customModelName) {
+        setModelName(thread.metadata.customModelName as ALL_MODEL_NAMES);
+      }
+      return thread;
     } catch (e) {
       console.error(`Failed to get thread with ID ${id}`, e);
     }
   };
 
-  const deleteThread = async (id: string, clearMessages: () => void) => {
-    if (!userId) {
-      throw new Error("User ID not found");
-    }
+  const deleteThread = async (
+    id: string,
+    userId: string,
+    clearMessages: () => void,
+  ) => {
+    setUserThreads((prevThreads) => {
+      const newThreads = prevThreads.filter(
+        (thread) => thread.thread_id !== id,
+      );
+      return newThreads;
+    });
     if (id === threadId) {
       clearMessages();
       // Create a new thread. Use .then to avoid blocking the UI.
       // Once completed, `createThread` will re-fetch all user
       // threads to update UI.
-      console.log("deleting thread 1");
-      void createThread(userId);
+      void createThread(modelName, userId);
     }
     try {
       await deleteThreadMutation({
@@ -218,16 +236,17 @@ export function useThread(userId: string) {
   };
 
   return {
-    clearThreadsWithNoValues,
     threadId,
-    assistantId,
-    createThread,
-    searchOrCreateThread,
     userThreads,
     isUserThreadsLoading,
+    modelName,
+    createThread,
+    clearThreadsWithNoValues,
+    searchOrCreateThread,
+    getUserThreads,
     deleteThread,
     getThreadById,
     setThreadId,
-    getOrCreateAssistant,
+    setModelName,
   };
 }

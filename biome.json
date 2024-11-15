@@ -13,6 +13,7 @@
         "useKeyWithClickEvents": "off"
       },
       "style": {
+        "noUnusedTemplateLiteral": "off",
         "noNonNullAssertion": "off",
         "useImportType": "off",
         "noUselessElse": "off",

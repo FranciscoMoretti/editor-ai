@@ -21,6 +21,7 @@ export async function addAssistantIdToUser(): Promise<void> {
 
   try {
     const supabase = createClient();
+    // TODO: Replace with prisma client
     // add ID to user data
     const { error } = await supabase.auth.updateUser({
       data: {

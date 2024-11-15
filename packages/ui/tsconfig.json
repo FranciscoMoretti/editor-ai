@@ -6,6 +6,9 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": [
+    "src",
+    "../../apps/app/src/components/programming-lang-dropdown.tsx"
+  ],
   "exclude": ["node_modules"]
 }

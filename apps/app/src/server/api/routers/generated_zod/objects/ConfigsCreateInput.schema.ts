@@ -15,6 +15,6 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 type SchemaType = z.ZodType<Prisma.configsCreateInput>;
 export const ConfigsCreateInputObjectSchema: SchemaType = z.object({
     config_id: z.string().optional(), user_id: z.string().optional(), tags: z.union([z.lazy(() => ConfigsCreatetagsInputObjectSchema),
-    z.string().array()]).optional(), recursion_limit: z.number(), configurable: z.union([z.lazy(() => JsonNullValueInputSchema),
+    z.string().array()]).optional(), recursion_limit: z.number().optional(), configurable: z.union([z.lazy(() => JsonNullValueInputSchema),
         jsonSchema]), assistants: z.lazy(() => AsssitantsCreateNestedManyWithoutConfigInputObjectSchema).optional()
 }).strict() as SchemaType;

@@ -2,7 +2,7 @@ import { useAssistantToolUI } from "@assistant-ui/react";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { ExternalLink } from "lucide-react";
 import { useCallback } from "react";
-import { LangSmithSVG } from "./icons/langsmith";
+import { LangSmithSVG } from "../icons/langsmith";
 
 export const useLangSmithLinkToolUI = () =>
   useAssistantToolUI({

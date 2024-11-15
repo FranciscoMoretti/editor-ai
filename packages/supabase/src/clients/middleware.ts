@@ -49,10 +49,11 @@ export const updateSession = async (
     return { response, user: devUser };
   } else {
     // Print the session to auto-singin in development mode
-    // if (process.env.NODE_ENV === "development") {
-    //   const session = await supabase.auth.getSession();
-    //   console.log("session", session);
-    // }
+    if (process.env.NODE_ENV === "development") {
+      const session = await supabase.auth.getSession();
+      console.log("ACCESS TOKEN: ", session.data.session?.access_token);
+      console.log("REFRESH TOKEN: ", session.data.session?.refresh_token);
+    }
 
     // Return the user if they are logged in or not in development
     return { response, user };

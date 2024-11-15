@@ -1,4 +1,4 @@
-import { GraphInput } from "@/hooks/use-graph/useGraph";
+import { GraphInput } from "@/contexts/GraphContext";
 import { cn } from "@/lib/utils";
 import { ArtifactLengthOptions } from "@/types";
 import { Slider } from "@v1/ui/slider";
@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 
 export interface LengthOptionsProps {
-  streamMessage: (input: GraphInput) => Promise<void>;
+  streamMessage: (params: GraphInput) => Promise<void>;
   handleClose: () => void;
 }
 
@@ -24,12 +24,13 @@ const lengthOptions = [
 ];
 
 export function LengthOptions(props: LengthOptionsProps) {
+  const { streamMessage } = props;
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState([3]);
 
   const handleSubmit = async (artifactLength: ArtifactLengthOptions) => {
     props.handleClose();
-    await props.streamMessage({
+    await streamMessage({
       artifactLength,
     });
   };

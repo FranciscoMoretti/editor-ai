@@ -1,26 +1,23 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import { getArtifactContent } from "@/contexts/utils";
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { Reflections } from "../../../types";
+import { getModelFromConfig } from "../../utils";
 import {
   ensureStoreInConfig,
   formatArtifactContentWithTemplate,
   formatReflections,
 } from "../../utils";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { Reflections } from "../../../types";
 import { CURRENT_ARTIFACT_PROMPT, NO_ARTIFACT_PROMPT } from "../prompts";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 /**
  * Generate responses to questions. Does not generate artifacts.
  */
-export const respondToQuery = async (
+export const replyToGeneralInput = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
-  const smallModel = new ChatOpenAI({
-    model: "gpt-4o-mini",
-    temperature: 0.5,
-  });
+  const smallModel = await getModelFromConfig(config);
 
   const prompt = `You are an AI assistant tasked with responding to the users question.
   
@@ -56,9 +53,9 @@ You also have the following reflections on style guidelines and general memories
       currentArtifactContent
         ? formatArtifactContentWithTemplate(
             CURRENT_ARTIFACT_PROMPT,
-            currentArtifactContent
+            currentArtifactContent,
           )
-        : NO_ARTIFACT_PROMPT
+        : NO_ARTIFACT_PROMPT,
     );
 
   const response = await smallModel.invoke([

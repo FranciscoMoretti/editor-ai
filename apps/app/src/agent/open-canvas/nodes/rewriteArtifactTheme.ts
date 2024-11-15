@@ -1,5 +1,9 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import { getArtifactContent } from "@/contexts/utils";
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
+import { ArtifactV3, Reflections } from "../../../types";
+import { getModelFromConfig } from "../../utils";
+import { ensureStoreInConfig, formatReflections } from "../../utils";
 import {
   ADD_EMOJIS_TO_ARTIFACT_PROMPT,
   CHANGE_ARTIFACT_LANGUAGE_PROMPT,
@@ -7,20 +11,13 @@ import {
   CHANGE_ARTIFACT_READING_LEVEL_PROMPT,
   CHANGE_ARTIFACT_TO_PIRATE_PROMPT,
 } from "../prompts";
-import { ensureStoreInConfig, formatReflections } from "../../utils";
-import { ArtifactV3, Reflections } from "../../../types";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
-import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 export const rewriteArtifactTheme = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
-  const smallModel = new ChatOpenAI({
-    model: "gpt-4o-mini",
-    temperature: 0.5,
-  });
+  const smallModel = await getModelFromConfig(config);
 
   const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.assistant_id;
@@ -48,7 +45,7 @@ export const rewriteArtifactTheme = async (
   if (state.language) {
     formattedPrompt = CHANGE_ARTIFACT_LANGUAGE_PROMPT.replace(
       "{newLanguage}",
-      state.language
+      state.language,
     ).replace("{artifactContent}", currentArtifactContent.fullMarkdown);
   } else if (state.readingLevel && state.readingLevel !== "pirate") {
     let newReadingLevel = "";
@@ -68,12 +65,12 @@ export const rewriteArtifactTheme = async (
     }
     formattedPrompt = CHANGE_ARTIFACT_READING_LEVEL_PROMPT.replace(
       "{newReadingLevel}",
-      newReadingLevel
+      newReadingLevel,
     ).replace("{artifactContent}", currentArtifactContent.fullMarkdown);
   } else if (state.readingLevel && state.readingLevel === "pirate") {
     formattedPrompt = CHANGE_ARTIFACT_TO_PIRATE_PROMPT.replace(
       "{artifactContent}",
-      currentArtifactContent.fullMarkdown
+      currentArtifactContent.fullMarkdown,
     );
   } else if (state.artifactLength) {
     let newLength = "";
@@ -93,12 +90,12 @@ export const rewriteArtifactTheme = async (
     }
     formattedPrompt = CHANGE_ARTIFACT_LENGTH_PROMPT.replace(
       "{newLength}",
-      newLength
+      newLength,
     ).replace("{artifactContent}", currentArtifactContent.fullMarkdown);
   } else if (state.regenerateWithEmojis) {
     formattedPrompt = ADD_EMOJIS_TO_ARTIFACT_PROMPT.replace(
       "{artifactContent}",
-      currentArtifactContent.fullMarkdown
+      currentArtifactContent.fullMarkdown,
     );
   } else {
     throw new Error("No theme selected");

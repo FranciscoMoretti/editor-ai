@@ -1,4 +1,4 @@
-import { GraphInput } from "@/hooks/use-graph/useGraph";
+import { GraphInput } from "@/contexts/GraphContext";
 import { cn } from "@/lib/utils";
 import { ProgrammingLanguageOptions } from "@/types";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
@@ -8,8 +8,8 @@ import { PortToLanguageOptions } from "./PortToLanguage";
 
 type SharedComponentProps = {
   handleClose: () => void;
+  streamMessage: (params: GraphInput) => Promise<void>;
   language: ProgrammingLanguageOptions;
-  streamMessage: (input: GraphInput) => Promise<void>;
 };
 
 type ToolbarOption = {
@@ -20,9 +20,9 @@ type ToolbarOption = {
 };
 
 export interface CodeToolbarProps {
+  streamMessage: (params: GraphInput) => Promise<void>;
   isTextSelected: boolean;
   language: ProgrammingLanguageOptions;
-  streamMessage: (input: GraphInput) => Promise<void>;
 }
 
 const toolbarOptions: ToolbarOption[] = [
@@ -55,6 +55,7 @@ const toolbarOptions: ToolbarOption[] = [
 ];
 
 export function CodeToolBar(props: CodeToolbarProps) {
+  const { streamMessage } = props;
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeOption, setActiveOption] = useState<string | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -97,15 +98,15 @@ export function CodeToolBar(props: CodeToolbarProps) {
     setIsExpanded(false);
     setActiveOption(null);
     if (optionId === "addComments") {
-      await props.streamMessage({
+      await streamMessage({
         addComments: true,
       });
     } else if (optionId === "addLogs") {
-      await props.streamMessage({
+      await streamMessage({
         addLogs: true,
       });
     } else if (optionId === "fixBugs") {
-      await props.streamMessage({
+      await streamMessage({
         fixBugs: true,
       });
     }

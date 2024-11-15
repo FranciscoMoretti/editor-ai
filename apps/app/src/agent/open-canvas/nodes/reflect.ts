@@ -6,8 +6,7 @@ export const reflectNode = async (
   state: typeof OpenCanvasGraphAnnotation.State,
   config: LangGraphRunnableConfig,
 ) => {
-  return {};
-  // TODO: Re-enable reflextion
+  // TODO: Replace langgraph client with internal API
   const langGraphClient = new Client({
     apiUrl: `http://localhost:${process.env.PORT}`,
     defaultHeaders: {

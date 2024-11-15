@@ -14,5 +14,5 @@ const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
 type SchemaType = z.ZodType<Prisma.asssitantsCreateWithoutConfigInput>;
 export const AsssitantsCreateWithoutConfigInputObjectSchema: SchemaType = z.object({
     assistant_id: z.string().optional(), graph_id: z.string(), created_at: z.union([z.date().optional(), z.string().datetime().optional()]), updated_at: z.union([z.date().optional(), z.string().datetime().optional()]), metadata: z.union([z.lazy(() => JsonNullValueInputSchema),
-        jsonSchema]).optional(), version: z.number().optional(), name: z.string().optional(), users: z.lazy(() => UsersCreateNestedOneWithoutAssistantsInputObjectSchema)
+        jsonSchema]).optional(), version: z.number().optional(), name: z.string().optional(), users: z.lazy(() => UsersCreateNestedOneWithoutAssistantsInputObjectSchema).optional()
 }).strict() as SchemaType;

@@ -1,8 +1,8 @@
-import { ChatAnthropic } from "@langchain/anthropic";
-import { ChatOpenAI } from "@langchain/openai";
+import { getArtifactContent } from "@/contexts/utils";
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { z } from "zod";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
 import { formatArtifactContentWithTemplate } from "../../utils";
+import { getModelFromConfig } from "../../utils";
 import {
   CURRENT_ARTIFACT_PROMPT,
   NO_ARTIFACT_PROMPT,
@@ -17,7 +17,9 @@ import { OpenCanvasGraphAnnotation } from "../state";
  */
 export const generatePath = async (
   state: typeof OpenCanvasGraphAnnotation.State,
+  config: LangGraphRunnableConfig,
 ) => {
+  console.log("config.configurable!!", config.configurable);
   if (state.highlightedCode) {
     return {
       next: "updateArtifact",
@@ -89,16 +91,13 @@ export const generatePath = async (
     ? "rewriteArtifact"
     : "generateArtifact";
 
-  // const modelWithTool = new ChatAnthropic({
-  //   model: "claude-3-5-sonnet-20240620",
-  const modelWithTool = new ChatOpenAI({
-    model: "gpt-4o-mini",
-
+  const model = await getModelFromConfig(config, {
     temperature: 0,
-  }).withStructuredOutput(
+  });
+  const modelWithTool = model.withStructuredOutput(
     z.object({
       route: z
-        .enum(["respondToQuery", artifactRoute])
+        .enum(["replyToGeneralInput", artifactRoute])
         .describe("The route to take based on the user's query."),
     }),
     {
@@ -106,17 +105,12 @@ export const generatePath = async (
     },
   );
 
-  const result = await modelWithTool.invoke(
-    [
-      {
-        role: "user",
-        content: formattedPrompt,
-      },
-    ],
+  const result = await modelWithTool.invoke([
     {
-      timeout: 10000,
+      role: "user",
+      content: formattedPrompt,
     },
-  );
+  ]);
 
   return {
     next: result.route,

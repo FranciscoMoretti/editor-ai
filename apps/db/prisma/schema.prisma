@@ -96,7 +96,7 @@ model configs {
   /// @omit
   user_id         String
   tags            String[]
-  recursion_limit Int
+  recursion_limit Int          @default(10)
   configurable    Json
   assistants      asssitants[]
 
@@ -106,6 +106,7 @@ model configs {
 /// @@allow('all', auth() != null && user_id == auth().id)
 model asssitants {
   assistant_id String   @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  /// @omit
   user_id      String   @db.Uuid()
   graph_id     String
   config_id    String   @db.Uuid()

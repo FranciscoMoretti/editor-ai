@@ -1,22 +1,20 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
-import { FOLLOWUP_ARTIFACT_PROMPT } from "../prompts";
-import { ensureStoreInConfig, formatReflections } from "../../utils";
-import { Reflections } from "../../../types";
+import { getArtifactContent } from "@/contexts/utils";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
 import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
+import { Reflections } from "../../../types";
+import { getModelFromConfig } from "../../utils";
+import { ensureStoreInConfig, formatReflections } from "../../utils";
+import { FOLLOWUP_ARTIFACT_PROMPT } from "../prompts";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 /**
  * Generate a followup message after generating or updating an artifact.
  */
 export const generateFollowup = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
-  const smallModel = new ChatOpenAI({
-    model: "gpt-4o-mini",
-    temperature: 0.5,
+  const smallModel = await getModelFromConfig(config, {
     maxTokens: 250,
   });
 
@@ -46,14 +44,14 @@ export const generateFollowup = async (
 
   const formattedPrompt = FOLLOWUP_ARTIFACT_PROMPT.replace(
     "{artifactContent}",
-    artifactContent || "No artifacts generated yet."
+    artifactContent || "No artifacts generated yet.",
   )
     .replace("{reflections}", memoriesAsString)
     .replace(
       "{conversation}",
       state.messages
         .map((msg) => `<${msg.getType()}>\n${msg.content}\n</${msg.getType()}>`)
-        .join("\n\n")
+        .join("\n\n"),
     );
 
   // TODO: Include the chat history as well.

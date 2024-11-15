@@ -1,7 +1,7 @@
 import { ProgrammingLanguageOptions } from "@/types";
 
 export const getLanguageTemplate = (
-  language: ProgrammingLanguageOptions
+  language: ProgrammingLanguageOptions,
 ): string => {
   switch (language) {
     case "javascript":

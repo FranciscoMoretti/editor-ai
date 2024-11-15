@@ -1,13 +1,13 @@
+import { Annotation, MessagesAnnotation } from "@langchain/langgraph";
 import {
   ArtifactLengthOptions,
+  ArtifactV3,
+  CodeHighlight,
   LanguageOptions,
   ProgrammingLanguageOptions,
   ReadingLevelOptions,
-  CodeHighlight,
-  ArtifactV3,
   TextHighlight,
 } from "../../types";
-import { Annotation, MessagesAnnotation } from "@langchain/langgraph";
 
 export const OpenCanvasGraphAnnotation = Annotation.Root({
   ...MessagesAnnotation.spec,

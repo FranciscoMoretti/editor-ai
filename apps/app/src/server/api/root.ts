@@ -1,5 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
-import createasssitantRouter from "./routers/asssitants.router";
+import createasssitantRouter from "./routers/assistants.router";
 import createconfigsRouter from "./routers/generated/routers/configs.router";
 import createusersRouter from "./routers/generated/routers/users.router";
 import createpostsRouter from "./routers/posts.router";
@@ -16,7 +16,7 @@ export const appRouter = createTRPCRouter({
   users: createusersRouter(),
   threads: createthreadsRouter(),
   configs: createconfigsRouter(),
-  assitants: createasssitantRouter(),
+  assistants: createasssitantRouter(),
   runs: createrunsRouter(),
 });
 

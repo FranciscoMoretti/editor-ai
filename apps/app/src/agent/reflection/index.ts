@@ -1,20 +1,20 @@
+import { getArtifactContent } from "@/contexts/utils";
 import { ChatAnthropic } from "@langchain/anthropic";
 import {
   type LangGraphRunnableConfig,
-  StateGraph,
   START,
+  StateGraph,
 } from "@langchain/langgraph";
-import { ReflectionGraphAnnotation, ReflectionGraphReturnType } from "./state";
-import { Reflections } from "../../types";
-import { REFLECT_SYSTEM_PROMPT, REFLECT_USER_PROMPT } from "./prompts";
 import { z } from "zod";
-import { ensureStoreInConfig, formatReflections } from "../utils";
-import { getArtifactContent } from "../../hooks/use-graph/utils";
 import { isArtifactMarkdownContent } from "../../lib/artifact_content_types";
+import { Reflections } from "../../types";
+import { ensureStoreInConfig, formatReflections } from "../utils";
+import { REFLECT_SYSTEM_PROMPT, REFLECT_USER_PROMPT } from "./prompts";
+import { ReflectionGraphAnnotation, ReflectionGraphReturnType } from "./state";
 
 export const reflect = async (
   state: typeof ReflectionGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<ReflectionGraphReturnType> => {
   const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.open_canvas_assistant_id;
@@ -61,14 +61,14 @@ export const reflect = async (
 
   const formattedSystemPrompt = REFLECT_SYSTEM_PROMPT.replace(
     "{artifact}",
-    artifactContent ?? "No artifact found."
+    artifactContent ?? "No artifact found.",
   ).replace("{reflections}", memoriesAsString);
 
   const formattedUserPrompt = REFLECT_USER_PROMPT.replace(
     "{conversation}",
     state.messages
       .map((msg) => `<${msg.getType()}>\n${msg.content}\n</${msg.getType()}>`)
-      .join("\n\n")
+      .join("\n\n"),
   );
 
   const result = await model.invoke([

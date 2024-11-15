@@ -8,6 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@v1/ui/dropdown-menu";
+import { TighterText } from "@v1/ui/header";
 import { Code } from "lucide-react";
 
 interface ProgrammingLanguageListProps {
@@ -118,7 +119,7 @@ export const ProgrammingLanguagesDropdown = ({
           variant="outline"
           className="transition-colors text-gray-600 flex items-center justify-center gap-2 w-[250px] h-[64px]"
         >
-          New Code File
+          <TighterText>New Code File</TighterText>
           <Code />
         </Button>
       </DropdownMenuTrigger>

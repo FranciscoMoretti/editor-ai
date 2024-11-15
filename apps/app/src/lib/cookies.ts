@@ -10,7 +10,7 @@ export const getCookie = (name: string): string | undefined => {
 export const setCookie = (
   name: string,
   value: string,
-  options?: Cookies.CookieAttributes
+  options?: Cookies.CookieAttributes,
 ): void => {
   if (typeof window === "undefined") {
     return;
@@ -19,4 +19,11 @@ export const setCookie = (
     expires: 365, // Default to 1 year expiration
     ...(options || {}),
   });
+};
+
+export const removeCookie = (name: string): void => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  Cookies.remove(name);
 };
