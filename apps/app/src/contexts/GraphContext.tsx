@@ -314,7 +314,7 @@ export function GraphProvider({ children }: { children: ReactNode }) {
     // let lastMessage: AIMessage | undefined = undefined;
 
     try {
-      const stream = await utils.runs.streamQuery.fetch({
+      const stream = await utils.runs.stream.fetch({
         thread_id: threadData.threadId,
         assistant_id: assistantsData.selectedAssistant.assistant_id,
         input,

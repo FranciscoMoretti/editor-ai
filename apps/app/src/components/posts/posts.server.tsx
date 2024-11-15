@@ -30,7 +30,7 @@ export function PostsServer() {
   });
   const { mutate: createPost } = api.posts.create.useMutation();
 
-  const { data: openCanvasResponse } = api.runs.streamQuery.useQuery(
+  const { data: openCanvasResponse } = api.runs.stream.useQuery(
     {
       thread_id: "65c9e502-0259-4936-b1b2-2e7921497dae",
       assistant_id: "5d24250f-e5cc-4b6f-aab4-72968db3a553",

@@ -110,7 +110,7 @@ export default function createRouter() {
           yield* maybeYield(who);
         }
       }),
-    streamQuery: procedure
+    stream: procedure
       .input(
         z.object({
           thread_id: z.string().uuid(),
