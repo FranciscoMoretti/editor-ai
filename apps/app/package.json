@@ -42,8 +42,6 @@
     "@trpc/next": "^11.0.0-rc.608",
     "@trpc/react-query": "^11.0.0-rc.608",
     "@trpc/server": "^11.0.0-rc.608",
-    "@types/lodash": "^4.17.12",
-    "@types/react-syntax-highlighter": "^15.5.13",
     "@uiw/react-codemirror": "^4.23.5",
     "@uiw/react-md-editor": "^4.0.4",
     "@v1/analytics": "workspace:*",
@@ -82,6 +80,7 @@
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@types/uuid": "^10.0.0",
     "typescript": "^5.5.4"
   }
