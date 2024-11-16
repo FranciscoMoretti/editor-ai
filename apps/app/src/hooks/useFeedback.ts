@@ -13,11 +13,11 @@ interface UseFeedbackResult {
     runId: string,
     feedbackKey: string,
     score: number,
-    comment?: string
+    comment?: string,
   ) => Promise<FeedbackResponse | undefined>;
   getFeedback: (
     runId: string,
-    feedbackKey: string
+    feedbackKey: string,
   ) => Promise<Feedback[] | undefined>;
 }
 
@@ -30,7 +30,7 @@ export function useFeedback(): UseFeedbackResult {
       runId: string,
       feedbackKey: string,
       score: number,
-      comment?: string
+      comment?: string,
     ): Promise<FeedbackResponse | undefined> => {
       setIsLoading(true);
       setError(null);
@@ -52,26 +52,26 @@ export function useFeedback(): UseFeedbackResult {
       } catch (error) {
         console.error("Error sending feedback:", error);
         setError(
-          error instanceof Error ? error.message : "An unknown error occurred"
+          error instanceof Error ? error.message : "An unknown error occurred",
         );
         return;
       } finally {
         setIsLoading(false);
       }
     },
-    []
+    [],
   );
 
   const getFeedback = useCallback(
     async (
       runId: string,
-      feedbackKey: string
+      feedbackKey: string,
     ): Promise<Feedback[] | undefined> => {
       setIsLoading(true);
       setError(null);
       try {
         const res = await fetch(
-          `/api/runs/feedback?runId=${encodeURIComponent(runId)}&feedbackKey=${encodeURIComponent(feedbackKey)}`
+          `/api/runs/feedback?runId=${encodeURIComponent(runId)}&feedbackKey=${encodeURIComponent(feedbackKey)}`,
         );
 
         if (!res.ok) {
@@ -82,14 +82,14 @@ export function useFeedback(): UseFeedbackResult {
       } catch (error) {
         console.error("Error getting feedback:", error);
         setError(
-          error instanceof Error ? error.message : "An unknown error occurred"
+          error instanceof Error ? error.message : "An unknown error occurred",
         );
         return;
       } finally {
         setIsLoading(false);
       }
     },
-    []
+    [],
   );
 
   return {

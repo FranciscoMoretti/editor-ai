@@ -1,4 +1,8 @@
 /* eslint-disable */
-import { z } from 'zod';
+import { z } from "zod";
 
-export const JsonNullValueFilterSchema = z.enum(["DbNull", "JsonNull", "AnyNull"])
+export const JsonNullValueFilterSchema = z.enum([
+  "DbNull",
+  "JsonNull",
+  "AnyNull",
+]);

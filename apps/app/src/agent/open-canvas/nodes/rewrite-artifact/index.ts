@@ -14,7 +14,7 @@ import { isArtifactMarkdownContent } from "@/lib/artifact_content_types";
 
 export const rewriteArtifact = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModelWithConfig = (await getModelFromConfig(config)).withConfig({
     runName: "rewrite_artifact_model_call",
@@ -24,7 +24,7 @@ export const rewriteArtifact = async (
 
   const artifactMetaToolCall = await optionallyUpdateArtifactMeta(
     state,
-    config
+    config,
   );
   const artifactType = artifactMetaToolCall?.args?.type;
   const isNewType = artifactType !== currentArtifactContent.type;

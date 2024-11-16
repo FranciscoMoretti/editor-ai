@@ -9,7 +9,7 @@ import { OpenCanvasGraphAnnotation } from "../../state";
 import { ToolCall } from "@langchain/core/messages/tool";
 
 export const validateState = (
-  state: typeof OpenCanvasGraphAnnotation.State
+  state: typeof OpenCanvasGraphAnnotation.State,
 ) => {
   const currentArtifactContent = state.artifact
     ? getArtifactContent(state.artifact)
@@ -19,7 +19,7 @@ export const validateState = (
   }
 
   const recentHumanMessage = state.messages.findLast(
-    (message) => message.getType() === "human"
+    (message) => message.getType() === "human",
   );
   if (!recentHumanMessage) {
     throw new Error("No recent human message found");
@@ -37,7 +37,7 @@ const buildMetaPrompt = (artifactMetaToolCall: ToolCall | undefined) => {
 
   return OPTIONALLY_UPDATE_META_PROMPT.replace(
     "{artifactType}",
-    artifactMetaToolCall?.args?.type
+    artifactMetaToolCall?.args?.type,
   ).replace("{artifactTitle}", titleSection);
 };
 
@@ -58,7 +58,7 @@ export const buildPrompt = ({
 
   return UPDATE_ENTIRE_ARTIFACT_PROMPT.replace(
     "{artifactContent}",
-    artifactContent
+    artifactContent,
   )
     .replace("{reflections}", memoriesAsString)
     .replace("{updateMetaPrompt}", metaPrompt);
@@ -102,7 +102,7 @@ export const createNewArtifactContent = ({
 
 const getLanguage = (
   artifactMetaToolCall: ToolCall | undefined,
-  currentArtifactContent: ArtifactCodeV3 | ArtifactMarkdownV3 // Replace 'any' with proper type
+  currentArtifactContent: ArtifactCodeV3 | ArtifactMarkdownV3, // Replace 'any' with proper type
 ) =>
   artifactMetaToolCall?.args?.programmingLanguage ||
   (isArtifactCodeContent(currentArtifactContent)

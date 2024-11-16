@@ -18,7 +18,7 @@ import { createArtifactContent, formatNewArtifactPrompt } from "./utils";
  */
 export const generateArtifact = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   const { modelName } = getModelConfig(config);
   const smallModel = await getModelFromConfig(config, {
@@ -32,13 +32,13 @@ export const generateArtifact = async (
         schema: ARTIFACT_TOOL_SCHEMA,
       },
     ],
-    { tool_choice: "generate_artifact" }
+    { tool_choice: "generate_artifact" },
   );
 
   const memoriesAsString = await getFormattedReflections(config);
   const formattedNewArtifactPrompt = formatNewArtifactPrompt(
     memoriesAsString,
-    modelName
+    modelName,
   );
 
   const userSystemPrompt = optionallyGetSystemPromptFromConfig(config);
@@ -48,7 +48,7 @@ export const generateArtifact = async (
 
   const response = await modelWithArtifactTool.invoke(
     [{ role: "system", content: fullSystemPrompt }, ...state.messages],
-    { runName: "generate_artifact" }
+    { runName: "generate_artifact" },
   );
 
   const newArtifactContent = createArtifactContent(response.tool_calls?.[0]);

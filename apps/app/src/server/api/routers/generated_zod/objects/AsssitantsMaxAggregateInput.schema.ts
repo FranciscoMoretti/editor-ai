@@ -1,10 +1,18 @@
 /* eslint-disable */
-import { z } from 'zod';
+import { z } from "zod";
 
-
-import type { Prisma } from '@zenstackhq/runtime/models';
+import type { Prisma } from "@zenstackhq/runtime/models";
 
 type SchemaType = z.ZodType<Prisma.AsssitantsMaxAggregateInputType>;
-export const AsssitantsMaxAggregateInputObjectSchema: SchemaType = z.object({
-    assistant_id: z.literal(true).optional(), user_id: z.literal(true).optional(), graph_id: z.literal(true).optional(), config_id: z.literal(true).optional(), created_at: z.literal(true).optional(), updated_at: z.literal(true).optional(), version: z.literal(true).optional(), name: z.literal(true).optional()
-}).strict() as SchemaType;
+export const AsssitantsMaxAggregateInputObjectSchema: SchemaType = z
+  .object({
+    assistant_id: z.literal(true).optional(),
+    user_id: z.literal(true).optional(),
+    graph_id: z.literal(true).optional(),
+    config_id: z.literal(true).optional(),
+    created_at: z.literal(true).optional(),
+    updated_at: z.literal(true).optional(),
+    version: z.literal(true).optional(),
+    name: z.literal(true).optional(),
+  })
+  .strict() as SchemaType;

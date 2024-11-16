@@ -1,4 +1,4 @@
 /* eslint-disable */
-import { z } from 'zod';
+import { z } from "zod";
 
-export const JsonNullValueInputSchema = z.enum(["JsonNull"])
+export const JsonNullValueInputSchema = z.enum(["JsonNull"]);

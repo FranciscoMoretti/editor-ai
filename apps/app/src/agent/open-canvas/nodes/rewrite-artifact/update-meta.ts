@@ -9,7 +9,7 @@ import { getFormattedReflections } from "../../../utils";
 
 export async function optionallyUpdateArtifactMeta(
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<ToolCall | undefined> {
   const toolCallingModel = (await getModelFromConfig(config))
     .bindTools(
@@ -20,7 +20,7 @@ export async function optionallyUpdateArtifactMeta(
           description: "Update the artifact meta information, if necessary.",
         },
       ],
-      { tool_choice: "optionallyUpdateArtifactMeta" }
+      { tool_choice: "optionallyUpdateArtifactMeta" },
     )
     .withConfig({ runName: "optionally_update_artifact_meta" });
 
@@ -36,11 +36,11 @@ export async function optionallyUpdateArtifactMeta(
   const optionallyUpdateArtifactMetaPrompt =
     GET_TITLE_TYPE_REWRITE_ARTIFACT.replace(
       "{artifact}",
-      formatArtifactContent(currentArtifactContent, true)
+      formatArtifactContent(currentArtifactContent, true),
     ).replace("{reflections}", memoriesAsString);
 
   const recentHumanMessage = state.messages.findLast(
-    (message) => message.getType() === "human"
+    (message) => message.getType() === "human",
   );
   if (!recentHumanMessage) {
     throw new Error("No recent human message found");

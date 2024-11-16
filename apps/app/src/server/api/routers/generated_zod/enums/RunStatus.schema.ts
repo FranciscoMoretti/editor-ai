@@ -1,4 +1,11 @@
 /* eslint-disable */
-import { z } from 'zod';
+import { z } from "zod";
 
-export const RunStatusSchema = z.enum(["pending", "error", "success", "timeout", "interrupted", "running"])
+export const RunStatusSchema = z.enum([
+  "pending",
+  "error",
+  "success",
+  "timeout",
+  "interrupted",
+  "running",
+]);
