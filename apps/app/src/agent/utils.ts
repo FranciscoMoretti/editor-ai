@@ -15,11 +15,11 @@ export const formatReflections = (
      * If this is set to true, you may not specify `onlyStyle` as `true`.
      */
     onlyContent?: boolean;
-  }
+  },
 ): string => {
   if (extra?.onlyStyle && extra?.onlyContent) {
     throw new Error(
-      "Cannot specify both `onlyStyle` and `onlyContent` as true."
+      "Cannot specify both `onlyStyle` and `onlyContent` as true.",
     );
   }
 
@@ -43,7 +43,7 @@ export const formatReflections = (
 };
 
 export const ensureStoreInConfig = (
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): BaseStore => {
   if (!config.store) {
     throw new Error("`store` not found in config");
@@ -53,7 +53,7 @@ export const ensureStoreInConfig = (
 
 export const formatArtifactContent = (
   content: ArtifactMarkdownV3 | ArtifactCodeV3,
-  shortenContent?: boolean
+  shortenContent?: boolean,
 ): string => {
   let artifactContent: string;
 
@@ -72,10 +72,10 @@ export const formatArtifactContent = (
 export const formatArtifactContentWithTemplate = (
   template: string,
   content: ArtifactMarkdownV3 | ArtifactCodeV3,
-  shortenContent?: boolean
+  shortenContent?: boolean,
 ): string => {
   return template.replace(
     "{artifact}",
-    formatArtifactContent(content, shortenContent)
+    formatArtifactContent(content, shortenContent),
   );
 };

@@ -76,7 +76,7 @@ export function CodeRenderer(props: Readonly<CodeRendererProps>) {
         className={cn(
           "w-full min-h-full",
           styles.codeMirrorCustom,
-          props.isStreaming && !props.firstTokenReceived ? "pulse-code" : ""
+          props.isStreaming && !props.firstTokenReceived ? "pulse-code" : "",
         )}
         value={cleanContent(props.artifactContent.code)}
         height="800px"

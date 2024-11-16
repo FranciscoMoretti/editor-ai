@@ -15,7 +15,7 @@ import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
 
 export const rewriteArtifactTheme = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModel = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -48,7 +48,7 @@ export const rewriteArtifactTheme = async (
   if (state.language) {
     formattedPrompt = CHANGE_ARTIFACT_LANGUAGE_PROMPT.replace(
       "{newLanguage}",
-      state.language
+      state.language,
     ).replace("{artifactContent}", currentArtifactContent.fullMarkdown);
   } else if (state.readingLevel && state.readingLevel !== "pirate") {
     let newReadingLevel = "";
@@ -68,12 +68,12 @@ export const rewriteArtifactTheme = async (
     }
     formattedPrompt = CHANGE_ARTIFACT_READING_LEVEL_PROMPT.replace(
       "{newReadingLevel}",
-      newReadingLevel
+      newReadingLevel,
     ).replace("{artifactContent}", currentArtifactContent.fullMarkdown);
   } else if (state.readingLevel && state.readingLevel === "pirate") {
     formattedPrompt = CHANGE_ARTIFACT_TO_PIRATE_PROMPT.replace(
       "{artifactContent}",
-      currentArtifactContent.fullMarkdown
+      currentArtifactContent.fullMarkdown,
     );
   } else if (state.artifactLength) {
     let newLength = "";
@@ -93,12 +93,12 @@ export const rewriteArtifactTheme = async (
     }
     formattedPrompt = CHANGE_ARTIFACT_LENGTH_PROMPT.replace(
       "{newLength}",
-      newLength
+      newLength,
     ).replace("{artifactContent}", currentArtifactContent.fullMarkdown);
   } else if (state.regenerateWithEmojis) {
     formattedPrompt = ADD_EMOJIS_TO_ARTIFACT_PROMPT.replace(
       "{artifactContent}",
-      currentArtifactContent.fullMarkdown
+      currentArtifactContent.fullMarkdown,
     );
   } else {
     throw new Error("No theme selected");

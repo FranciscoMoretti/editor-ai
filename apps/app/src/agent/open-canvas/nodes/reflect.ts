@@ -4,7 +4,7 @@ import { LangGraphRunnableConfig } from "@langchain/langgraph";
 
 export const reflectNode = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ) => {
   const langGraphClient = new Client({
     apiUrl: `http://localhost:${process.env.PORT}`,
@@ -49,7 +49,7 @@ export const reflectNode = async (
       // if the user is actively engaging in a conversation. This saves us $$ and
       // can help reduce the occurrence of duplicate memories.
       afterSeconds: 15,
-    }
+    },
   );
 
   return {};

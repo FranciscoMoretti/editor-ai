@@ -15,7 +15,7 @@ import { getArtifactContent } from "../../../hooks/use-graph/utils";
  * Routes to the proper node in the graph based on the user's query.
  */
 export const generatePath = async (
-  state: typeof OpenCanvasGraphAnnotation.State
+  state: typeof OpenCanvasGraphAnnotation.State,
 ) => {
   if (state.highlightedCode) {
     return {
@@ -65,23 +65,23 @@ export const generatePath = async (
     "{artifactOptions}",
     currentArtifactContent
       ? ROUTE_QUERY_OPTIONS_HAS_ARTIFACTS
-      : ROUTE_QUERY_OPTIONS_NO_ARTIFACTS
+      : ROUTE_QUERY_OPTIONS_NO_ARTIFACTS,
   )
     .replace(
       "{recentMessages}",
       state.messages
         .slice(-3)
         .map((message) => `${message.getType()}: ${message.content}`)
-        .join("\n\n")
+        .join("\n\n"),
     )
     .replace(
       "{currentArtifactPrompt}",
       currentArtifactContent
         ? formatArtifactContentWithTemplate(
             CURRENT_ARTIFACT_PROMPT,
-            currentArtifactContent
+            currentArtifactContent,
           )
-        : NO_ARTIFACT_PROMPT
+        : NO_ARTIFACT_PROMPT,
     );
 
   const artifactRoute = currentArtifactContent
@@ -99,7 +99,7 @@ export const generatePath = async (
     }),
     {
       name: "route_query",
-    }
+    },
   );
 
   const result = await modelWithTool.invoke([

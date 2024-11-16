@@ -12,7 +12,7 @@ import { isArtifactCodeContent } from "../../../lib/artifact_content_types";
  */
 export const updateArtifact = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModel = new ChatOpenAI({
     model: "gpt-4o",
@@ -43,7 +43,7 @@ export const updateArtifact = async (
 
   if (!state.highlightedCode) {
     throw new Error(
-      "Can not partially regenerate an artifact without a highlight"
+      "Can not partially regenerate an artifact without a highlight",
     );
   }
 
@@ -51,32 +51,32 @@ export const updateArtifact = async (
   const start = Math.max(0, state.highlightedCode.startCharIndex - 500);
   const end = Math.min(
     currentArtifactContent.code.length,
-    state.highlightedCode.endCharIndex + 500
+    state.highlightedCode.endCharIndex + 500,
   );
 
   const beforeHighlight = currentArtifactContent.code.slice(
     start,
-    state.highlightedCode.startCharIndex
+    state.highlightedCode.startCharIndex,
   ) as string;
   const highlightedText = currentArtifactContent.code.slice(
     state.highlightedCode.startCharIndex,
-    state.highlightedCode.endCharIndex
+    state.highlightedCode.endCharIndex,
   ) as string;
   const afterHighlight = currentArtifactContent.code.slice(
     state.highlightedCode.endCharIndex,
-    end
+    end,
   ) as string;
 
   const formattedPrompt = UPDATE_HIGHLIGHTED_ARTIFACT_PROMPT.replace(
     "{highlightedText}",
-    highlightedText
+    highlightedText,
   )
     .replace("{beforeHighlight}", beforeHighlight)
     .replace("{afterHighlight}", afterHighlight)
     .replace("{reflections}", memoriesAsString);
 
   const recentHumanMessage = state.messages.findLast(
-    (message) => message.getType() === "human"
+    (message) => message.getType() === "human",
   );
   if (!recentHumanMessage) {
     throw new Error("No recent human message found");
@@ -88,10 +88,10 @@ export const updateArtifact = async (
 
   const entireTextBefore = currentArtifactContent.code.slice(
     0,
-    state.highlightedCode.startCharIndex
+    state.highlightedCode.startCharIndex,
   );
   const entireTextAfter = currentArtifactContent.code.slice(
-    state.highlightedCode.endCharIndex
+    state.highlightedCode.endCharIndex,
   );
   const entireUpdatedContent = `${entireTextBefore}${updatedArtifact.content}${entireTextAfter}`;
 

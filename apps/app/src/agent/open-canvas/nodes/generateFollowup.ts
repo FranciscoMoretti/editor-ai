@@ -12,7 +12,7 @@ import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
  */
 export const generateFollowup = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModel = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -46,14 +46,14 @@ export const generateFollowup = async (
 
   const formattedPrompt = FOLLOWUP_ARTIFACT_PROMPT.replace(
     "{artifactContent}",
-    artifactContent || "No artifacts generated yet."
+    artifactContent || "No artifacts generated yet.",
   )
     .replace("{reflections}", memoriesAsString)
     .replace(
       "{conversation}",
       state.messages
         .map((msg) => `<${msg.getType()}>\n${msg.content}\n</${msg.getType()}>`)
-        .join("\n\n")
+        .join("\n\n"),
     );
 
   // TODO: Include the chat history as well.

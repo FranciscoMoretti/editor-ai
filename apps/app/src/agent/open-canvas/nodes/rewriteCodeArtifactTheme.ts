@@ -11,7 +11,7 @@ import { isArtifactCodeContent } from "../../../lib/artifact_content_types";
 import { getArtifactContent } from "../../../hooks/use-graph/utils";
 
 export const rewriteCodeArtifactTheme = async (
-  state: typeof OpenCanvasGraphAnnotation.State
+  state: typeof OpenCanvasGraphAnnotation.State,
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModel = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -61,7 +61,7 @@ export const rewriteCodeArtifactTheme = async (
     }
     formattedPrompt = PORT_LANGUAGE_CODE_ARTIFACT_PROMPT.replace(
       "{newLanguage}",
-      newLanguage
+      newLanguage,
     );
   } else if (state.addLogs) {
     formattedPrompt = ADD_LOGS_TO_CODE_ARTIFACT_PROMPT;
@@ -74,7 +74,7 @@ export const rewriteCodeArtifactTheme = async (
   // Insert the code into the artifact placeholder in the prompt
   formattedPrompt = formattedPrompt.replace(
     "{artifactContent}",
-    currentArtifactContent.code
+    currentArtifactContent.code,
   );
 
   const newArtifactValues = await smallModel.invoke([

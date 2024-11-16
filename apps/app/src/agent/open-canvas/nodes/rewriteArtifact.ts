@@ -27,7 +27,7 @@ import {
 
 export const rewriteArtifact = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModel = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -56,11 +56,11 @@ export const rewriteArtifact = async (
   const optionallyUpdateArtifactMetaPrompt =
     GET_TITLE_TYPE_REWRITE_ARTIFACT.replace(
       "{artifact}",
-      formatArtifactContent(currentArtifactContent, true)
+      formatArtifactContent(currentArtifactContent, true),
     ).replace("{reflections}", memoriesAsString);
 
   const recentHumanMessage = state.messages.findLast(
-    (message) => message.getType() === "human"
+    (message) => message.getType() === "human",
   );
   if (!recentHumanMessage) {
     throw new Error("No recent human message found");
@@ -73,18 +73,18 @@ export const rewriteArtifact = async (
       .string()
       .optional()
       .describe(
-        "The new title to give the artifact. ONLY update this if the user is making a request which changes the subject/topic of the artifact."
+        "The new title to give the artifact. ONLY update this if the user is making a request which changes the subject/topic of the artifact.",
       ),
     programmingLanguage: z
       .enum(
         PROGRAMMING_LANGUAGES.map((lang) => lang.language) as [
           string,
           ...string[],
-        ]
+        ],
       )
       .optional()
       .describe(
-        "The programming language of the code artifact. ONLY update this if the user is making a request which changes the programming language of the code artifact, or is asking for a code artifact to be generated."
+        "The programming language of the code artifact. ONLY update this if the user is making a request which changes the programming language of the code artifact, or is asking for a code artifact to be generated.",
       ),
   });
   const optionallyUpdateModelWithTool = smallModel
@@ -112,7 +112,7 @@ export const rewriteArtifact = async (
 
   const formattedPrompt = UPDATE_ENTIRE_ARTIFACT_PROMPT.replace(
     "{artifactContent}",
-    artifactContent
+    artifactContent,
   )
     .replace("{reflections}", memoriesAsString)
     .replace(
@@ -120,15 +120,15 @@ export const rewriteArtifact = async (
       isNewType
         ? OPTIONALLY_UPDATE_META_PROMPT.replace(
             "{artifactType}",
-            artifactMetaToolCall?.args?.type
+            artifactMetaToolCall?.args?.type,
           ).replace(
             "{artifactTitle}",
             artifactMetaToolCall?.args?.title &&
               artifactMetaToolCall?.args?.type !== "code"
               ? `And its title is (do NOT include this in your response):\n${artifactMetaToolCall?.args?.title}`
-              : ""
+              : "",
           )
-        : ""
+        : "",
     );
 
   const smallModelWithConfig = smallModel.withConfig({

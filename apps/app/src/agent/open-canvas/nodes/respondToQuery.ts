@@ -15,7 +15,7 @@ import { getArtifactContent } from "../../../hooks/use-graph/utils";
  */
 export const respondToQuery = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModel = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -56,9 +56,9 @@ You also have the following reflections on style guidelines and general memories
       currentArtifactContent
         ? formatArtifactContentWithTemplate(
             CURRENT_ARTIFACT_PROMPT,
-            currentArtifactContent
+            currentArtifactContent,
           )
-        : NO_ARTIFACT_PROMPT
+        : NO_ARTIFACT_PROMPT,
     );
 
   const response = await smallModel.invoke([

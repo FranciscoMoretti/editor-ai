@@ -10,7 +10,7 @@ export const getCookie = (name: string): string | undefined => {
 export const setCookie = (
   name: string,
   value: string,
-  options?: Cookies.CookieAttributes
+  options?: Cookies.CookieAttributes,
 ): void => {
   if (typeof window === "undefined") {
     return;

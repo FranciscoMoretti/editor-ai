@@ -15,10 +15,10 @@ import {
 
 export const replaceOrInsertMessageChunk = (
   prevMessages: BaseMessage[],
-  newMessageChunk: BaseMessageChunk
+  newMessageChunk: BaseMessageChunk,
 ): BaseMessage[] => {
   const existingMessageIndex = prevMessages.findIndex(
-    (msg) => msg.id === newMessageChunk.id
+    (msg) => msg.id === newMessageChunk.id,
   );
 
   if (
@@ -52,7 +52,7 @@ export const replaceOrInsertMessageChunk = (
 };
 
 export const createNewGeneratedArtifactFromTool = (
-  artifactTool: ArtifactToolResponse
+  artifactTool: ArtifactToolResponse,
 ): ArtifactMarkdownV3 | ArtifactCodeV3 | undefined => {
   if (!artifactTool.type) {
     console.error("Received new artifact without type");
@@ -82,7 +82,7 @@ export const createNewGeneratedArtifactFromTool = (
 const validateNewArtifactIndex = (
   newArtifactIndexGuess: number,
   prevArtifactContentsLength: number,
-  isFirstUpdate: boolean
+  isFirstUpdate: boolean,
 ): number => {
   if (isFirstUpdate) {
     // For first updates, currentIndex should be one more than the total prev contents
@@ -106,13 +106,13 @@ export const updateHighlightedMarkdown = (
   content: string,
   newArtifactIndex: number,
   prevCurrentContent: ArtifactMarkdownV3,
-  isFirstUpdate: boolean
+  isFirstUpdate: boolean,
 ): ArtifactV3 | undefined => {
   let newContents: (ArtifactCodeV3 | ArtifactMarkdownV3)[];
   const currentIndex = validateNewArtifactIndex(
     newArtifactIndex,
     prevArtifact.contents.length,
-    isFirstUpdate
+    isFirstUpdate,
   );
 
   if (isFirstUpdate) {
@@ -146,13 +146,13 @@ export const updateHighlightedCode = (
   content: string,
   newArtifactIndex: number,
   prevCurrentContent: ArtifactCodeV3,
-  isFirstUpdate: boolean
+  isFirstUpdate: boolean,
 ): ArtifactV3 | undefined => {
   let newContents: (ArtifactCodeV3 | ArtifactMarkdownV3)[];
   const currentIndex = validateNewArtifactIndex(
     newArtifactIndex,
     prevArtifact.contents.length,
-    isFirstUpdate
+    isFirstUpdate,
   );
 
   if (isFirstUpdate) {
@@ -204,7 +204,7 @@ export const updateRewrittenArtifact = ({
   const currentIndex = validateNewArtifactIndex(
     newArtifactIndex,
     prevArtifact.contents.length,
-    isFirstUpdate
+    isFirstUpdate,
   );
 
   if (isFirstUpdate) {
@@ -295,13 +295,13 @@ export const convertToArtifactV3 = (oldArtifact: Artifact): ArtifactV3 => {
 };
 
 export const getArtifactContent = (
-  artifact: ArtifactV3
+  artifact: ArtifactV3,
 ): ArtifactCodeV3 | ArtifactMarkdownV3 => {
   if (!artifact) {
     throw new Error("No artifact found.");
   }
   const currentContent = artifact.contents.find(
-    (a) => a.index === artifact.currentIndex
+    (a) => a.index === artifact.currentIndex,
   );
   if (!currentContent) {
     return artifact.contents[artifact.contents.length - 1];

@@ -27,7 +27,7 @@ Ensure you reply with the FULL text block, including the updated selected text. 
  * Update an existing artifact based on the user's query.
  */
 export const updateHighlightedText = async (
-  state: typeof OpenCanvasGraphAnnotation.State
+  state: typeof OpenCanvasGraphAnnotation.State,
 ): Promise<OpenCanvasGraphReturnType> => {
   const model = new ChatOpenAI({
     model: "gpt-4o",
@@ -46,14 +46,14 @@ export const updateHighlightedText = async (
 
   if (!state.highlightedText) {
     throw new Error(
-      "Can not partially regenerate an artifact without a highlight"
+      "Can not partially regenerate an artifact without a highlight",
     );
   }
 
   const { markdownBlock, selectedText, fullMarkdown } = state.highlightedText;
   const formattedPrompt = PROMPT.replace(
     "{highlightedText}",
-    selectedText
+    selectedText,
   ).replace("{textBlocks}", markdownBlock);
 
   const recentUserMessage = state.messages[state.messages.length - 1];
@@ -72,7 +72,7 @@ export const updateHighlightedText = async (
 
   const newCurrIndex = state.artifact.contents.length + 1;
   const prevContent = state.artifact.contents.find(
-    (c) => c.index === state.artifact.currentIndex && c.type === "text"
+    (c) => c.index === state.artifact.currentIndex && c.type === "text",
   ) as ArtifactMarkdownV3 | undefined;
   if (!prevContent) {
     throw new Error("Previous content not found");

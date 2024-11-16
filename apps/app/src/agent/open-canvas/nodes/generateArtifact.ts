@@ -17,7 +17,7 @@ import { LangGraphRunnableConfig } from "@langchain/langgraph";
  */
 export const generateArtifact = async (
   state: typeof OpenCanvasGraphAnnotation.State,
-  config: LangGraphRunnableConfig
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModel = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -49,19 +49,19 @@ export const generateArtifact = async (
               PROGRAMMING_LANGUAGES.map((lang) => lang.language) as [
                 string,
                 ...string[],
-              ]
+              ],
             )
             .optional()
             .describe(
               "The language/programming language of the artifact generated.\n" +
                 "If generating code, it should be one of the options, or 'other'.\n" +
-                "If not generating code, the language should ALWAYS be 'other'."
+                "If not generating code, the language should ALWAYS be 'other'.",
             ),
           isValidReact: z
             .boolean()
             .optional()
             .describe(
-              "Whether or not the generated code is valid React code. Only populate this field if generating code."
+              "Whether or not the generated code is valid React code. Only populate this field if generating code.",
             ),
           artifact: z
             .string()
@@ -69,17 +69,17 @@ export const generateArtifact = async (
           title: z
             .string()
             .describe(
-              "A short title to give to the artifact. Should be less than 5 words."
+              "A short title to give to the artifact. Should be less than 5 words.",
             ),
         }),
       },
     ],
-    { tool_choice: "generate_artifact" }
+    { tool_choice: "generate_artifact" },
   );
 
   const formattedNewArtifactPrompt = NEW_ARTIFACT_PROMPT.replace(
     "{reflections}",
-    memoriesAsString
+    memoriesAsString,
   );
 
   const response = await modelWithArtifactTool.invoke(
@@ -87,7 +87,7 @@ export const generateArtifact = async (
       { role: "system", content: formattedNewArtifactPrompt },
       ...state.messages,
     ],
-    { runName: "generate_artifact" }
+    { runName: "generate_artifact" },
   );
 
   const newArtifactType = response.tool_calls?.[0]?.args.type;

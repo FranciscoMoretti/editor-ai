@@ -44,7 +44,7 @@ export function TextRenderer(props: TextRendererProps) {
 
       const currentBlockIdx = props.artifact.currentIndex;
       const currentContent = props.artifact.contents.find(
-        (c) => c.index === currentBlockIdx
+        (c) => c.index === currentBlockIdx,
       );
       if (!currentContent) {
         console.error("Current content not found");
@@ -91,14 +91,14 @@ export function TextRenderer(props: TextRendererProps) {
     try {
       const currentIndex = props.artifact.currentIndex;
       const currentContent = props.artifact.contents.find(
-        (c) => c.index === currentIndex && c.type === "text"
+        (c) => c.index === currentIndex && c.type === "text",
       ) as ArtifactMarkdownV3 | undefined;
       if (!currentContent) return;
 
       // Blocks are not found in the artifact, so once streaming is done we should update the artifact state with the blocks
       (async () => {
         const markdownAsBlocks = await editor.tryParseMarkdownToBlocks(
-          currentContent.fullMarkdown
+          currentContent.fullMarkdown,
         );
         editor.replaceBlocks(editor.document, markdownAsBlocks);
         props.setUpdateRenderedArtifactRequired(false);
@@ -186,7 +186,7 @@ export function TextRenderer(props: TextRendererProps) {
         <SuggestionMenuController
           getItems={async () =>
             getDefaultReactSlashMenuItems(editor).filter(
-              (z) => z.group !== "Media"
+              (z) => z.group !== "Media",
             )
           }
           triggerCharacter={"/"}
