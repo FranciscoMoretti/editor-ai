@@ -1,17 +1,24 @@
-import { END, Send, START, StateGraph } from "@langchain/langgraph";
-import { OpenCanvasGraphAnnotation } from "./state";
-import { generatePath } from "./nodes/generatePath";
-import { generateFollowup } from "./nodes/generateFollowup";
-import { generateArtifact } from "./nodes/generateArtifact";
-import { rewriteArtifact } from "./nodes/rewriteArtifact";
-import { rewriteArtifactTheme } from "./nodes/rewriteArtifactTheme";
-import { updateArtifact } from "./nodes/updateArtifact";
-import { respondToQuery } from "./nodes/respondToQuery";
-import { rewriteCodeArtifactTheme } from "./nodes/rewriteCodeArtifactTheme";
-import { reflectNode } from "./nodes/reflect";
-import { customAction } from "./nodes/customAction";
-import { updateHighlightedText } from "./nodes/updateHighlightedText";
+import {
+  END,
+  InMemoryStore,
+  START,
+  Send,
+  StateGraph,
+} from "@langchain/langgraph";
 import { DEFAULT_INPUTS } from "../../constants";
+import { customAction } from "./nodes/customAction";
+import { generateArtifact } from "./nodes/generate-artifact";
+import { generateFollowup } from "./nodes/generateFollowup";
+import { generatePath } from "./nodes/generatePath";
+import { generateTitleNode } from "./nodes/generateTitle";
+import { reflectNode } from "./nodes/reflect";
+import { replyToGeneralInput } from "./nodes/replyToGeneralInput";
+import { rewriteArtifact } from "./nodes/rewrite-artifact";
+import { rewriteArtifactTheme } from "./nodes/rewriteArtifactTheme";
+import { rewriteCodeArtifactTheme } from "./nodes/rewriteCodeArtifactTheme";
+import { updateArtifact } from "./nodes/updateArtifact";
+import { updateHighlightedText } from "./nodes/updateHighlightedText";
+import { OpenCanvasGraphAnnotation } from "./state";
 
 const routeNode = (state: typeof OpenCanvasGraphAnnotation.State) => {
   if (!state.next) {
@@ -29,12 +36,27 @@ const cleanState = (_: typeof OpenCanvasGraphAnnotation.State) => {
   };
 };
 
+/**
+ * Conditionally route to the "generateTitle" node if there are only
+ * two messages in the conversation. This node generates a concise title
+ * for the conversation which is displayed in the thread history.
+ */
+const conditionallyGenerateTitle = (
+  state: typeof OpenCanvasGraphAnnotation.State,
+) => {
+  if (state.messages.length > 2) {
+    // Do not generate if there are more than two messages (meaning it's not the first human-AI conversation)
+    return END;
+  }
+  return "generateTitle";
+};
+
 const builder = new StateGraph(OpenCanvasGraphAnnotation)
   // Start node & edge
   .addNode("generatePath", generatePath)
   .addEdge(START, "generatePath")
   // Nodes
-  .addNode("respondToQuery", respondToQuery)
+  .addNode("replyToGeneralInput", replyToGeneralInput)
   .addNode("rewriteArtifact", rewriteArtifact)
   .addNode("rewriteArtifactTheme", rewriteArtifactTheme)
   .addNode("rewriteCodeArtifactTheme", rewriteCodeArtifactTheme)
@@ -45,12 +67,13 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addNode("generateFollowup", generateFollowup)
   .addNode("cleanState", cleanState)
   .addNode("reflect", reflectNode)
+  .addNode("generateTitle", generateTitleNode)
   // Initial router
   .addConditionalEdges("generatePath", routeNode, [
     "updateArtifact",
     "rewriteArtifactTheme",
     "rewriteCodeArtifactTheme",
-    "respondToQuery",
+    "replyToGeneralInput",
     "generateArtifact",
     "rewriteArtifact",
     "customAction",
@@ -65,10 +88,14 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addEdge("rewriteCodeArtifactTheme", "generateFollowup")
   .addEdge("customAction", "generateFollowup")
   // End edges
-  .addEdge("respondToQuery", "cleanState")
+  .addEdge("replyToGeneralInput", "cleanState")
   // Only reflect if an artifact was generated/updated.
   .addEdge("generateFollowup", "reflect")
   .addEdge("reflect", "cleanState")
-  .addEdge("cleanState", END);
+  .addConditionalEdges("cleanState", conditionallyGenerateTitle, [
+    END,
+    "generateTitle",
+  ])
+  .addEdge("generateTitle", END);
 
 export const graph = builder.compile().withConfig({ runName: "open_canvas" });

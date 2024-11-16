@@ -1,22 +1,21 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import { getArtifactContent } from "@/contexts/utils";
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { isArtifactCodeContent } from "../../../lib/artifact_content_types";
+import { ArtifactCodeV3, ArtifactV3 } from "../../../types";
+import { getModelFromConfig } from "../../utils";
 import {
   ADD_COMMENTS_TO_CODE_ARTIFACT_PROMPT,
   ADD_LOGS_TO_CODE_ARTIFACT_PROMPT,
   FIX_BUGS_CODE_ARTIFACT_PROMPT,
   PORT_LANGUAGE_CODE_ARTIFACT_PROMPT,
 } from "../prompts";
-import { ArtifactCodeV3, ArtifactV3 } from "../../../types";
-import { isArtifactCodeContent } from "../../../lib/artifact_content_types";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 export const rewriteCodeArtifactTheme = async (
   state: typeof OpenCanvasGraphAnnotation.State,
+  config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
-  const smallModel = new ChatOpenAI({
-    model: "gpt-4o-mini",
-    temperature: 0.5,
-  });
+  const smallModel = await getModelFromConfig(config);
 
   const currentArtifactContent = state.artifact
     ? getArtifactContent(state.artifact)

@@ -1,4 +1,4 @@
-import { GraphInput } from "@/hooks/use-graph/useGraph";
+import { GraphInput } from "@/contexts/GraphContext";
 import { ReadingLevelOptions as ReadingLevelOptionsType } from "@/types";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import {
@@ -10,14 +10,16 @@ import {
 } from "lucide-react";
 
 export interface ReadingLevelOptionsProps {
-  streamMessage: (input: GraphInput) => Promise<void>;
+  streamMessage: (params: GraphInput) => Promise<void>;
   handleClose: () => void;
 }
 
 export function ReadingLevelOptions(props: ReadingLevelOptionsProps) {
+  const { streamMessage } = props;
+
   const handleSubmit = async (readingLevel: ReadingLevelOptionsType) => {
     props.handleClose();
-    await props.streamMessage({
+    await streamMessage({
       readingLevel,
     });
   };

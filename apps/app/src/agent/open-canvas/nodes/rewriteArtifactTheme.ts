@@ -1,5 +1,12 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import { getStoreMemoriesNamespace } from "@/agent/getStoreNamespace";
+import { getArtifactContent } from "@/contexts/utils";
+import { storeGetReflection } from "@/server/api/routers/store.router";
+import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
+import { ArtifactV3, Reflections } from "../../../types";
+import { getModelFromConfig } from "../../utils";
+import { formatReflections } from "../../utils";
 import {
   ADD_EMOJIS_TO_ARTIFACT_PROMPT,
   CHANGE_ARTIFACT_LANGUAGE_PROMPT,
@@ -7,31 +14,24 @@ import {
   CHANGE_ARTIFACT_READING_LEVEL_PROMPT,
   CHANGE_ARTIFACT_TO_PIRATE_PROMPT,
 } from "../prompts";
-import { ensureStoreInConfig, formatReflections } from "../../utils";
-import { ArtifactV3, Reflections } from "../../../types";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
-import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 export const rewriteArtifactTheme = async (
   state: typeof OpenCanvasGraphAnnotation.State,
   config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
-  const smallModel = new ChatOpenAI({
-    model: "gpt-4o-mini",
-    temperature: 0.5,
-  });
+  const smallModel = await getModelFromConfig(config);
 
-  const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.assistant_id;
   if (!assistantId) {
     throw new Error("`assistant_id` not found in configurable");
   }
-  const memoryNamespace = ["memories", assistantId];
-  const memoryKey = "reflection";
-  const memories = await store.get(memoryNamespace, memoryKey);
-  const memoriesAsString = memories?.value
-    ? formatReflections(memories.value as Reflections)
+  const memoryNamespace = getStoreMemoriesNamespace(assistantId);
+  const prisma = await getEnhancedPrismaWithUser();
+
+  const memories = await storeGetReflection(prisma, memoryNamespace);
+  const memoriesAsString = memories
+    ? formatReflections(memories)
     : "No reflections found.";
 
   const currentArtifactContent = state.artifact

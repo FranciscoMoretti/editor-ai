@@ -1,7 +1,7 @@
 import {
-  useExternalMessageConverter,
   ThreadMessageLike,
   ToolCallContentPart,
+  useExternalMessageConverter,
 } from "@assistant-ui/react";
 import { AIMessage, BaseMessage, ToolMessage } from "@langchain/core/messages";
 
@@ -49,7 +49,9 @@ export const convertLangchainMessages: useExternalMessageConverter.Callback<
         content: [{ type: "text", text: message.content }],
       };
     case "ai":
+      // biome-ignore lint/correctness/noSwitchDeclarations: <explanation>
       const aiMsg = message as AIMessage;
+      // biome-ignore lint/correctness/noSwitchDeclarations: <explanation>
       const toolCallsContent: ToolCallContentPart[] = aiMsg.tool_calls?.length
         ? aiMsg.tool_calls.map((tc) => ({
             type: "tool-call" as const,

@@ -1,11 +1,17 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
-import { UPDATE_HIGHLIGHTED_ARTIFACT_PROMPT } from "../prompts";
-import { ensureStoreInConfig, formatReflections } from "../../utils";
-import { ArtifactCodeV3, ArtifactV3, Reflections } from "../../../types";
+import { getStoreMemoriesNamespace } from "@/agent/getStoreNamespace";
+import { storeGetReflection } from "@/server/api/routers/store.router";
+import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
+import { getArtifactContent } from "../../../contexts/utils";
 import { isArtifactCodeContent } from "../../../lib/artifact_content_types";
+import { ArtifactCodeV3, ArtifactV3, Reflections } from "../../../types";
+import {
+  formatReflections,
+  getModelConfig,
+  getModelFromConfig,
+} from "../../utils";
+import { UPDATE_HIGHLIGHTED_ARTIFACT_PROMPT } from "../prompts";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 /**
  * Update an existing artifact based on the user's query.
@@ -14,21 +20,38 @@ export const updateArtifact = async (
   state: typeof OpenCanvasGraphAnnotation.State,
   config: LangGraphRunnableConfig,
 ): Promise<OpenCanvasGraphReturnType> => {
-  const smallModel = new ChatOpenAI({
-    model: "gpt-4o",
-    temperature: 0,
-  });
+  const { modelProvider } = getModelConfig(config);
+  let smallModel: Awaited<ReturnType<typeof getModelFromConfig>>;
+  if (modelProvider.includes("openai")) {
+    // Custom model is OpenAI/Azure OpenAI
+    smallModel = await getModelFromConfig(config, {
+      temperature: 0,
+    });
+  } else {
+    // Custom model is not set to OpenAI/Azure OpenAI. Use GPT-4o
+    smallModel = await getModelFromConfig(
+      {
+        ...config,
+        configurable: {
+          customModelName: "gpt-4o",
+        },
+      },
+      {
+        temperature: 0,
+      },
+    );
+  }
 
-  const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.assistant_id;
   if (!assistantId) {
     throw new Error("`assistant_id` not found in configurable");
   }
-  const memoryNamespace = ["memories", assistantId];
-  const memoryKey = "reflection";
-  const memories = await store.get(memoryNamespace, memoryKey);
-  const memoriesAsString = memories?.value
-    ? formatReflections(memories.value as Reflections)
+  const memoryNamespace = getStoreMemoriesNamespace(assistantId);
+  const prisma = await getEnhancedPrismaWithUser();
+
+  const memories = await storeGetReflection(prisma, memoryNamespace);
+  const memoriesAsString = memories
+    ? formatReflections(memories)
     : "No reflections found.";
 
   const currentArtifactContent = state.artifact

@@ -1,32 +1,37 @@
+import { getArtifactContent } from "@/contexts/utils";
+import {
+  storeGetReflection,
+  storePut,
+} from "@/server/api/routers/store.router";
+import { StoreKey } from "@/server/api/routers/storeSchema";
+import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
 import { ChatAnthropic } from "@langchain/anthropic";
 import {
   type LangGraphRunnableConfig,
-  StateGraph,
   START,
+  StateGraph,
 } from "@langchain/langgraph";
-import { ReflectionGraphAnnotation, ReflectionGraphReturnType } from "./state";
-import { Reflections } from "../../types";
-import { REFLECT_SYSTEM_PROMPT, REFLECT_USER_PROMPT } from "./prompts";
 import { z } from "zod";
-import { ensureStoreInConfig, formatReflections } from "../utils";
-import { getArtifactContent } from "../../hooks/use-graph/utils";
 import { isArtifactMarkdownContent } from "../../lib/artifact_content_types";
+import { getStoreMemoriesNamespace } from "../getStoreNamespace";
+import { formatReflections } from "../utils";
+import { REFLECT_SYSTEM_PROMPT, REFLECT_USER_PROMPT } from "./prompts";
+import { ReflectionGraphAnnotation, ReflectionGraphReturnType } from "./state";
 
 export const reflect = async (
   state: typeof ReflectionGraphAnnotation.State,
   config: LangGraphRunnableConfig,
 ): Promise<ReflectionGraphReturnType> => {
-  const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.open_canvas_assistant_id;
   if (!assistantId) {
     throw new Error("`open_canvas_assistant_id` not found in configurable");
   }
-  const memoryNamespace = ["memories", assistantId];
-  const memoryKey = "reflection";
-  const memories = await store.get(memoryNamespace, memoryKey);
+  const memoryNamespace = getStoreMemoriesNamespace(assistantId);
+  const prisma = await getEnhancedPrismaWithUser();
+  const memories = await storeGetReflection(prisma, memoryNamespace);
 
-  const memoriesAsString = memories?.value
-    ? formatReflections(memories.value as Reflections)
+  const memoriesAsString = memories
+    ? formatReflections(memories)
     : "No reflections found.";
 
   const generateReflectionTool = {
@@ -92,7 +97,12 @@ export const reflect = async (
     content: reflectionToolCall.args.content,
   };
 
-  await store.put(memoryNamespace, memoryKey, newMemories);
+  await storePut(
+    prisma,
+    memoryNamespace,
+    StoreKey.Values.reflection,
+    newMemories,
+  );
 
   return {};
 };

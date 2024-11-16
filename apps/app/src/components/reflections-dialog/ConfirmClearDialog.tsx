@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@v1/ui/dialog";
+import { TighterText } from "@v1/ui/header";
 import { useState } from "react";
 
 export interface ReflectionsProps {
@@ -20,14 +21,16 @@ export function ConfirmClearDialog(props: ReflectionsProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)} variant="destructive">
-          Clear reflections
+          <TighterText>Clear reflections</TighterText>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-xl p-8 bg-white rounded-lg shadow-xl">
         <DialogHeader>
           <DialogDescription className="mt-2 text-md text-center font-light text-red-500">
-            Are you sure you want to clear all reflections? This action can not
-            be undone.
+            <TighterText>
+              Are you sure you want to clear all reflections? This action can
+              not be undone.
+            </TighterText>
           </DialogDescription>
         </DialogHeader>
         <Button
@@ -37,11 +40,11 @@ export function ConfirmClearDialog(props: ReflectionsProps) {
           }}
           variant="destructive"
         >
-          Clear reflections
+          <TighterText>Clear reflections</TighterText>
         </Button>
         <div className="mt-6 flex justify-end">
           <Button onClick={() => setOpen(false)} variant="outline">
-            Cancel
+            <TighterText>Cancel</TighterText>
           </Button>
         </div>
       </DialogContent>

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type Message = {
   id: string;
   text?: string;
@@ -95,6 +97,11 @@ export type ProgrammingLanguageOptions =
   | "python"
   | "html"
   | "sql"
+  | "json"
+  | "rust"
+  | "xml"
+  | "clojure"
+  | "csharp"
   | "other";
 
 export const PROGRAMMING_LANGUAGES: Array<{
@@ -134,6 +141,26 @@ export const PROGRAMMING_LANGUAGES: Array<{
     label: "SQL",
   },
   {
+    language: "json",
+    label: "JSON",
+  },
+  {
+    language: "rust",
+    label: "Rust",
+  },
+  {
+    language: "xml",
+    label: "XML",
+  },
+  {
+    language: "clojure",
+    label: "Clojure",
+  },
+  {
+    language: "csharp",
+    label: "C#",
+  },
+  {
     language: "other",
     label: "Other",
   },
@@ -148,44 +175,53 @@ export type ReadingLevelOptions =
   | "college"
   | "phd";
 
-export interface Reflections {
-  /**
-   * Style rules to follow for generating content.
-   */
-  styleRules: string[];
-  /**
-   * Key content to remember about the user when generating content.
-   */
-  content: string[];
-}
+export const Reflections = z
+  .object({
+    /**
+     * Style rules to follow for generating content.
+     */
+    styleRules: z.array(z.string()),
+    /**
+     * Key content to remember about the user when generating content.
+     */
+    content: z.array(z.string()),
+  })
+  .default({ styleRules: [], content: [] });
 
-export interface CustomQuickAction {
+export type Reflections = z.infer<typeof Reflections>;
+
+export const CustomQuickAction = z.object({
   /**
    * A UUID for the quick action. Used to identify the quick action.
    */
-  id: string;
+  id: z.string(),
   /**
    * The title of the quick action. Used in the UI
    * to display the quick action.
    */
-  title: string;
+  title: z.string(),
   /**
    * The prompt to use when the quick action is invoked.
    */
-  prompt: string;
+  prompt: z.string(),
   /**
    * Whether or not to include the user's reflections in the prompt.
    */
-  includeReflections: boolean;
+  includeReflections: z.boolean(),
   /**
    * Whether or not to include the default prefix in the prompt.
    */
-  includePrefix: boolean;
+  includePrefix: z.boolean(),
   /**
    * Whether or not to include the last 5 (or less) messages in the prompt.
    */
-  includeRecentHistory: boolean;
-}
+  includeRecentHistory: z.boolean(),
+});
+
+export const CustomQuickActions = z.record(CustomQuickAction).default({});
+export type CustomQuickActions = z.infer<typeof CustomQuickActions>;
+
+export type CustomQuickAction = z.infer<typeof CustomQuickAction>;
 
 export interface ArtifactV3 {
   currentIndex: number;
@@ -233,9 +269,23 @@ export type RewriteArtifactMetaToolResponse =
   | {
       type: "text";
       title?: string;
+      language: ProgrammingLanguageOptions;
     }
   | {
       type: "code";
       title: string;
-      programmingLanguage: string;
+      language: ProgrammingLanguageOptions;
     };
+
+export interface ModelConfig {
+  temperature?: number;
+  modelProvider: string;
+  maxTokens?: number;
+  azureConfig?: {
+    azureOpenAIApiKey: string;
+    azureOpenAIApiInstanceName: string;
+    azureOpenAIApiDeploymentName: string;
+    azureOpenAIApiVersion: string;
+    azureOpenAIBasePath?: string;
+  };
+}

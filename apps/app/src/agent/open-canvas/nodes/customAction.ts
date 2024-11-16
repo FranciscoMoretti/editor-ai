@@ -1,12 +1,16 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 import {
-  CUSTOM_QUICK_ACTION_ARTIFACT_CONTENT_PROMPT,
-  CUSTOM_QUICK_ACTION_ARTIFACT_PROMPT_PREFIX,
-  CUSTOM_QUICK_ACTION_CONVERSATION_CONTEXT,
-  REFLECTIONS_QUICK_ACTION_PROMPT,
-} from "../prompts";
-import { ensureStoreInConfig, formatReflections } from "../../utils";
+  getStoreCustomActionsNamespace,
+  getStoreMemoriesNamespace,
+} from "@/agent/getStoreNamespace";
+import { getArtifactContent } from "@/contexts/utils";
+import {
+  storeGetQuickActions,
+  storeGetReflection,
+} from "@/server/api/routers/store.router";
+import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
+import { BaseMessage } from "@langchain/core/messages";
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
 import {
   ArtifactCodeV3,
   ArtifactMarkdownV3,
@@ -14,10 +18,15 @@ import {
   CustomQuickAction,
   Reflections,
 } from "../../../types";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { BaseMessage } from "@langchain/core/messages";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
-import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
+import { getModelFromConfig } from "../../utils";
+import { formatReflections } from "../../utils";
+import {
+  CUSTOM_QUICK_ACTION_ARTIFACT_CONTENT_PROMPT,
+  CUSTOM_QUICK_ACTION_ARTIFACT_PROMPT_PREFIX,
+  CUSTOM_QUICK_ACTION_CONVERSATION_CONTEXT,
+  REFLECTIONS_QUICK_ACTION_PROMPT,
+} from "../prompts";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 const formatMessages = (messages: BaseMessage[]): string =>
   messages
@@ -35,12 +44,10 @@ export const customAction = async (
     throw new Error("No custom quick action ID found.");
   }
 
-  const smallModel = new ChatOpenAI({
-    model: "gpt-4o-mini",
+  const smallModel = await getModelFromConfig(config, {
     temperature: 0.5,
   });
 
-  const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.assistant_id;
   const userId = config.configurable?.supabase_user_id;
   if (!assistantId) {
@@ -49,22 +56,17 @@ export const customAction = async (
   if (!userId) {
     throw new Error("`supabase_user_id` not found in configurable");
   }
-  const customActionsNamespace = ["custom_actions", userId];
-  const actionsKey = "actions";
+  const customActionsNamespace = getStoreCustomActionsNamespace(userId);
+  const memoryNamespace = getStoreMemoriesNamespace(assistantId);
 
-  const memoryNamespace = ["memories", assistantId];
-  const memoryKey = "reflection";
+  const prisma = await getEnhancedPrismaWithUser();
 
-  const [customActionsItem, memories] = await Promise.all([
-    store.get(customActionsNamespace, actionsKey),
-    store.get(memoryNamespace, memoryKey),
+  const [customActions, memories] = await Promise.all([
+    storeGetQuickActions(prisma, customActionsNamespace),
+    storeGetReflection(prisma, memoryNamespace),
   ]);
-  if (!customActionsItem?.value) {
-    throw new Error("No custom actions found.");
-  }
-  const customQuickAction = customActionsItem.value[
-    state.customQuickActionId
-  ] as CustomQuickAction | undefined;
+
+  const customQuickAction = customActions?.[state.customQuickActionId];
   if (!customQuickAction) {
     throw new Error(
       `No custom quick action found from ID ${state.customQuickActionId}`,
@@ -76,8 +78,8 @@ export const customAction = async (
     : undefined;
 
   let formattedPrompt = `<custom-instructions>\n${customQuickAction.prompt}\n</custom-instructions>`;
-  if (customQuickAction.includeReflections && memories?.value) {
-    const memoriesAsString = formatReflections(memories.value as Reflections);
+  if (customQuickAction.includeReflections && memories) {
+    const memoriesAsString = formatReflections(memories);
     const reflectionsPrompt = REFLECTIONS_QUICK_ACTION_PROMPT.replace(
       "{reflections}",
       memoriesAsString,

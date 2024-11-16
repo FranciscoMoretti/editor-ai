@@ -1,4 +1,8 @@
-import { ChatOpenAI } from "@langchain/openai";
+import { getArtifactContent } from "@/contexts/utils";
+import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { z } from "zod";
+import { formatArtifactContentWithTemplate } from "../../utils";
+import { getModelFromConfig } from "../../utils";
 import {
   CURRENT_ARTIFACT_PROMPT,
   NO_ARTIFACT_PROMPT,
@@ -7,16 +11,15 @@ import {
   ROUTE_QUERY_PROMPT,
 } from "../prompts";
 import { OpenCanvasGraphAnnotation } from "../state";
-import { z } from "zod";
-import { formatArtifactContentWithTemplate } from "../../utils";
-import { getArtifactContent } from "../../../hooks/use-graph/utils";
 
 /**
  * Routes to the proper node in the graph based on the user's query.
  */
 export const generatePath = async (
   state: typeof OpenCanvasGraphAnnotation.State,
+  config: LangGraphRunnableConfig,
 ) => {
+  console.log("config.configurable!!", config.configurable);
   if (state.highlightedCode) {
     return {
       next: "updateArtifact",
@@ -88,13 +91,13 @@ export const generatePath = async (
     ? "rewriteArtifact"
     : "generateArtifact";
 
-  const modelWithTool = new ChatOpenAI({
-    model: "gpt-4o-mini",
+  const model = await getModelFromConfig(config, {
     temperature: 0,
-  }).withStructuredOutput(
+  });
+  const modelWithTool = model.withStructuredOutput(
     z.object({
       route: z
-        .enum(["respondToQuery", artifactRoute])
+        .enum(["replyToGeneralInput", artifactRoute])
         .describe("The route to take based on the user's query."),
     }),
     {
