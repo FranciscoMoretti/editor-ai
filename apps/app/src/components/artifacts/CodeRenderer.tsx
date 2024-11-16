@@ -1,24 +1,24 @@
+import { useGraphContext } from "@/contexts/GraphContext";
+import { getArtifactContent } from "@/contexts/utils";
+import { cleanContent } from "@/lib/normalize_string";
+import { cn } from "@/lib/utils";
 import { ArtifactCodeV3 } from "@/types";
-import React, { MutableRefObject, useEffect } from "react";
-import CodeMirror, { EditorView } from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
 import { cpp } from "@codemirror/lang-cpp";
+import { html } from "@codemirror/lang-html";
 import { java } from "@codemirror/lang-java";
+import { javascript } from "@codemirror/lang-javascript";
+import { json } from "@codemirror/lang-json";
 import { php } from "@codemirror/lang-php";
 import { python } from "@codemirror/lang-python";
-import { html } from "@codemirror/lang-html";
-import { sql } from "@codemirror/lang-sql";
-import { json } from "@codemirror/lang-json";
 import { rust } from "@codemirror/lang-rust";
+import { sql } from "@codemirror/lang-sql";
 import { xml } from "@codemirror/lang-xml";
 import { clojure } from "@nextjournal/lang-clojure";
 import { csharp } from "@replit/codemirror-lang-csharp";
+import CodeMirror, { EditorView } from "@uiw/react-codemirror";
+import React, { MutableRefObject, useEffect } from "react";
 import styles from "./CodeRenderer.module.css";
-import { cleanContent } from "@/lib/normalize_string";
-import { cn } from "@/lib/utils";
 import { CopyText } from "./components/CopyText";
-import { getArtifactContent } from "@/contexts/utils";
-import { useGraphContext } from "@/contexts/GraphContext";
 
 export interface CodeRendererProps {
   editorRef: MutableRefObject<EditorView | null>;
