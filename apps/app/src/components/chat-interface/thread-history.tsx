@@ -207,7 +207,7 @@ export function ThreadHistoryComponent(props: ThreadHistoryProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window == "undefined" || userThreads.length || !user) return;
+    if (typeof window === "undefined" || userThreads.length || !user) return;
 
     getUserThreads(user.id);
   }, [user]);

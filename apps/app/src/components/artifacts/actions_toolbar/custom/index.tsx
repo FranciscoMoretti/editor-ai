@@ -108,7 +108,7 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
   };
 
   useEffect(() => {
-    if (typeof window === undefined || !assistantId || !user) return;
+    if (typeof window === "undefined" || !assistantId || !user) return;
     getAndSetCustomQuickActions(user.id);
   }, [assistantId, user]);
 

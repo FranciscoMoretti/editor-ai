@@ -40,7 +40,7 @@ export function useThread() {
   const utils = api.useUtils();
 
   const createThread = async (
-    customModelName: ALL_MODEL_NAMES = DEFAULT_MODEL_NAME,
+    customModelName: ALL_MODEL_NAMES,
     userId: string,
   ): Promise<Thread | undefined> => {
     console.log("creating thread!", customModelName);
@@ -197,7 +197,7 @@ export function useThread() {
           },
         })
         .then(threadResponseToThread);
-      if (thread?.metadata && thread.metadata.customModelName) {
+      if (thread?.metadata?.customModelName) {
         setModelName(thread.metadata.customModelName as ALL_MODEL_NAMES);
       }
       return thread;

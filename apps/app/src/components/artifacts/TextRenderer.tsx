@@ -281,8 +281,12 @@ export function TextRendererComponent(props: TextRendererProps) {
             theme="light"
             formattingToolbar={false}
             slashMenu={false}
-            onCompositionStartCapture={() => (isComposition.current = true)}
-            onCompositionEndCapture={() => (isComposition.current = false)}
+            onCompositionStartCapture={() => {
+              isComposition.current = true;
+            }}
+            onCompositionEndCapture={() => {
+              isComposition.current = false;
+            }}
             onChange={onChange}
             editable={
               !isStreaming || props.isEditing || !manuallyUpdatingArtifact

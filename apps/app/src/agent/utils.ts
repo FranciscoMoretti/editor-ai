@@ -75,7 +75,7 @@ export const formatReflections = (
     return contentString;
   }
 
-  return styleString + "\n\n" + contentString;
+  return `${styleString}\n\n${contentString}`;
 };
 
 export async function getFormattedReflections(

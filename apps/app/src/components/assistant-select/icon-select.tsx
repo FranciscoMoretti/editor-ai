@@ -19,11 +19,9 @@ import React from "react";
 type KeyofIcons = keyof typeof Icons;
 
 const prettifyIconLabel = (iconName: string) => {
-  iconName = iconName
-    .replace("Icon", "")
-    .replace("icon", "")
-    .replace("Lucide", "");
-  return startCase(iconName);
+  return startCase(
+    iconName.replace("Icon", "").replace("icon", "").replace("Lucide", ""),
+  );
 };
 
 export function IconSelect({

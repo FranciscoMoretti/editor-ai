@@ -83,7 +83,7 @@ export function CreateEditAssistantDialog(
   const metadata = props.assistant?.metadata as Record<string, any> | undefined;
 
   useEffect(() => {
-    if ((props.assistant, props.isEditing)) {
+    if (props.assistant && props.isEditing) {
       setName(props.assistant?.name || "");
       setDescription(metadata?.description || "");
       setSystemPrompt(
@@ -292,7 +292,7 @@ export function CreateEditAssistantDialog(
                   value={iconColor}
                   onChange={(e) => {
                     if (!e.target.value.startsWith("#")) {
-                      setIconColor("#" + e.target.value);
+                      setIconColor(`#${e.target.value}`);
                     } else {
                       setIconColor(e.target.value);
                     }

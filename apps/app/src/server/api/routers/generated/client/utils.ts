@@ -7,7 +7,7 @@ type Primitive =
   | Function
   | number
   | boolean
-  | Symbol
+  | symbol
   | undefined
   | null;
 
