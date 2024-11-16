@@ -1,9 +1,12 @@
+import { getStoreMemoriesNamespace } from "@/agent/getStoreNamespace";
 import { getArtifactContent } from "@/contexts/utils";
+import { storeGetReflection } from "@/server/api/routers/store.router";
+import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
 import { Reflections } from "../../../types";
 import { getModelFromConfig } from "../../utils";
-import { ensureStoreInConfig, formatReflections } from "../../utils";
+import { formatReflections } from "../../utils";
 import { FOLLOWUP_ARTIFACT_PROMPT } from "../prompts";
 import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
@@ -18,16 +21,16 @@ export const generateFollowup = async (
     maxTokens: 250,
   });
 
-  const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.assistant_id;
   if (!assistantId) {
     throw new Error("`assistant_id` not found in configurable");
   }
-  const memoryNamespace = ["memories", assistantId];
-  const memoryKey = "reflection";
-  const memories = await store.get(memoryNamespace, memoryKey);
-  const memoriesAsString = memories?.value
-    ? formatReflections(memories.value as Reflections, {
+  const memoryNamespace = getStoreMemoriesNamespace(assistantId);
+
+  const prisma = await getEnhancedPrismaWithUser();
+  const storeReponse = await storeGetReflection(prisma, memoryNamespace);
+  const memoriesAsString = storeReponse
+    ? formatReflections(storeReponse, {
         onlyContent: true,
       })
     : "No reflections found.";

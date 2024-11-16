@@ -1,4 +1,3 @@
-import { graph as openCanvasGraph } from "@/agent/open-canvas/graph";
 import { RunsInputSchema } from "@/server/api/routers/generated_zod/input/RunsInput.schema";
 import { createTRPCRouter } from "@/server/api/trpc";
 import { procedure } from "@/server/api/trpc";
@@ -6,6 +5,7 @@ import { procedure } from "@/server/api/trpc";
 import { EventEmitter, on } from "node:stream";
 import { DEFAULT_INPUTS } from "@/constants";
 import { z } from "zod";
+import { GRAPHS } from "../../../agent/GRAPHS";
 import { checkMutate, checkRead } from "./generated/helper";
 /* eslint-disable */
 import { db } from "./generated/routers";
@@ -135,17 +135,17 @@ export default function createRouter() {
         //   }),
         // );
 
-        // const assistant = await checkRead(
-        //   db(ctx).asssitants.findUnique({
-        //     where: {
-        //       assistant_id: input.assistant_id,
-        //     },
-        //   }),
-        // );
+        const assistant = await checkRead(
+          db(ctx).asssitants.findUnique({
+            where: {
+              assistant_id: input.assistant_id,
+            },
+          }),
+        );
 
-        // if (!thread || !assistant) {
-        //   throw new Error("Thread or assistant not found");
-        // }
+        if (!assistant) {
+          throw new Error("Assistant not found");
+        }
 
         // Create a run_id for the thread
         const run = await checkMutate(
@@ -167,8 +167,8 @@ export default function createRouter() {
         }
 
         // TODO here switch by graph_id
-        if (true) {
-          const graph = openCanvasGraph;
+        if (assistant.graph_id === "agent") {
+          const graph = GRAPHS[assistant.graph_id];
           try {
             // TODO: FIX graph inputs
 
@@ -183,18 +183,19 @@ export default function createRouter() {
                   assistant_id: input.assistant_id,
                   run_id: run.run_id,
                   ...input.config.configurable,
+                  thread_id: input.thread_id,
                 },
                 version: "v1",
               },
             );
-            let count = 0;
+            // const count = 0;
             const dataArray: any[] = [];
             for await (const data of stream) {
-              console.log("data", count++, data);
+              // console.log("data", count++, data);
               dataArray.push(data);
               yield { data };
             }
-            console.log(dataArray);
+            // console.log(dataArray);
 
             console.log("Stream complete");
           } catch (error) {

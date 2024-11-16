@@ -1,3 +1,9 @@
+import {
+  getStoreCustomActionsNamespace,
+  getStoreMemoriesNamespace,
+} from "@/agent/getStoreNamespace";
+import { StoreKey, parseStoreValue } from "@/server/api/routers/storeSchema";
+import { api } from "@/trpc/react";
 import { CustomQuickAction, Reflections } from "@/types";
 import { useToast } from "@v1/ui/use-toast";
 import { useState } from "react";
@@ -6,38 +12,34 @@ export function useStore() {
   const { toast } = useToast();
   const [isLoadingReflections, setIsLoadingReflections] = useState(false);
   const [isLoadingQuickActions, setIsLoadingQuickActions] = useState(false);
+  const { mutateAsync: deleteReflectionAsync } = api.store.delete.useMutation();
+  const { mutateAsync: putReflectionAsync } = api.store.put.useMutation();
+  const utils = api.useUtils();
   const [reflections, setReflections] = useState<
     Reflections & { assistantId: string; updatedAt: Date }
   >();
 
   const getReflections = async (assistantId: string): Promise<void> => {
     setIsLoadingReflections(true);
-    const res = await fetch("/api/store/get", {
-      method: "POST",
-      body: JSON.stringify({
-        namespace: ["memories", assistantId],
-        key: "reflection",
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+    console.log("getReflections", assistantId);
+    const res = await utils.store.get.fetch({
+      namespace: getStoreMemoriesNamespace(assistantId),
+      key: StoreKey.Values.reflection,
     });
 
-    if (!res.ok) {
-      return;
-    }
-
-    const { item } = await res.json();
-
-    if (!item?.value) {
+    if (res === "NOT_FOUND") {
       setIsLoadingReflections(false);
       // No reflections found. Return early.
       setReflections(undefined);
       return;
     }
+    const value = parseStoreValue(res.value, StoreKey.Values.reflection);
+    setIsLoadingReflections(false);
+    // No reflections found. Return early.
+    setReflections(undefined);
 
-    let styleRules = item.value.styleRules ?? [];
-    let content = item.value.content ?? [];
+    let styleRules = value.styleRules;
+    let content = value.content;
     try {
       styleRules =
         typeof styleRules === "string" ? JSON.parse(styleRules) : styleRules;
@@ -49,41 +51,27 @@ export function useStore() {
     }
 
     setReflections({
-      ...item.value,
+      ...value,
       styleRules,
       content,
-      updatedAt: new Date(item.updatedAt),
+      updatedAt: new Date(res.updated_at ?? new Date()),
       assistantId,
     });
     setIsLoadingReflections(false);
   };
 
   const deleteReflections = async (assistantId: string): Promise<boolean> => {
-    const res = await fetch("/api/store/delete", {
-      method: "POST",
-      body: JSON.stringify({
-        namespace: ["memories", assistantId],
-        key: "reflection",
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+    await deleteReflectionAsync({
+      namespace: getStoreMemoriesNamespace(assistantId),
+      key: StoreKey.Values.reflection,
     });
 
-    if (!res.ok) {
-      return false;
-    }
-
-    const { success } = await res.json();
-    if (success) {
-      setReflections(undefined);
-    } else {
-      toast({
-        title: "Failed to delete reflections",
-        description: "Please try again later.",
-      });
-    }
-    return success;
+    setReflections(undefined);
+    toast({
+      title: "Failed to delete reflections",
+      description: "Please try again later.",
+    });
+    return true;
   };
 
   const getCustomQuickActions = async (
@@ -91,26 +79,18 @@ export function useStore() {
   ): Promise<CustomQuickAction[] | undefined> => {
     setIsLoadingQuickActions(true);
     try {
-      const res = await fetch("/api/store/get", {
-        method: "POST",
-        body: JSON.stringify({
-          namespace: ["custom_actions", userId],
-          key: "actions",
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const res = await utils.store.get.fetch({
+        namespace: getStoreCustomActionsNamespace(userId),
+        key: StoreKey.Values.actions,
       });
 
-      if (!res.ok) {
+      if (res === "NOT_FOUND") {
         return undefined;
       }
 
-      const { item } = await res.json();
-      if (!item?.value) {
-        return undefined;
-      }
-      return Object.values(item?.value);
+      const value = parseStoreValue(res.value, StoreKey.Values.actions);
+
+      return Object.values(value);
     } finally {
       setIsLoadingQuickActions(false);
     }
@@ -131,24 +111,13 @@ export function useStore() {
       {},
     );
 
-    const res = await fetch("/api/store/put", {
-      method: "POST",
-      body: JSON.stringify({
-        namespace: ["custom_actions", userId],
-        key: "actions",
-        value: valuesWithoutDeleted,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+    await putReflectionAsync({
+      namespace: getStoreCustomActionsNamespace(userId),
+      key: StoreKey.Values.actions,
+      value: valuesWithoutDeleted,
     });
 
-    if (!res.ok) {
-      return false;
-    }
-
-    const { success } = await res.json();
-    return success;
+    return true;
   };
 
   const createCustomQuickAction = async (
@@ -165,24 +134,13 @@ export function useStore() {
     );
 
     newValue[newAction.id] = newAction;
-    const res = await fetch("/api/store/put", {
-      method: "POST",
-      body: JSON.stringify({
-        namespace: ["custom_actions", userId],
-        key: "actions",
-        value: newValue,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+    await putReflectionAsync({
+      namespace: getStoreCustomActionsNamespace(userId),
+      key: StoreKey.Values.actions,
+      value: newValue,
     });
 
-    if (!res.ok) {
-      return false;
-    }
-
-    const { success } = await res.json();
-    return success;
+    return true;
   };
 
   const editCustomQuickAction = async (
@@ -199,24 +157,13 @@ export function useStore() {
     );
 
     newValue[editedAction.id] = editedAction;
-    const res = await fetch("/api/store/put", {
-      method: "POST",
-      body: JSON.stringify({
-        namespace: ["custom_actions", userId],
-        key: "actions",
-        value: newValue,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+    await putReflectionAsync({
+      namespace: getStoreCustomActionsNamespace(userId),
+      key: StoreKey.Values.actions,
+      value: newValue,
     });
 
-    if (!res.ok) {
-      return false;
-    }
-
-    const { success } = await res.json();
-    return success;
+    return true;
   };
 
   return {

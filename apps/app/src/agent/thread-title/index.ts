@@ -1,4 +1,5 @@
 import { getArtifactContent } from "@/contexts/utils";
+
 import {
   type LangGraphRunnableConfig,
   START,
@@ -6,6 +7,7 @@ import {
 } from "@langchain/langgraph";
 import { Client } from "@langchain/langgraph-sdk";
 import { ChatOpenAI } from "@langchain/openai";
+import { prisma } from "@v1/supabase/lib/prisma";
 import { z } from "zod";
 import { isArtifactMarkdownContent } from "../../lib/artifact_content_types";
 import { TITLE_SYSTEM_PROMPT, TITLE_USER_PROMPT } from "./prompts";
@@ -74,20 +76,16 @@ export const generateTitle = async (
     throw new Error("Title generation tool call failed.");
   }
 
-  const langGraphClient = new Client({
-    apiUrl: `http://localhost:${process.env.PORT}`,
-    defaultHeaders: {
-      "X-API-KEY": process.env.LANGCHAIN_API_KEY,
+  await prisma.threads.update({
+    where: {
+      thread_id: threadId,
+    },
+    data: {
+      metadata: {
+        thread_title: titleToolCall.args.title,
+      },
     },
   });
-
-  // Update thread metadata with the generated title
-  await langGraphClient.threads.update(threadId, {
-    metadata: {
-      thread_title: titleToolCall.args.title,
-    },
-  });
-
   return {};
 };
 

@@ -6,7 +6,12 @@
       "type": "node-terminal",
       "request": "launch",
       "command": "npm run dev",
-      "cwd": "${workspaceFolder}/apps/app"
+      "cwd": "${workspaceFolder}/apps/app",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**",
+        "${workspaceFolder}/apps/app/.next/**"
+      ]
     },
     {
       "name": "Next.js: debug client-side",
@@ -27,7 +32,11 @@
       "request": "launch",
       "program": "${workspaceFolder}/node_modules/.bin/next",
       "runtimeArgs": ["--inspect"],
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**",
+        "${workspaceFolder}/apps/app/.next/**"
+      ],
       "serverReadyAction": {
         "action": "debugWithChrome",
         "killOnServerStop": true,

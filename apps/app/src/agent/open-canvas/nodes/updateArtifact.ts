@@ -1,9 +1,11 @@
+import { getStoreMemoriesNamespace } from "@/agent/getStoreNamespace";
+import { storeGetReflection } from "@/server/api/routers/store.router";
+import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { getArtifactContent } from "../../../contexts/utils";
 import { isArtifactCodeContent } from "../../../lib/artifact_content_types";
 import { ArtifactCodeV3, ArtifactV3, Reflections } from "../../../types";
 import {
-  ensureStoreInConfig,
   formatReflections,
   getModelConfig,
   getModelFromConfig,
@@ -40,16 +42,16 @@ export const updateArtifact = async (
     );
   }
 
-  const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.assistant_id;
   if (!assistantId) {
     throw new Error("`assistant_id` not found in configurable");
   }
-  const memoryNamespace = ["memories", assistantId];
-  const memoryKey = "reflection";
-  const memories = await store.get(memoryNamespace, memoryKey);
-  const memoriesAsString = memories?.value
-    ? formatReflections(memories.value as Reflections)
+  const memoryNamespace = getStoreMemoriesNamespace(assistantId);
+  const prisma = await getEnhancedPrismaWithUser();
+
+  const memories = await storeGetReflection(prisma, memoryNamespace);
+  const memoriesAsString = memories
+    ? formatReflections(memories)
     : "No reflections found.";
 
   const currentArtifactContent = state.artifact

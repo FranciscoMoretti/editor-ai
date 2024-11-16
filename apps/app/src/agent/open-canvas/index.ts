@@ -98,10 +98,4 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   ])
   .addEdge("generateTitle", END);
 
-const inMemoryStore = new InMemoryStore();
-
-export const graph = builder
-  .compile({
-    store: inMemoryStore,
-  })
-  .withConfig({ runName: "open_canvas" });
+export const graph = builder.compile().withConfig({ runName: "open_canvas" });

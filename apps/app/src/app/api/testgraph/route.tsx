@@ -1,4 +1,4 @@
-import { builder, graph } from "@/agent/open-canvas/graph";
+import { builder, graph } from "@/agent/open-canvas";
 import { ROUTE_QUERY_PROMPT } from "@/agent/open-canvas/prompts";
 import { DEFAULT_INPUTS } from "@/constants";
 import { InMemoryStore } from "@langchain/langgraph";

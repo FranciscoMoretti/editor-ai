@@ -10,6 +10,7 @@ import { ClientType as ThreadsClientType } from "./Threads.react.type";
 import { ClientType as ConfigsClientType } from "./Configs.react.type";
 import { ClientType as AsssitantsClientType } from "./Asssitants.react.type";
 import { ClientType as RunsClientType } from "./Runs.react.type";
+import { ClientType as StoreClientType } from "./Store.react.type";
 
 export function createTRPCReact<
     TRouter extends AnyRouter,
@@ -27,4 +28,5 @@ export interface ClientType<AppRouter extends AnyRouter> {
     configs: ConfigsClientType<AppRouter>;
     asssitants: AsssitantsClientType<AppRouter>;
     runs: RunsClientType<AppRouter>;
+    store: StoreClientType<AppRouter>;
 }

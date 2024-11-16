@@ -5,6 +5,7 @@ export * from './ThreadsScalarFieldEnum.schema';
 export * from './ConfigsScalarFieldEnum.schema';
 export * from './AsssitantsScalarFieldEnum.schema';
 export * from './RunsScalarFieldEnum.schema';
+export * from './StoreScalarFieldEnum.schema';
 export * from './SortOrder.schema';
 export * from './JsonNullValueInput.schema';
 export * from './QueryMode.schema';

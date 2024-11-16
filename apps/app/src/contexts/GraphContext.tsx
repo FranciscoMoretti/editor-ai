@@ -605,10 +605,6 @@ export function GraphProvider({ children }: { children: ReactNode }) {
               }
             }
 
-            if (chunk.data.metadata.langgraph_node === "rewriteArtifact") {
-              console.log(chunk.data);
-            }
-
             if (
               chunk.data.metadata.langgraph_node === "rewriteArtifact" &&
               chunk.data.name === "rewrite_artifact_model_call" &&
@@ -773,7 +769,7 @@ export function GraphProvider({ children }: { children: ReactNode }) {
               } else {
                 console.log("No message found in generation");
               }
-              rewriteArtifactMeta = chunk.data.data.output.tool_calls[0].args;
+              rewriteArtifactMeta = chunk.data.data.output.tool_calls?.[0].args;
               console.log("rewriteArtifactMeta2", rewriteArtifactMeta);
             }
             // if (chunk.data?.data.output && "type" in chunk.data.data.output && chunk.data.data.output.type === "ai") {

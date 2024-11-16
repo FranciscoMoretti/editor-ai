@@ -1,7 +1,10 @@
 import { isArtifactCodeContent } from "@/lib/artifact_content_types";
+import { storeGetReflection } from "@/server/api/routers/store.router";
+import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
 import { BaseStore, LangGraphRunnableConfig } from "@langchain/langgraph";
 import { initChatModel } from "langchain/chat_models/universal";
 import { ArtifactCodeV3, ArtifactMarkdownV3, Reflections } from "../types";
+import { getStoreMemoriesNamespace } from "./getStoreNamespace";
 
 export const formatReflections = (
   reflections: Reflections,
@@ -78,29 +81,21 @@ export const formatReflections = (
 export async function getFormattedReflections(
   config: LangGraphRunnableConfig,
 ): Promise<string> {
-  const store = ensureStoreInConfig(config);
   const assistantId = config.configurable?.assistant_id;
   if (!assistantId) {
     throw new Error("`assistant_id` not found in configurable");
   }
-  const memoryNamespace = ["memories", assistantId];
-  const memoryKey = "reflection";
-  const memories = await store.get(memoryNamespace, memoryKey);
-  const memoriesAsString = memories?.value
-    ? formatReflections(memories.value as Reflections)
+  const prisma = await getEnhancedPrismaWithUser();
+  const memories = await storeGetReflection(
+    prisma,
+    getStoreMemoriesNamespace(assistantId),
+  );
+  const memoriesAsString = memories
+    ? formatReflections(memories)
     : "No reflections found.";
 
   return memoriesAsString;
 }
-
-export const ensureStoreInConfig = (
-  config: LangGraphRunnableConfig,
-): BaseStore => {
-  if (!config.store) {
-    throw new Error("`store` not found in config");
-  }
-  return config.store;
-};
 
 export const formatArtifactContent = (
   content: ArtifactMarkdownV3 | ArtifactCodeV3,

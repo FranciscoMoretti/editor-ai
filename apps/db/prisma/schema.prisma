@@ -137,3 +137,18 @@ model runs {
 
   @@schema("public")
 }
+
+/// @@allow('all', auth() != null && user_id == auth().id)
+model store {
+  id         String   @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  namespace  String
+  key        String
+  /// @omit
+  user_id    String   @db.Uuid()
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  value      Json
+
+  @@unique([namespace, key])
+  @@schema("public")
+}

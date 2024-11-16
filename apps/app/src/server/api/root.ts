@@ -4,6 +4,7 @@ import createconfigsRouter from "./routers/generated/routers/configs.router";
 import createusersRouter from "./routers/generated/routers/users.router";
 import createpostsRouter from "./routers/posts.router";
 import createrunsRouter from "./routers/runs.router";
+import createStoreRouter from "./routers/store.router";
 import createthreadsRouter from "./routers/threads.router";
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   configs: createconfigsRouter(),
   assistants: createasssitantRouter(),
   runs: createrunsRouter(),
+  store: createStoreRouter(),
 });
 
 // export type definition of API
