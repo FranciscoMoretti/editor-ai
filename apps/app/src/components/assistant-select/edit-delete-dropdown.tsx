@@ -59,7 +59,7 @@ export function EditDeleteDropdown({
           className="w-8"
           disabled={disabled}
         >
-          <Pencil className="text-gray-600 hover:text-black transition-colors ease-in-out duration-200" />
+          <Pencil className="text-foreground hover:text-foreground transition-colors ease-in-out duration-200" />
         </DropdownMenuItem>
         {allowDelete && (
           <DropdownMenuItem
@@ -86,7 +86,7 @@ export function EditDeleteDropdown({
             disabled={disabled}
             className="w-8"
           >
-            <Trash2 className="text-gray-600 hover:text-red-500 transition-colors ease-in-out duration-200" />
+            <Trash2 className="text-foreground hover:text-red-500 transition-colors ease-in-out duration-200" />
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

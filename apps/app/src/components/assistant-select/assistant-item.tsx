@@ -39,7 +39,7 @@ export function AssistantItem({
         disabled={allDisabled}
         className={cn(
           "flex items-center justify-start gap-2 w-full",
-          isSelected && "bg-gray-50",
+          isSelected && "bg-background",
         )}
       >
         <span
@@ -50,7 +50,9 @@ export function AssistantItem({
         </span>
         {assistant.name}
         {isDefault && (
-          <span className="text-xs text-gray-500 ml-auto">{"(default)"}</span>
+          <span className="text-xs text-muted-foreground ml-auto">
+            {"(default)"}
+          </span>
         )}
         {isSelected && <span className="ml-auto">•</span>}
       </DropdownMenuItem>

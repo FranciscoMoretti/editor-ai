@@ -13,13 +13,13 @@ export function InlineContextTooltip({
     <HoverCard>
       <HoverCardTrigger asChild>
         <span className="inline-flex items-center ml-1">
-          <CircleHelp className="w-3 h-3 text-gray-600" />
+          <CircleHelp className="w-3 h-3 text-foreground" />
         </span>
       </HoverCardTrigger>
       <HoverCardContent
         className={cn(cardContentClassName, "w-[300px] text-wrap")}
       >
-        <p className="text-black font-medium">What&apos;s this?</p>
+        <p className="text-foreground font-medium">What&apos;s this?</p>
         {children}
       </HoverCardContent>
     </HoverCard>

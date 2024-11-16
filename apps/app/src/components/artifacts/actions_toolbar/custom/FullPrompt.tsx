@@ -111,7 +111,7 @@ export const FullPrompt = (props: FullPromptProps) => {
   }, [props.customQuickAction.includeRecentHistory]);
 
   return (
-    <div className="border-[1px] bg-gray-50 border-gray-200 rounded-md text-wrap overflow-y-auto w-full h-full text-sm px-3 py-2">
+    <div className="border-[1px] bg-background border-border rounded-md text-wrap overflow-y-auto w-full h-full text-sm px-3 py-2">
       <p className="whitespace-pre-wrap">
         <HighlightToDeleteText
           text={`${CUSTOM_QUICK_ACTION_ARTIFACT_PROMPT_PREFIX}\n\n`}

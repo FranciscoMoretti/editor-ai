@@ -43,9 +43,9 @@ function ViewRawText({
         onClick={() => setIsRawView((p) => !p)}
       >
         {isRawView ? (
-          <EyeOff className="w-5 h-5 text-gray-600" />
+          <EyeOff className="w-5 h-5" />
         ) : (
-          <Eye className="w-5 h-5 text-gray-600" />
+          <Eye className="w-5 h-5" />
         )}
       </TooltipIconButton>
     </motion.div>
@@ -247,7 +247,7 @@ export function TextRendererComponent(props: TextRendererProps) {
   };
 
   return (
-    <div className="w-full h-full mt-2 flex flex-col border-t-[1px] border-gray-200 overflow-y-auto py-5 relative">
+    <div className="w-full h-full mt-2 flex flex-col border-t-[1px] border-border overflow-y-auto py-5 relative">
       {props.isHovering && artifact && (
         <div className="absolute flex gap-2 top-2 right-4 z-10">
           <CopyText currentArtifactContent={getArtifactContent(artifact)} />
@@ -278,7 +278,6 @@ export function TextRendererComponent(props: TextRendererProps) {
             }
           `}</style>
           <BlockNoteView
-            theme="light"
             formattingToolbar={false}
             slashMenu={false}
             onCompositionStartCapture={() => {

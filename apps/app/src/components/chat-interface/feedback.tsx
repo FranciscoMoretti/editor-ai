@@ -62,10 +62,12 @@ export const FeedbackButton: FC<FeedbackButtonProps> = ({
       disabled={isLoading}
     >
       {icon === "thumbs-up" ? (
-        <ThumbsUpIcon className={cn("size-4", isLoading && "text-gray-300")} />
+        <ThumbsUpIcon
+          className={cn("size-4", isLoading && "text-muted-foreground")}
+        />
       ) : (
         <ThumbsDownIcon
-          className={cn("size-4", isLoading && "text-gray-300")}
+          className={cn("size-4", isLoading && "text-muted-foreground")}
         />
       )}
     </TooltipIconButton>

@@ -78,7 +78,7 @@ export const AskOpenCanvas = forwardRef<HTMLDivElement, AskOpenCanvasProps>(
       <div
         ref={ref}
         className={cn(
-          "absolute bg-white border border-gray-200 shadow-md p-2 flex gap-2",
+          "absolute bg-background border border-border shadow-md p-2 flex gap-2",
           isInputVisible ? "rounded-3xl" : "rounded-md",
         )}
         style={{

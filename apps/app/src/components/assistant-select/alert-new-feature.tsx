@@ -50,7 +50,7 @@ export const AlertNewAssistantsFeature = ({
           transition={{ duration: 0.2 }}
         >
           <div className="relative p-[0px] rounded-lg bg-gradient-to-r from-pink-500/50 via-purple-500/50 to-pink-500/50 animate-gradient-xy shadow-[0_0_25px_rgba(236,72,153,0.3)] before:absolute before:inset-0 before:rounded-lg before:p-[12px] before:bg-gradient-to-r before:from-pink-500/20 before:via-purple-500/20 before:to-pink-500/20 before:blur-xl before:-z-10 before:animate-gradient-xy-enhanced">
-            <Alert className="max-w-xl bg-white rounded-lg hover:bg-gray-50 transition-colors duration-300 ease-in-out">
+            <Alert className="max-w-xl bg-background rounded-lg hover:bg-background transition-colors duration-300 ease-in-out">
               <AlertTitle className="flex justify-between items-center">
                 <div className="flex items-center justify-start gap-1">
                   <Users className="w-4 h-4" />
@@ -63,7 +63,7 @@ export const AlertNewAssistantsFeature = ({
                   onClick={handleCloseAlert}
                   size="sm"
                 >
-                  <X className="w-4 h-4 text-gray-600" />
+                  <X className="w-4 h-4 text-foreground" />
                 </TooltipIconButton>
               </AlertTitle>
               <AlertDescription className="inline-flex items-center justify-start gap-1 flex-wrap mt-2">

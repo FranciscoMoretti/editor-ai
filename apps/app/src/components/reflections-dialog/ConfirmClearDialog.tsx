@@ -24,7 +24,7 @@ export function ConfirmClearDialog(props: ReflectionsProps) {
           <TighterText>Clear reflections</TighterText>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-xl p-8 bg-white rounded-lg shadow-xl">
+      <DialogContent className="max-w-xl p-8 bg-background rounded-lg shadow-xl">
         <DialogHeader>
           <DialogDescription className="mt-2 text-md text-center font-light text-red-500">
             <TighterText>

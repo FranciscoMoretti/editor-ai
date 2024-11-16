@@ -43,7 +43,7 @@ function NoReflections(props: NoReflectionsProps) {
   return (
     <div className="flex flex-col items-center mt-6 mb-[-24px] gap-3">
       <TighterText>No reflections have been generated yet.</TighterText>
-      <TighterText className="text-sm text-gray-500">
+      <TighterText className="text-sm text-muted-foreground">
         Reflections generate after 30s of inactivity. If none appear, try again
         later.
       </TighterText>
@@ -107,13 +107,13 @@ export function ReflectionsDialog(props: ReflectionsDialogProps) {
           className="w-fit h-fit p-2"
           onClick={() => setOpen(true)}
         >
-          <BrainCog className="w-6 h-6 text-gray-600" />
+          <BrainCog className="w-6 h-6 text-foreground" />
         </TooltipIconButton>
       </DialogTrigger>
-      <DialogContent className="max-w-xl p-8 bg-white rounded-lg shadow-xl">
+      <DialogContent className="max-w-xl p-8 rounded-lg shadow-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
-            <TighterText className="text-3xl font-light text-gray-800">
+            <TighterText className="text-3xl font-light text-foreground">
               Reflections
             </TighterText>
             {selectedAssistant && (
@@ -141,7 +141,7 @@ export function ReflectionsDialog(props: ReflectionsDialogProps) {
               </Badge>
             )}
           </DialogTitle>
-          <DialogDescription className="mt-2 text-md font-light text-gray-600">
+          <DialogDescription className="mt-2 text-md font-light text-foreground">
             <TighterText>
               {isLoadingReflections ? (
                 "Loading reflections..."
@@ -156,7 +156,7 @@ export function ReflectionsDialog(props: ReflectionsDialogProps) {
             </TighterText>
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-6 max-h-[60vh] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <div className="mt-6 max-h-[60vh] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-border scrollbar-track-background">
           {isLoadingReflections ? (
             <div className="flex justify-center items-center h-32">
               <Loader className="h-8 w-8 animate-spin" />
@@ -165,14 +165,14 @@ export function ReflectionsDialog(props: ReflectionsDialogProps) {
             <>
               {reflections?.styleRules && (
                 <div className="mb-6">
-                  <TighterText className="text-xl font-light text-gray-800 sticky top-0 bg-white py-2 mb-3">
+                  <TighterText className="text-xl font-light text-foreground sticky top-0 bg-background py-2 mb-3">
                     Style Reflections:
                   </TighterText>
                   <ul className="list-disc list-inside space-y-2">
                     {reflections.styleRules?.map((rule, index) => (
                       <li key={index} className="flex items-baseline">
                         <span className="mr-2">•</span>
-                        <TighterText className="text-gray-600 font-light">
+                        <TighterText className="text-foreground font-light">
                           {rule}
                         </TighterText>
                       </li>
@@ -182,14 +182,14 @@ export function ReflectionsDialog(props: ReflectionsDialogProps) {
               )}
               {reflections?.content && (
                 <div className="mb-6">
-                  <TighterText className="text-xl font-light text-gray-800 sticky top-0 bg-white py-2 mb-3">
+                  <TighterText className="text-xl font-light text-foreground sticky top-0 bg-background py-2 mb-3">
                     Content Reflections:
                   </TighterText>
                   <ul className="list-disc list-inside space-y-2">
                     {reflections.content.map((rule, index) => (
                       <li key={index} className="flex items-baseline">
                         <span className="mr-2">•</span>
-                        <TighterText className="text-gray-600 font-light">
+                        <TighterText className="text-foreground font-light">
                           {rule}
                         </TighterText>
                       </li>
@@ -206,7 +206,7 @@ export function ReflectionsDialog(props: ReflectionsDialogProps) {
           ) : null}
           <Button
             onClick={() => setOpen(false)}
-            className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded shadow transition"
+            className="px-4 py-2 rounded shadow transition"
           >
             <TighterText>Close</TighterText>
           </Button>

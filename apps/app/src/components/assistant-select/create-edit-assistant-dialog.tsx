@@ -50,7 +50,7 @@ interface CreateEditAssistantDialogProps {
 const GH_DISCUSSION_URL = `https://github.com/langchain-ai/open-canvas/discussions/182`;
 
 const SystemPromptWhatsThis = (): React.ReactNode => (
-  <span className="flex flex-col gap-1 text-sm text-gray-600">
+  <span className="flex flex-col gap-1 text-sm text-foreground">
     <p>
       Custom system prompts will be passed to the LLM when generating, or
       re-writing artifacts. They are <i>not</i> used for responding to general
@@ -192,14 +192,14 @@ export function CreateEditAssistantDialog(
         props.setOpen(change);
       }}
     >
-      <DialogContent className="max-w-xl max-h-[90vh] p-8 bg-white rounded-lg shadow-xl min-w-[70vw] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+      <DialogContent className="max-w-xl max-h-[90vh] p-8 bg-background rounded-lg shadow-xl min-w-[70vw] overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-background">
         <DialogHeader>
-          <DialogTitle className="text-3xl font-light text-gray-800">
+          <DialogTitle className="text-3xl font-light text-foreground">
             <TighterText>
               {props.isEditing ? "Edit" : "Create"} Assistant
             </TighterText>
           </DialogTitle>
-          <DialogDescription className="mt-2 text-md font-light text-gray-600">
+          <DialogDescription className="mt-2 text-md font-light text-foreground">
             <TighterText>
               Creating a new assistant allows you to tailor your reflections to
               a specific context, as reflections are unique to assistants.

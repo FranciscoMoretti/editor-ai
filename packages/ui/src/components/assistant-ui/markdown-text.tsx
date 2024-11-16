@@ -159,7 +159,7 @@ const MarkdownTextImpl = () => {
         pre: ({ node: _node, className, ...props }) => (
           <pre
             className={cn(
-              "overflow-x-auto rounded-b-lg bg-black p-4 text-white",
+              "overflow-x-auto rounded-b-lg bg-card p-4 text-card-foreground",
               className,
             )}
             {...props}

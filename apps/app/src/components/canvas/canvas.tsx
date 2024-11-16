@@ -75,12 +75,12 @@ export function CanvasComponent() {
   };
 
   return (
-    <main className="h-screen flex flex-row">
+    <main className="h-screen flex flex-row bg-background">
       <div
         className={cn(
           "transition-all duration-700",
           chatStarted ? "w-[35%]" : "w-full",
-          "h-full mr-auto bg-gray-50/70 shadow-inner-right",
+          "h-full mr-auto shadow-inner-right",
         )}
       >
         <ContentComposerChatInterface

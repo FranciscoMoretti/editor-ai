@@ -59,9 +59,9 @@ const ViewOrHidePromptIcon = (props: ViewOrHidePromptIconProps) => (
     }}
   >
     {props.showFullPrompt ? (
-      <EyeOff className="w-4 h-4 text-gray-600" />
+      <EyeOff className="w-4 h-4 text-foreground" />
     ) : (
-      <Eye className="w-4 h-4 text-gray-600" />
+      <Eye className="w-4 h-4 text-foreground" />
     )}
   </TooltipIconButton>
 );
@@ -172,14 +172,14 @@ export function NewCustomQuickActionDialog(
         props.onOpenChange(change);
       }}
     >
-      <DialogContent className="max-w-xl p-8 bg-white rounded-lg shadow-xl min-w-[70vw]">
+      <DialogContent className="max-w-xl p-8 bg-background rounded-lg shadow-xl min-w-[70vw]">
         <DialogHeader>
-          <DialogTitle className="text-3xl font-light text-gray-800">
+          <DialogTitle className="text-3xl font-light text-foreground">
             <TighterText>
               {props.isEditing ? "Edit" : "Create"} Quick Action
             </TighterText>
           </DialogTitle>
-          <DialogDescription className="mt-2 text-md font-light text-gray-600">
+          <DialogDescription className="mt-2 text-md font-light text-foreground">
             <TighterText>
               Custom quick actions are a way to create your own actions to take
               against the selected artifact.
@@ -216,7 +216,7 @@ export function NewCustomQuickActionDialog(
                 setShowFullPrompt={setShowFullPrompt}
               />
             </Label>
-            <TighterText className="text-gray-500 text-sm whitespace-normal">
+            <TighterText className="text-muted-foreground text-sm whitespace-normal">
               The full prompt includes predefined variables in curly braces
               (e.g., <code className="inline-code">{`{artifactContent}`}</code>)
               that will be replaced at runtime. Custom variables are not
@@ -225,10 +225,10 @@ export function NewCustomQuickActionDialog(
             <span className="my-1" />
             <div className="flex items-center justify-center w-full h-[350px] gap-2 transition-all duration-300 ease-in-out">
               <div className="w-full h-full flex flex-col gap-1">
-                <TighterText className="text-gray-500 text-sm flex items-center">
+                <TighterText className="text-muted-foreground text-sm flex items-center">
                   Custom instructions
                   <InlineContextTooltip>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-foreground">
                       {CUSTOM_INSTRUCTIONS_TOOLTIP_TEXT}
                     </p>
                   </InlineContextTooltip>
@@ -246,10 +246,10 @@ export function NewCustomQuickActionDialog(
 
               {showFullPrompt && (
                 <div className="w-full h-full flex flex-col gap-1">
-                  <TighterText className="text-gray-500 text-sm flex items-center">
+                  <TighterText className="text-muted-foreground text-sm flex items-center">
                     Full prompt
                     <InlineContextTooltip>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-foreground">
                         {FULL_PROMPT_TOOLTIP_TEXT}
                       </p>
                     </InlineContextTooltip>

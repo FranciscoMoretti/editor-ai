@@ -66,7 +66,7 @@ const DropdownMenuItemWithDelete = ({
         onClick={onEdit}
         className={cn("ml-1", isHovering ? "visible" : "invisible")}
       >
-        <Pencil className="text-[#575757] hover:text-black transition-colors ease-in" />
+        <Pencil className="text-[#575757] hover:text-foreground transition-colors ease-in" />
       </TooltipIconButton>
       <TooltipIconButton
         disabled={disabled}
@@ -186,7 +186,7 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
           className={cn(
             "transition-colors w-[48px] h-[48px] p-0 rounded-xl",
             props.isTextSelected
-              ? "cursor-default opacity-50 text-gray-400 hover:bg-background"
+              ? "cursor-default opacity-50 text-muted-foreground hover:bg-background"
               : "cursor-pointer",
           )}
           delayDuration={400}
@@ -195,28 +195,28 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
             className={cn(
               "w-[26px] h-[26px]",
               props.isTextSelected
-                ? "text-gray-400"
-                : "hover:text-gray-900 transition-colors",
+                ? "text-muted-foreground"
+                : "hover:text-foreground transition-colors",
             )}
           />
         </TooltipIconButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="max-h-[600px] max-w-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+      <DropdownMenuContent className="max-h-[600px] max-w-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-background">
         <DropdownMenuLabel>
           <TighterText>Custom Quick Actions</TighterText>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {isLoadingQuickActions && !customQuickActions?.length ? (
-          <span className="text-sm text-gray-600 flex items-center justify-start gap-1 p-2">
+          <span className="text-sm text-foreground flex items-center justify-start gap-1 p-2">
             Loading
             <LoaderCircle className="w-4 h-4 animate-spin" />
           </span>
         ) : !customQuickActions?.length ? (
-          <TighterText className="text-sm text-gray-600 p-2">
+          <TighterText className="text-sm text-foreground p-2">
             No custom quick actions found.
           </TighterText>
         ) : (
-          <div className="max-h-[450px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div className="max-h-[450px] overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-background">
             {customQuickActions.map((action) => (
               <DropdownMenuItemWithDelete
                 key={action.id}

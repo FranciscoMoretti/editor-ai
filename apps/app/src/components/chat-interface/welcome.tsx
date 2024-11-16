@@ -26,7 +26,7 @@ const QuickStartPrompts = () => {
   };
 
   return (
-    <div className="flex flex-col w-full gap-2 text-gray-700">
+    <div className="flex flex-col w-full gap-2 text-foreground">
       <div className="flex gap-2 w-full">
         <Button
           onClick={(e) =>
@@ -83,11 +83,13 @@ const QuickStartButtons = (props: QuickStartButtonsProps) => {
   return (
     <div className="flex flex-col gap-8 items-center justify-center w-full">
       <div className="flex flex-col gap-6">
-        <p className="text-gray-600 text-sm">Start with a blank canvas</p>
+        <p className="text-muted-foreground text-sm">
+          Start with a blank canvas
+        </p>
         <div className="flex flex-row gap-1 items-center justify-center w-full">
           <Button
             variant="outline"
-            className="transition-colors text-gray-600 flex items-center justify-center gap-2 w-[250px] h-[64px]"
+            className="transition-colors flex items-center justify-center gap-2 w-[250px] h-[64px]"
             onClick={() => props.handleQuickStart("text")}
           >
             <TighterText>New Markdown</TighterText>
@@ -97,7 +99,7 @@ const QuickStartButtons = (props: QuickStartButtonsProps) => {
         </div>
       </div>
       <div className="flex flex-col gap-6 mt-2 w-full">
-        <p className="text-gray-600 text-sm">or with a message</p>
+        <p className="text-muted-foreground text-sm">or with a message</p>
         <QuickStartPrompts />
         {props.composer}
       </div>

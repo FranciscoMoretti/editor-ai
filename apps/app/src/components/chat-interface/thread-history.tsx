@@ -245,16 +245,16 @@ export function ThreadHistoryComponent(props: ThreadHistoryProps) {
           className="w-fit h-fit p-2"
         >
           <PiChatsCircleLight
-            className="w-6 h-6 text-gray-600"
+            className="w-6 h-6 text-foreground"
             strokeWidth={8}
           />
         </TooltipIconButton>
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="border-none overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+        className="border-none overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-background"
       >
-        <TighterText className="px-2 text-lg text-gray-600">
+        <TighterText className="px-2 text-lg text-foreground">
           Chat History
         </TighterText>
         {isUserThreadsLoading && !userThreads.length ? (
@@ -264,7 +264,9 @@ export function ThreadHistoryComponent(props: ThreadHistoryProps) {
             ))}
           </div>
         ) : !userThreads.length ? (
-          <p className="px-3 text-gray-500">No items found in history.</p>
+          <p className="px-3 text-muted-foreground">
+            No items found in history.
+          </p>
         ) : (
           <ThreadsList groupedThreads={groupedThreads} />
         )}

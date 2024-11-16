@@ -23,12 +23,12 @@ const Slider = React.forwardRef<
   >
     <SliderPrimitive.Track
       className={cn(
-        "relative grow overflow-hidden rounded-full bg-gray-200",
+        "relative grow overflow-hidden rounded-full bg-muted",
         orientation === "horizontal" ? "h-1.5 w-full" : "h-full w-1.5",
       )}
     >
       <SliderPrimitive.Range
-        className="absolute bg-gray-500"
+        className="absolute bg-muted-foreground"
         style={
           orientation === "horizontal" ? { height: "100%" } : { width: "100%" }
         }
@@ -37,7 +37,7 @@ const Slider = React.forwardRef<
     {[1, 2, 3, 4, 5].map((tick) => (
       <div
         key={tick}
-        className="absolute h-2 w-2 rounded-full bg-gray-500"
+        className="absolute h-2 w-2 rounded-full bg-muted-foreground"
         style={
           orientation === "horizontal"
             ? {
@@ -51,7 +51,7 @@ const Slider = React.forwardRef<
         }
       />
     ))}
-    <SliderPrimitive.Thumb className="block h-4 w-4 rounded-full border border-gray-500 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+    <SliderPrimitive.Thumb className="block h-4 w-4 rounded-full border border-border bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
   </SliderPrimitive.Root>
 ));
 Slider.displayName = SliderPrimitive.Root.displayName;

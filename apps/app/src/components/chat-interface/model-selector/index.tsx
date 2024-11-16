@@ -97,7 +97,7 @@ export default function ModelSelector(props: ModelSelectorProps) {
   return (
     <div className="relative">
       <Select value={modelName} onValueChange={handleModelChange}>
-        <SelectTrigger className="min-w-[180px] w-[250px] bg-transparent shadow-none text-sm focus:outline-none cursor-pointer hover:bg-gray-100 rounded transition-colors border-none text-gray-600">
+        <SelectTrigger className="min-w-[180px] w-[250px] bg-transparent shadow-none text-sm focus:outline-none cursor-pointer hover:bg-background rounded transition-colors border-none text-foreground">
           <SelectValue>
             <div className="flex items-center pr-2 truncate">
               <NextImage

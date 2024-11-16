@@ -121,13 +121,13 @@ export function CodeToolBar(props: CodeToolbarProps) {
     <div
       ref={toolbarRef}
       className={cn(
-        "fixed bottom-4 right-4 transition-all duration-300 ease-in-out text-black flex flex-col items-center justify-center bg-white",
+        "fixed bottom-4 right-4 transition-all duration-300 ease-in-out text-foreground flex flex-col items-center justify-center bg-background",
         isExpanded ? "w-26 min-h-fit rounded-3xl" : "w-12 h-12 rounded-full",
       )}
       onClick={toggleExpand}
     >
       {isExpanded ? (
-        <div className="flex flex-col gap-3 items-center w-full border-[1px] border-gray-200 rounded-3xl py-4 px-3">
+        <div className="flex flex-col gap-3 items-center w-full border-[1px] border-border rounded-3xl py-4 px-3">
           {activeOption && activeOption !== "addEmojis"
             ? toolbarOptions
                 .find((option) => option.id === activeOption)
@@ -159,7 +159,7 @@ export function CodeToolBar(props: CodeToolbarProps) {
           className={cn(
             "transition-colors w-[48px] h-[48px] p-0 rounded-xl",
             props.isTextSelected
-              ? "cursor-default opacity-50 text-gray-400 hover:bg-background"
+              ? "cursor-default opacity-50 text-muted-foreground hover:bg-background"
               : "cursor-pointer",
           )}
           delayDuration={400}
@@ -168,8 +168,8 @@ export function CodeToolBar(props: CodeToolbarProps) {
             className={cn(
               "w-[26px] h-[26px]",
               props.isTextSelected
-                ? "text-gray-400"
-                : "hover:text-gray-900 transition-colors",
+                ? "text-muted-foreground"
+                : "hover:text-foreground transition-colors",
             )}
           />
         </TooltipIconButton>

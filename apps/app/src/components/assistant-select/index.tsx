@@ -87,7 +87,7 @@ function AssistantSelectComponent(props: AssistantSelectProps) {
             setOpen(c);
           }}
         >
-          <DropdownMenuTrigger className="text-gray-600" asChild>
+          <DropdownMenuTrigger className="text-foreground" asChild>
             <TooltipIconButton
               tooltip="Change assistant"
               variant="ghost"
@@ -98,13 +98,13 @@ function AssistantSelectComponent(props: AssistantSelectProps) {
               {getIcon(metadata?.iconData?.iconName as string | undefined)}
             </TooltipIconButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="max-h-[600px] max-w-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 ml-4">
+          <DropdownMenuContent className="max-h-[600px] max-w-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-background ml-4">
             <DropdownMenuLabel>
               <TighterText>My Assistants</TighterText>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {isLoadingAllAssistants && !assistants?.length ? (
-              <span className="text-sm text-gray-600 flex items-center justify-start gap-1 p-2">
+              <span className="text-sm text-foreground flex items-center justify-start gap-1 p-2">
                 Loading
                 <Icons.LoaderCircle className="w-4 h-4 animate-spin" />
               </span>

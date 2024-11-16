@@ -40,15 +40,15 @@ interface ArtifactTitleProps {
 function ArtifactTitle(props: ArtifactTitleProps) {
   return (
     <>
-      <h1 className="text-xl font-medium text-gray-600 ">{props.title}</h1>
+      <h1 className="text-xl font-medium ">{props.title}</h1>
       <span className="mt-auto">
         {props.isArtifactSaved ? (
-          <span className="flex items-center justify-start gap-1 text-gray-400">
+          <span className="flex items-center justify-start gap-1 text-muted-foreground">
             <p className="text-xs font-light">Saved</p>
             <CircleCheck className="w-[10px] h-[10px]" />
           </span>
         ) : (
-          <span className="flex items-center justify-start gap-1 text-gray-400">
+          <span className="flex items-center justify-stqart gap-1 text-muted-foregound">
             <p className="text-xs font-light">Saving</p>
             <LoaderCircle className="animate-spin w-[10px] h-[10px]" />
           </span>
@@ -84,7 +84,7 @@ function NavigateArtifactHistory(props: NavigateArtifactHistoryProps) {
       >
         <Forward
           aria-disabled={props.isBackwardsDisabled}
-          className="w-6 h-6 text-gray-600 scale-x-[-1]"
+          className="w-6 h-6  scale-x-[-1]"
         />
       </TooltipIconButton>
       <div className="flex items-center justify-center gap-1">
@@ -107,7 +107,7 @@ function NavigateArtifactHistory(props: NavigateArtifactHistoryProps) {
       >
         <Forward
           aria-disabled={props.isForwardDisabled}
-          className="w-6 h-6 text-gray-600"
+          className="w-6 h-6 text-foreground"
         />
       </TooltipIconButton>
     </>
@@ -344,7 +344,7 @@ function ArtifactRendererComponent(props: ArtifactRendererProps) {
             isArtifactSaved={isArtifactSaved}
           />
         </div>
-        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-3 text-gray-600">
+        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-3 text-foreground">
           <NavigateArtifactHistory
             isBackwardsDisabled={isBackwardsDisabled}
             isForwardDisabled={isForwardDisabled}

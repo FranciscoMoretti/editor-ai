@@ -76,7 +76,7 @@ const AssistantMessageBarComponent = ({
       className="flex items-center mt-2"
     >
       {feedbackSubmitted ? (
-        <TighterText className="text-gray-500 text-sm">
+        <TighterText className="text-muted-foreground text-sm">
           Feedback received! Thank you!
         </TighterText>
       ) : (

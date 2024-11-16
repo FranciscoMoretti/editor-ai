@@ -135,7 +135,7 @@ export function IconSelect({
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="h-[400px] w-[400px] ml-auto">
-        <div className="sticky top-0 z-10 bg-white dark:bg-gray-950 p-2">
+        <div className="sticky top-0 z-10 bg-background p-2">
           <DropdownMenuLabel className="px-2 pb-2">Icons</DropdownMenuLabel>
           <Input
             disabled={allDisabled}
@@ -148,7 +148,7 @@ export function IconSelect({
         </div>
         <div className="overflow-y-auto max-h-[420px]" onScroll={handleScroll}>
           {startIndex > 0 && (
-            <div className="py-2 text-center text-sm text-gray-500">
+            <div className="py-2 text-center text-sm text-muted-foreground">
               Scroll up for previous icons
             </div>
           )}
@@ -172,7 +172,7 @@ export function IconSelect({
               </DropdownMenuItem>
             ))}
           {startIndex + WINDOW_SIZE < filteredIcons.length && (
-            <div className="py-2 text-center text-sm text-gray-500">
+            <div className="py-2 text-center text-sm text-muted-foreground">
               Scroll down for more icons
             </div>
           )}

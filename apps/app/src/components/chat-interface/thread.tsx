@@ -83,7 +83,7 @@ export const Thread: FC<ThreadProps> = (props: ThreadProps) => {
   return (
     <ThreadPrimitive.Root className="flex flex-col h-full">
       <div className="pr-3 pl-6 pt-3 pb-2 flex flex-row gap-4 items-center justify-between">
-        <div className="flex items-center justify-start gap-2 text-gray-600">
+        <div className="flex items-center justify-start gap-2 text-foreground">
           <ThreadHistory
             switchSelectedThreadCallback={switchSelectedThreadCallback}
           />
@@ -104,7 +104,7 @@ export const Thread: FC<ThreadProps> = (props: ThreadProps) => {
             delayDuration={400}
             onClick={handleCreateThread}
           >
-            <SquarePen className="w-6 h-6 text-gray-600" />
+            <SquarePen className="w-6 h-6 text-foreground" />
           </TooltipIconButton>
         ) : (
           <div className="flex flex-row gap-2 items-center">
