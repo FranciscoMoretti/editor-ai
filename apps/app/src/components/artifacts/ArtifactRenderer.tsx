@@ -17,8 +17,9 @@ import { ReflectionsDialog } from "../reflections-dialog/ReflectionsDialog";
 import { ArtifactLoading } from "./ArtifactLoading";
 import { CodeRenderer } from "./CodeRenderer";
 import { TextRenderer } from "./TextRenderer";
-import { ActionsToolbar, CodeToolBar } from "./actions_toolbar";
-import { CustomQuickActions } from "./actions_toolbar/custom";
+import { CodeToolBar } from "./actions_toolbar/code/code";
+import { CustomQuickActions } from "./actions_toolbar/custom/custom";
+import { ActionsToolbar } from "./actions_toolbar/text/text";
 import { AskOpenCanvas } from "./components/AskOpenCanvas";
 
 export interface ArtifactRendererProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas } from "@/components/canvas";
+import { Canvas } from "@/components/canvas/canvas";
 import { GraphProvider } from "@/contexts/GraphContext";
 
 export default function Home() {

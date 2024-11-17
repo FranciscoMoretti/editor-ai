@@ -4,9 +4,9 @@ import type { Prisma } from "@zenstackhq/runtime/models";
 
 import * as _Schema from "@zenstackhq/runtime/zod/input";
 import { z } from "zod";
-import { checkMutate, checkRead } from "./generated/helper";
 /* eslint-disable */
-import { db } from "./generated/routers";
+import { db } from "../db";
+import { checkMutate, checkRead } from "./generated/helper";
 
 const literalSchema = z.union([z.string(), z.number(), z.boolean()]);
 const jsonSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>

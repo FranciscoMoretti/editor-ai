@@ -1,6 +1,5 @@
 "use client";
 
-import { Thread } from "@/components/chat-interface";
 import { useGraphContext } from "@/contexts/GraphContext";
 import {
   convertLangchainMessages,
@@ -19,6 +18,7 @@ import { Toaster } from "@v1/ui/toaster";
 import { useToast } from "@v1/ui/use-toast";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { Thread } from "../chat-interface/thread";
 
 export interface ContentComposerChatInterfaceProps {
   switchSelectedThreadCallback: (thread: ThreadType) => void;

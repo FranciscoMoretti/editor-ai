@@ -3,9 +3,9 @@ import { procedure } from "@/server/api/trpc";
 import * as _Schema from "@zenstackhq/runtime/zod/input";
 import * as _SchemaModels from "@zenstackhq/runtime/zod/models";
 import { z } from "zod";
-import { checkMutate, checkRead } from "./generated/helper";
 /* eslint-disable */
-import { db } from "./generated/routers";
+import { db } from "../db";
+import { checkMutate, checkRead } from "./generated/helper";
 
 const AssistantUpdateModelSchema = _SchemaModels.AsssitantsUpdateSchema;
 const AsssitantsInputSchema = _Schema.AsssitantsInputSchema;

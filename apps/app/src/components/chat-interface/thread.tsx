@@ -11,7 +11,7 @@ import { ReflectionsDialog } from "../reflections-dialog/ReflectionsDialog";
 import { useLangSmithLinkToolUI } from "../tool-hooks/LangSmithLinkToolUI";
 import { Composer } from "./composer";
 import { AssistantMessage, UserMessage } from "./messages";
-import ModelSelector from "./model-selector";
+import ModelSelector from "./model-selector/model-selector";
 import { ThreadHistory } from "./thread-history";
 import { ThreadWelcome } from "./welcome";
 

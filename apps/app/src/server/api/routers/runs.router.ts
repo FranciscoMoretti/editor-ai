@@ -6,9 +6,9 @@ import { procedure } from "@/server/api/trpc";
 import { DEFAULT_INPUTS } from "@/constants";
 import { z } from "zod";
 import { GRAPHS } from "../../../agent/GRAPHS";
-import { checkMutate, checkRead } from "./generated/helper";
 /* eslint-disable */
-import { db } from "./generated/routers";
+import { db } from "../db";
+import { checkMutate, checkRead } from "./generated/helper";
 
 export const GraphInputSchema = z.union([
   z.array(z.record(z.any())),

@@ -3,8 +3,8 @@ import { procedure } from "@/server/api/trpc";
 import { CustomQuickAction, Reflections } from "@/types";
 import type { PrismaClient } from "@zenstackhq/runtime/models";
 import { z } from "zod";
+import { db } from "../db";
 import { checkMutate, checkRead } from "./generated/helper";
-import { db } from "./generated/routers";
 import { StoreKey, StoreValueSchema, parseStoreValue } from "./storeSchema";
 
 const StoreLocationSchema = z.object({

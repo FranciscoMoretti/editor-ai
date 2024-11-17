@@ -1,9 +1,9 @@
 import { createTRPCRouter } from "@/server/api/trpc";
 import { procedure } from "@/server/api/trpc";
 import * as _Schema from "@zenstackhq/runtime/zod/input";
-import { checkMutate, checkRead } from "./generated/helper";
 /* eslint-disable */
-import { db } from "./generated/routers";
+import { db } from "../db";
+import { checkMutate, checkRead } from "./generated/helper";
 
 const PostsInputSchema = _Schema.PostsInputSchema;
 

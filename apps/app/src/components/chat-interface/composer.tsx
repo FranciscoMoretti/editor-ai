@@ -5,7 +5,7 @@ import { type FC } from "react";
 
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { SendHorizontalIcon } from "lucide-react";
-import { AssistantSelect } from "../assistant-select";
+import { AssistantSelect } from "../assistant-select/assistant-select";
 
 const CircleStopIcon = () => {
   return (

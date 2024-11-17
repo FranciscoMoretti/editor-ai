@@ -1,8 +1,5 @@
-import { builder, graph } from "@/agent/open-canvas";
-import { ROUTE_QUERY_PROMPT } from "@/agent/open-canvas/prompts";
+import { graph } from "@/agent/open-canvas/graph";
 import { DEFAULT_INPUTS } from "@/constants";
-import { InMemoryStore } from "@langchain/langgraph";
-import { ChatOpenAI } from "@langchain/openai";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -20,16 +17,6 @@ export const GET = async (req: NextRequest) => {
   //     content: "say hello",
   //   },
   // ]);
-
-  const inMemoryStore = new InMemoryStore();
-
-  const graph = builder
-    .compile({
-      store: inMemoryStore,
-    })
-    .withConfig({
-      runName: "open_canvas",
-    });
 
   const result = await graph.invoke(
     {
