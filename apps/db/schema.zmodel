@@ -12,14 +12,12 @@ datasource db {
 
 plugin zod {
   provider = '@core/zod'
-  output = "../app/src/server/api/routers/generated_zod"
   generateModels = ["public_users", "posts", "threads", "configs", "asssitants", "runs"]
 }
 
 plugin trpc {
   provider = '@zenstackhq/trpc'
   output = '../app/src/server/api/routers/generated'
-  zodSchemasImport = '@/server/api/routers/generated_zod'
   version = "v11"
   importCreateRouter = "@/server/api/trpc"
   importProcedure = "@/server/api/trpc"
