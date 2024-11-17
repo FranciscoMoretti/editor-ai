@@ -1,4 +1,5 @@
-import { RunsInputSchema } from "@/server/api/routers/generated_zod/input/RunsInput.schema";
+import * as _Schema from "@zenstackhq/runtime/zod/input";
+
 import { createTRPCRouter } from "@/server/api/trpc";
 import { procedure } from "@/server/api/trpc";
 
@@ -18,6 +19,8 @@ export const GraphInputSchema = z.union([
 export const StreamMode = z
   .enum(["values", "debug", "updates", "events"])
   .default("values");
+
+const RunsInputSchema = _Schema.RunsInputSchema;
 
 export default function createRouter() {
   return createTRPCRouter({

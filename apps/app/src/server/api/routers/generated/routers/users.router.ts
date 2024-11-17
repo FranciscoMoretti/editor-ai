@@ -1,98 +1,44 @@
-import { UsersInputSchema } from "@/server/api/routers/generated_zod/input/UsersInput.schema";
-import { createTRPCRouter } from "@/server/api/trpc";
-import { procedure } from "@/server/api/trpc";
 /* eslint-disable */
 import { db } from ".";
-import { checkMutate, checkRead } from "../helper";
+import { createTRPCRouter } from "@/server/api/trpc";
+import { procedure } from "@/server/api/trpc";
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
 
 export default function createRouter() {
-  return createTRPCRouter({
-    aggregate: procedure
-      .input(UsersInputSchema.aggregate)
-      .query(({ ctx, input }) =>
-        checkRead(db(ctx).users.aggregate(input as any)),
-      ),
+    return createTRPCRouter({
 
-    createMany: procedure
-      .input(UsersInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).users.createMany(input as any)),
-      ),
+        aggregate: procedure.input($Schema.UsersInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).users.aggregate(input as any))),
 
-    create: procedure
-      .input(UsersInputSchema.create)
-      .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).users.create(input as any)),
-      ),
+        createMany: procedure.input($Schema.UsersInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).users.createMany(input as any))),
 
-    deleteMany: procedure
-      .input(UsersInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).users.deleteMany(input as any)),
-      ),
+        create: procedure.input($Schema.UsersInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).users.create(input as any))),
 
-    delete: procedure
-      .input(UsersInputSchema.delete)
-      .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).users.delete(input as any)),
-      ),
+        deleteMany: procedure.input($Schema.UsersInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).users.deleteMany(input as any))),
 
-    findFirst: procedure
-      .input(UsersInputSchema.findFirst.optional())
-      .query(({ ctx, input }) =>
-        checkRead(db(ctx).users.findFirst(input as any)),
-      ),
+        delete: procedure.input($Schema.UsersInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).users.delete(input as any))),
 
-    findFirstOrThrow: procedure
-      .input(UsersInputSchema.findFirst.optional())
-      .query(({ ctx, input }) =>
-        checkRead(db(ctx).users.findFirstOrThrow(input as any)),
-      ),
+        findFirst: procedure.input($Schema.UsersInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).users.findFirst(input as any))),
 
-    findMany: procedure
-      .input(UsersInputSchema.findMany.optional())
-      .query(({ ctx, input }) =>
-        checkRead(db(ctx).users.findMany(input as any)),
-      ),
+        findFirstOrThrow: procedure.input($Schema.UsersInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).users.findFirstOrThrow(input as any))),
 
-    findUnique: procedure
-      .input(UsersInputSchema.findUnique)
-      .query(({ ctx, input }) =>
-        checkRead(db(ctx).users.findUnique(input as any)),
-      ),
+        findMany: procedure.input($Schema.UsersInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).users.findMany(input as any))),
 
-    findUniqueOrThrow: procedure
-      .input(UsersInputSchema.findUnique)
-      .query(({ ctx, input }) =>
-        checkRead(db(ctx).users.findUniqueOrThrow(input as any)),
-      ),
+        findUnique: procedure.input($Schema.UsersInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).users.findUnique(input as any))),
 
-    groupBy: procedure
-      .input(UsersInputSchema.groupBy)
-      .query(({ ctx, input }) =>
-        checkRead(db(ctx).users.groupBy(input as any)),
-      ),
+        findUniqueOrThrow: procedure.input($Schema.UsersInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).users.findUniqueOrThrow(input as any))),
 
-    updateMany: procedure
-      .input(UsersInputSchema.updateMany)
-      .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).users.updateMany(input as any)),
-      ),
+        groupBy: procedure.input($Schema.UsersInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).users.groupBy(input as any))),
 
-    update: procedure
-      .input(UsersInputSchema.update)
-      .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).users.update(input as any)),
-      ),
+        updateMany: procedure.input($Schema.UsersInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).users.updateMany(input as any))),
 
-    upsert: procedure
-      .input(UsersInputSchema.upsert)
-      .mutation(async ({ ctx, input }) =>
-        checkMutate(db(ctx).users.upsert(input as any)),
-      ),
+        update: procedure.input($Schema.UsersInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).users.update(input as any))),
 
-    count: procedure
-      .input(UsersInputSchema.count.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).users.count(input as any))),
-  });
+        upsert: procedure.input($Schema.UsersInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).users.upsert(input as any))),
+
+        count: procedure.input($Schema.UsersInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).users.count(input as any))),
+
+    }
+    );
 }

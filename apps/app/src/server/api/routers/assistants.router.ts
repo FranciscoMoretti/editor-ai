@@ -1,11 +1,14 @@
-import { AsssitantsInputSchema } from "@/server/api/routers/generated_zod/input/AsssitantsInput.schema";
 import { createTRPCRouter } from "@/server/api/trpc";
 import { procedure } from "@/server/api/trpc";
+import * as _Schema from "@zenstackhq/runtime/zod/input";
+import * as _SchemaModels from "@zenstackhq/runtime/zod/models";
 import { z } from "zod";
 import { checkMutate, checkRead } from "./generated/helper";
 /* eslint-disable */
 import { db } from "./generated/routers";
-import { AsssitantsPrismaUpdateSchema } from "./generated_zod/models/Asssitants.schema";
+
+const AssistantUpdateModelSchema = _SchemaModels.AsssitantsUpdateSchema;
+const AsssitantsInputSchema = _Schema.AsssitantsInputSchema;
 
 export default function createRouter() {
   return createTRPCRouter({
@@ -99,7 +102,7 @@ export default function createRouter() {
 
     update: procedure
       .input(
-        AsssitantsPrismaUpdateSchema.omit({ assistant_id: true })
+        AssistantUpdateModelSchema.omit({ assistant_id: true })
           .merge(
             z.object({
               assistant_id: z.string().uuid(),
