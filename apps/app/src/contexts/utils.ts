@@ -1,4 +1,4 @@
-import {
+import type {
   Artifact,
   ArtifactCodeV3,
   ArtifactMarkdownV3,
@@ -9,8 +9,8 @@ import {
 } from "@/types";
 import {
   AIMessage,
-  BaseMessage,
-  BaseMessageChunk,
+  type BaseMessage,
+  type BaseMessageChunk,
 } from "@langchain/core/messages";
 
 export function removeCodeBlockFormatting(text: string): string {

@@ -5,8 +5,8 @@ import {
   SpanishFlag,
   UsaFlag,
 } from "@/components/icons/flags";
-import { GraphInput } from "@/contexts/GraphContext";
-import { LanguageOptions } from "@/types";
+import type { GraphInput } from "@/contexts/GraphContext";
+import type { LanguageOptions } from "@/types";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 
 export interface TranslateOptionsProps {

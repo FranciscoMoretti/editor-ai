@@ -1,5 +1,5 @@
 import { OpenCanvasGraphReturnType } from "../agent/open-canvas/state";
-import { StreamSample } from "./types";
+import type { StreamSample } from "./types";
 
 export const STREAM_SAMPLE: StreamSample = [
   {

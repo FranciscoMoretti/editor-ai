@@ -1,5 +1,5 @@
 import { Annotation, MessagesAnnotation } from "@langchain/langgraph";
-import {
+import type {
   ArtifactLengthOptions,
   ArtifactV3,
   CodeHighlight,

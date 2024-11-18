@@ -1,6 +1,6 @@
 import { NEW_ARTIFACT_PROMPT } from "../../prompts";
-import { ArtifactCodeV3, ArtifactMarkdownV3 } from "@/types";
-import { ToolCall } from "@langchain/core/messages/tool";
+import type { ArtifactCodeV3, ArtifactMarkdownV3 } from "@/types";
+import type { ToolCall } from "@langchain/core/messages/tool";
 
 export const formatNewArtifactPrompt = (
   memoriesAsString: string,

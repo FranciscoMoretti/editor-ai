@@ -1,4 +1,4 @@
-import { ProgrammingLanguageOptions } from "@/types";
+import type { ProgrammingLanguageOptions } from "@/types";
 
 export const getLanguageTemplate = (
   language: ProgrammingLanguageOptions,

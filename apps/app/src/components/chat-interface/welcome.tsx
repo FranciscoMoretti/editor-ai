@@ -1,11 +1,11 @@
 import { ProgrammingLanguagesDropdown } from "@/components/artifacts/actions_toolbar/programming-lang-dropdown";
-import { ProgrammingLanguageOptions } from "@/types";
+import type { ProgrammingLanguageOptions } from "@/types";
 import { ThreadPrimitive, useThreadRuntime } from "@assistant-ui/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@v1/ui/avatar";
 import { Button } from "@v1/ui/button";
 import { TighterText } from "@v1/ui/header";
 import { NotebookPen } from "lucide-react";
-import { FC } from "react";
+import type { FC } from "react";
 
 interface QuickStartButtonsProps {
   handleQuickStart: (

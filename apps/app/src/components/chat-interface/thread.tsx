@@ -1,12 +1,12 @@
 import { useGraphContext } from "@/contexts/GraphContext";
-import { ProgrammingLanguageOptions } from "@/types";
+import type { ProgrammingLanguageOptions } from "@/types";
 import { ThreadPrimitive } from "@assistant-ui/react";
-import { Thread as ThreadType } from "@langchain/langgraph-sdk";
+import type { Thread as ThreadType } from "@langchain/langgraph-sdk";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { TighterText } from "@v1/ui/header";
 import { useToast } from "@v1/ui/use-toast";
 import { ArrowDownIcon, SquarePen } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
 import { ReflectionsDialog } from "../reflections-dialog/ReflectionsDialog";
 import { useLangSmithLinkToolUI } from "../tool-hooks/LangSmithLinkToolUI";
 import { Composer } from "./composer";

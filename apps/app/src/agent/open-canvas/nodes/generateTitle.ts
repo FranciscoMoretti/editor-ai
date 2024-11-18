@@ -1,6 +1,6 @@
 import { GRAPHS } from "@/agent/GRAPHS";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { OpenCanvasGraphAnnotation } from "../state";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { OpenCanvasGraphAnnotation } from "../state";
 
 export const generateTitleNode = async (
   state: typeof OpenCanvasGraphAnnotation.State,

@@ -4,7 +4,7 @@ import {
 } from "@/agent/getStoreNamespace";
 import { StoreKey, parseStoreValue } from "@/server/api/routers/storeSchema";
 import { api } from "@/trpc/react";
-import { CustomQuickAction, Reflections } from "@/types";
+import type { CustomQuickAction, Reflections } from "@/types";
 import { useToast } from "@v1/ui/use-toast";
 import { useState } from "react";
 

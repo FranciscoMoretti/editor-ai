@@ -8,13 +8,13 @@ import {
   storeGetReflection,
 } from "@/server/api/routers/store.router";
 import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
-import { BaseMessage } from "@langchain/core/messages";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { BaseMessage } from "@langchain/core/messages";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
 import {
-  ArtifactCodeV3,
-  ArtifactMarkdownV3,
-  ArtifactV3,
+  type ArtifactCodeV3,
+  type ArtifactMarkdownV3,
+  type ArtifactV3,
   CustomQuickAction,
   Reflections,
 } from "../../../types";
@@ -26,7 +26,7 @@ import {
   CUSTOM_QUICK_ACTION_CONVERSATION_CONTEXT,
   REFLECTIONS_QUICK_ACTION_PROMPT,
 } from "../prompts";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import type { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 const formatMessages = (messages: BaseMessage[]): string =>
   messages

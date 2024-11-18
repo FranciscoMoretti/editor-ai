@@ -1,7 +1,7 @@
 "use client";
 
 import { ComposerPrimitive, ThreadPrimitive } from "@assistant-ui/react";
-import { type FC } from "react";
+import type { FC } from "react";
 
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { SendHorizontalIcon } from "lucide-react";

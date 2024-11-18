@@ -1,9 +1,9 @@
 import { isArtifactCodeContent } from "@/lib/artifact_content_types";
 import { storeGetReflection } from "@/server/api/routers/store.router";
 import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
-import { BaseStore, LangGraphRunnableConfig } from "@langchain/langgraph";
+import { BaseStore, type LangGraphRunnableConfig } from "@langchain/langgraph";
 import { initChatModel } from "langchain/chat_models/universal";
-import { ArtifactCodeV3, ArtifactMarkdownV3, Reflections } from "../types";
+import type { ArtifactCodeV3, ArtifactMarkdownV3, Reflections } from "../types";
 import { getStoreMemoriesNamespace } from "./getStoreNamespace";
 
 export const formatReflections = (

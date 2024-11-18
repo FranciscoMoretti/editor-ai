@@ -5,15 +5,15 @@ import {
   convertLangchainMessages,
   convertToOpenAIFormat,
 } from "@/lib/convert_messages";
-import { ProgrammingLanguageOptions } from "@/types";
+import type { ProgrammingLanguageOptions } from "@/types";
 import {
-  AppendMessage,
+  type AppendMessage,
   AssistantRuntimeProvider,
   useExternalMessageConverter,
   useExternalStoreRuntime,
 } from "@assistant-ui/react";
-import { BaseMessage, HumanMessage } from "@langchain/core/messages";
-import { Thread as ThreadType } from "@langchain/langgraph-sdk";
+import { type BaseMessage, HumanMessage } from "@langchain/core/messages";
+import type { Thread as ThreadType } from "@langchain/langgraph-sdk";
 import { Toaster } from "@v1/ui/toaster";
 import { useToast } from "@v1/ui/use-toast";
 import React, { useState } from "react";

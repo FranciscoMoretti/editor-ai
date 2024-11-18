@@ -4,9 +4,9 @@ import {
   getModelFromConfig,
   optionallyGetSystemPromptFromConfig,
 } from "@/agent/utils";
-import { ArtifactV3 } from "@/types";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import {
+import type { ArtifactV3 } from "@/types";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type {
   OpenCanvasGraphAnnotation,
   OpenCanvasGraphReturnType,
 } from "../../state";

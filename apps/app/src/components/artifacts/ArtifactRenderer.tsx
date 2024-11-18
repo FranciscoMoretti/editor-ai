@@ -2,12 +2,12 @@ import { useGraphContext } from "@/contexts/GraphContext";
 import { getArtifactContent } from "@/contexts/utils";
 import { convertToOpenAIFormat } from "@/lib/convert_messages";
 import { cn } from "@/lib/utils";
-import {
+import type {
   ArtifactCodeV3,
   ArtifactMarkdownV3,
   ProgrammingLanguageOptions,
 } from "@/types";
-import { EditorView } from "@codemirror/view";
+import type { EditorView } from "@codemirror/view";
 import { HumanMessage } from "@langchain/core/messages";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { CircleCheck, Forward, LoaderCircle } from "lucide-react";

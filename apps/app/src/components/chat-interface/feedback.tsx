@@ -1,9 +1,9 @@
-import { FeedbackResponse } from "@/hooks/useFeedback";
+import type { FeedbackResponse } from "@/hooks/useFeedback";
 import { cn } from "@/lib/utils";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { useToast } from "@v1/ui/use-toast";
 import { ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
 
 interface FeedbackButtonProps {
   runId: string;

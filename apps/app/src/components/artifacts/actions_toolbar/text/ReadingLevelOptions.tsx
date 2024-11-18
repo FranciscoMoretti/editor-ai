@@ -1,5 +1,5 @@
-import { GraphInput } from "@/contexts/GraphContext";
-import { ReadingLevelOptions as ReadingLevelOptionsType } from "@/types";
+import type { GraphInput } from "@/contexts/GraphContext";
+import type { ReadingLevelOptions as ReadingLevelOptionsType } from "@/types";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import {
   Baby,

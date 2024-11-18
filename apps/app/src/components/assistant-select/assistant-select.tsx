@@ -1,6 +1,6 @@
 import { OC_HAS_SEEN_CUSTOM_ASSISTANTS_ALERT } from "@/constants";
 import { useGraphContext } from "@/contexts/GraphContext";
-import { Assistant } from "@langchain/langgraph-sdk";
+import type { Assistant } from "@langchain/langgraph-sdk";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import {
   DropdownMenu,

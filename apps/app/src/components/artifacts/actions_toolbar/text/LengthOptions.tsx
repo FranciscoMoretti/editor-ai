@@ -1,6 +1,6 @@
-import { GraphInput } from "@/contexts/GraphContext";
+import type { GraphInput } from "@/contexts/GraphContext";
 import { cn } from "@/lib/utils";
-import { ArtifactLengthOptions } from "@/types";
+import type { ArtifactLengthOptions } from "@/types";
 import { Slider } from "@v1/ui/slider";
 import {
   Tooltip,

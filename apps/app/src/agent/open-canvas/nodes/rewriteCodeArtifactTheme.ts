@@ -1,7 +1,7 @@
 import { getArtifactContent } from "@/contexts/utils";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { isArtifactCodeContent } from "../../../lib/artifact_content_types";
-import { ArtifactCodeV3, ArtifactV3 } from "../../../types";
+import type { ArtifactCodeV3, ArtifactV3 } from "../../../types";
 import { getModelFromConfig } from "../../utils";
 import {
   ADD_COMMENTS_TO_CODE_ARTIFACT_PROMPT,
@@ -9,7 +9,7 @@ import {
   FIX_BUGS_CODE_ARTIFACT_PROMPT,
   PORT_LANGUAGE_CODE_ARTIFACT_PROMPT,
 } from "../prompts";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import type { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 export const rewriteCodeArtifactTheme = async (
   state: typeof OpenCanvasGraphAnnotation.State,

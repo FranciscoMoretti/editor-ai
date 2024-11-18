@@ -1,5 +1,5 @@
 import { MagicPencilSVG } from "@/components/icons/magic_pencil";
-import { GraphInput } from "@/contexts/GraphContext";
+import type { GraphInput } from "@/contexts/GraphContext";
 import { cn } from "@/lib/utils";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { BookOpen, Languages, SlidersVertical, SmilePlus } from "lucide-react";

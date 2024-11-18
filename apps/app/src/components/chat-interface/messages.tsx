@@ -5,7 +5,7 @@ import {
   MessagePrimitive,
   useMessage,
 } from "@assistant-ui/react";
-import React, { Dispatch, SetStateAction, type FC } from "react";
+import React, { type Dispatch, type SetStateAction, type FC } from "react";
 
 import { useFeedback } from "@/hooks/useFeedback";
 import { MarkdownText } from "@v1/ui/assistant-ui/markdown-text";

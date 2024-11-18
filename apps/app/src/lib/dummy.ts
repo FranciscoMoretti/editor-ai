@@ -2,7 +2,7 @@
 // import { HumanMessage, AIMessage } from "@langchain/core/messages";
 // import { v4 as uuidv4 } from "uuid";
 
-import { CustomQuickAction } from "@/types";
+import type { CustomQuickAction } from "@/types";
 
 // const defaultContent = `Here is a short story for you:
 

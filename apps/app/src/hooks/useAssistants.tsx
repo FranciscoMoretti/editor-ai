@@ -1,7 +1,7 @@
 import { ASSISTANT_ID_COOKIE } from "@/constants";
 import { getCookie, removeCookie } from "@/lib/cookies";
 import { api } from "@/trpc/react";
-import { Assistant } from "@langchain/langgraph-sdk";
+import type { Assistant } from "@langchain/langgraph-sdk";
 import { useToast } from "@v1/ui/use-toast";
 import { useState } from "react";
 

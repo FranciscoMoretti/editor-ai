@@ -1,4 +1,4 @@
-import { Feedback } from "langsmith";
+import type { Feedback } from "langsmith";
 import { useCallback, useState } from "react";
 
 export interface FeedbackResponse {

@@ -1,12 +1,12 @@
 import { getArtifactContent } from "@/contexts/utils";
 import { isArtifactCodeContent } from "@/lib/artifact_content_types";
 import { cn } from "@/lib/utils";
-import { ArtifactV3 } from "@/types";
+import type { ArtifactV3 } from "@/types";
 import { Button } from "@v1/ui/button";
 import { Input } from "@v1/ui/input";
 import { useToast } from "@v1/ui/use-toast";
 import { CircleArrowUp } from "lucide-react";
-import { Dispatch, FormEvent, SetStateAction, forwardRef } from "react";
+import { type Dispatch, type FormEvent, type SetStateAction, forwardRef } from "react";
 
 interface AskOpenCanvasProps {
   isInputVisible: boolean;

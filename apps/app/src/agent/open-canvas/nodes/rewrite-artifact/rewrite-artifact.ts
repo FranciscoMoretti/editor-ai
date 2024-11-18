@@ -1,8 +1,8 @@
-import {
+import type {
   OpenCanvasGraphAnnotation,
   OpenCanvasGraphReturnType,
 } from "../../state";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { optionallyUpdateArtifactMeta } from "./update-meta";
 import { buildPrompt, createNewArtifactContent, validateState } from "./utils";
 import {

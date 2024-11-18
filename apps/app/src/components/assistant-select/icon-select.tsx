@@ -13,7 +13,7 @@ import startCase from "lodash/startCase";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import * as Icons from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from "react";
 import React from "react";
 
 type KeyofIcons = keyof typeof Icons;

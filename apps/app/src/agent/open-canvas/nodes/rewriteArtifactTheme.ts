@@ -2,9 +2,9 @@ import { getStoreMemoriesNamespace } from "@/agent/getStoreNamespace";
 import { getArtifactContent } from "@/contexts/utils";
 import { storeGetReflection } from "@/server/api/routers/store.router";
 import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
-import { ArtifactV3, Reflections } from "../../../types";
+import { type ArtifactV3, Reflections } from "../../../types";
 import { getModelFromConfig } from "../../utils";
 import { formatReflections } from "../../utils";
 import {
@@ -14,7 +14,7 @@ import {
   CHANGE_ARTIFACT_READING_LEVEL_PROMPT,
   CHANGE_ARTIFACT_TO_PIRATE_PROMPT,
 } from "../prompts";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import type { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 export const rewriteArtifactTheme = async (
   state: typeof OpenCanvasGraphAnnotation.State,

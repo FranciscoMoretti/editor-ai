@@ -1,4 +1,4 @@
-import { ProgrammingLanguageOptions } from "@/types";
+import type { ProgrammingLanguageOptions } from "@/types";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { Button } from "@v1/ui/button";
 import {

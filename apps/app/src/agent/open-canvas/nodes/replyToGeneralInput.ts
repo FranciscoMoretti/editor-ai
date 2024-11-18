@@ -2,7 +2,7 @@ import { getStoreMemoriesNamespace } from "@/agent/getStoreNamespace";
 import { getArtifactContent } from "@/contexts/utils";
 import { storeGetReflection } from "@/server/api/routers/store.router";
 import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { Reflections } from "../../../types";
 import { getModelFromConfig } from "../../utils";
 import {
@@ -10,7 +10,7 @@ import {
   formatReflections,
 } from "../../utils";
 import { CURRENT_ARTIFACT_PROMPT, NO_ARTIFACT_PROMPT } from "../prompts";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import type { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 /**
  * Generate responses to questions. Does not generate artifacts.

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { Assistant } from "@langchain/langgraph-sdk";
+import type { Assistant } from "@langchain/langgraph-sdk";
 import { DropdownMenuItem } from "@v1/ui/dropdown-menu";
-import { Dispatch, MouseEventHandler, SetStateAction } from "react";
+import type { Dispatch, MouseEventHandler, SetStateAction } from "react";
 import { EditDeleteDropdown } from "./edit-delete-dropdown";
 import { getIcon } from "./utils";
 

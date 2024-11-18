@@ -8,7 +8,7 @@ import { TighterText } from "@v1/ui/header";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
 import NextImage from "next/image";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { type Dispatch, type SetStateAction, useEffect } from "react";
 
 export const AlertNewModelSelectorFeature = ({
   chatStarted,

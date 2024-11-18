@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import React from "react";
 import { HexColorPicker } from "react-colorful";
 

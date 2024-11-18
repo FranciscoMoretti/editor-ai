@@ -21,7 +21,6 @@
       "style": {
         "noUnusedTemplateLiteral": "off",
         "noNonNullAssertion": "off",
-        "useImportType": "off",
         "noUselessElse": "off",
         "useSelfClosingElements": "off"
       },

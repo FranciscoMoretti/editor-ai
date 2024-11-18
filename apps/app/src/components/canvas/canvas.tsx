@@ -1,11 +1,11 @@
 "use client";
 
 import { ArtifactRenderer } from "@/components/artifacts/ArtifactRenderer";
-import { ALL_MODEL_NAMES } from "@/constants";
+import type { ALL_MODEL_NAMES } from "@/constants";
 import { useGraphContext } from "@/contexts/GraphContext";
 import { getLanguageTemplate } from "@/lib/get_language_template";
 import { cn } from "@/lib/utils";
-import {
+import type {
   ArtifactCodeV3,
   ArtifactMarkdownV3,
   ArtifactV3,

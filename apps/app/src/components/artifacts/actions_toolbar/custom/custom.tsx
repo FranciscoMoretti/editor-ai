@@ -1,8 +1,8 @@
-import { GraphInput } from "@/contexts/GraphContext";
+import type { GraphInput } from "@/contexts/GraphContext";
 import { useStore } from "@/hooks/useStore";
 import { cn } from "@/lib/utils";
-import { CustomQuickAction } from "@/types";
-import { User } from "@supabase/supabase-js";
+import type { CustomQuickAction } from "@/types";
+import type { User } from "@supabase/supabase-js";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import {
   DropdownMenu,

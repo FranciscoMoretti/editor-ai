@@ -1,6 +1,6 @@
 import { ProgrammingLanguageList } from "@/components/artifacts/actions_toolbar/programming-lang-dropdown";
-import { GraphInput } from "@/contexts/GraphContext";
-import { ProgrammingLanguageOptions } from "@/types";
+import type { GraphInput } from "@/contexts/GraphContext";
+import type { ProgrammingLanguageOptions } from "@/types";
 import { useToast } from "@v1/ui/use-toast";
 
 export interface PortToLanguageOptionsProps {

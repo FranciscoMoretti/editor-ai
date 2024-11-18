@@ -1,4 +1,4 @@
-import { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { createClient } from "@v1/supabase/server";
 import { enhance } from "@zenstackhq/runtime";
 import { prisma } from "./client";

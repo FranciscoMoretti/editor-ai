@@ -1,5 +1,5 @@
 import { isArtifactCodeContent } from "@/lib/artifact_content_types";
-import { ArtifactCodeV3, ArtifactMarkdownV3 } from "@/types";
+import type { ArtifactCodeV3, ArtifactMarkdownV3 } from "@/types";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { useToast } from "@v1/ui/use-toast";
 import { motion } from "framer-motion";

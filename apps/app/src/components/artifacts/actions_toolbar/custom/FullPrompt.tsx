@@ -5,7 +5,7 @@ import {
   REFLECTIONS_QUICK_ACTION_PROMPT,
 } from "@/agent/open-canvas/prompts";
 import { cn } from "@/lib/utils";
-import { CustomQuickAction } from "@/types";
+import type { CustomQuickAction } from "@/types";
 import {
   Tooltip,
   TooltipContent,
@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from "@v1/ui/tooltip";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 
 interface FullPromptProps {
   customQuickAction: Omit<CustomQuickAction, "id">;

@@ -1,4 +1,4 @@
-import { OpenCanvasGraphReturnType } from "@/agent/open-canvas/state";
+import type { OpenCanvasGraphReturnType } from "@/agent/open-canvas/state";
 
 interface BaseEvent {
   name: string;

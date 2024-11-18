@@ -1,9 +1,9 @@
-import {
+import type {
   ThreadMessageLike,
   ToolCallContentPart,
   useExternalMessageConverter,
 } from "@assistant-ui/react";
-import { AIMessage, BaseMessage, ToolMessage } from "@langchain/core/messages";
+import type { AIMessage, BaseMessage, ToolMessage } from "@langchain/core/messages";
 
 // Not exposed by `@assistant-ui/react` package, but is
 // the required return type for this callback function.

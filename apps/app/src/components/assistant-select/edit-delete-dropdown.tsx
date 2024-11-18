@@ -1,4 +1,4 @@
-import { Assistant } from "@langchain/langgraph-sdk";
+import type { Assistant } from "@langchain/langgraph-sdk";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import {
   DropdownMenu,
@@ -8,7 +8,7 @@ import {
 } from "@v1/ui/dropdown-menu";
 import { useToast } from "@v1/ui/use-toast";
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import styles from "./edit-delete-dropdown.module.css";
 
 interface EditDeleteDropdownProps {

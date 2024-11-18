@@ -1,13 +1,13 @@
 import { getModelConfig, getModelFromConfig } from "@/agent/utils";
 import { getArtifactContent } from "@/contexts/utils";
-import { BaseLanguageModelInput } from "@langchain/core/language_models/base";
-import { AIMessageChunk } from "@langchain/core/messages";
-import { RunnableBinding } from "@langchain/core/runnables";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { ConfigurableChatModelCallOptions } from "langchain/chat_models/universal";
+import type { BaseLanguageModelInput } from "@langchain/core/language_models/base";
+import type { AIMessageChunk } from "@langchain/core/messages";
+import type { RunnableBinding } from "@langchain/core/runnables";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { ConfigurableChatModelCallOptions } from "langchain/chat_models/universal";
 import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
-import { ArtifactMarkdownV3 } from "../../../types";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import type { ArtifactMarkdownV3 } from "../../../types";
+import type { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 const PROMPT = `You are an expert AI writing assistant, tasked with rewriting some text a user has selected. The selected text is nested inside a larger 'block'. You should always respond with ONLY the updated text block in accordance with the user's request.
 You should always respond with the full markdown text block, as it will simply replace the existing block in the artifact.

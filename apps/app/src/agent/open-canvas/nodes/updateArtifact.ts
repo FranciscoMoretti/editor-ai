@@ -1,17 +1,17 @@
 import { getStoreMemoriesNamespace } from "@/agent/getStoreNamespace";
 import { storeGetReflection } from "@/server/api/routers/store.router";
 import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { getArtifactContent } from "../../../contexts/utils";
 import { isArtifactCodeContent } from "../../../lib/artifact_content_types";
-import { ArtifactCodeV3, ArtifactV3, Reflections } from "../../../types";
+import { type ArtifactCodeV3, type ArtifactV3, Reflections } from "../../../types";
 import {
   formatReflections,
   getModelConfig,
   getModelFromConfig,
 } from "../../utils";
 import { UPDATE_HIGHLIGHTED_ARTIFACT_PROMPT } from "../prompts";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import type { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 /**
  * Update an existing artifact based on the user's query.

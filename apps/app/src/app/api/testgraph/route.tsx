@@ -1,6 +1,6 @@
 import { graph } from "@/agent/open-canvas/graph";
 import { DEFAULT_INPUTS } from "@/constants";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 export const runtime = "nodejs";

@@ -1,5 +1,5 @@
-import { CreateAssistantFields } from "@/hooks/useAssistants";
-import { Assistant } from "@langchain/langgraph-sdk";
+import type { CreateAssistantFields } from "@/hooks/useAssistants";
+import type { Assistant } from "@langchain/langgraph-sdk";
 import { Button } from "@v1/ui/button";
 import {
   Dialog,
@@ -14,15 +14,15 @@ import { Input } from "@v1/ui/input";
 import { Label } from "@v1/ui/label";
 import { Textarea } from "@v1/ui/textarea";
 import { useToast } from "@v1/ui/use-toast";
-import * as Icons from "lucide-react";
+import type * as Icons from "lucide-react";
 import {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
+  type Dispatch,
+  type FormEvent,
+  type SetStateAction,
   useEffect,
   useState,
 } from "react";
-import React from "react";
+import type React from "react";
 import { ColorPicker } from "./color-picker";
 import { IconSelect } from "./icon-select";
 

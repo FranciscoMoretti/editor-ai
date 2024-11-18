@@ -1,12 +1,12 @@
 import {
-  ALL_MODEL_NAMES,
+  type ALL_MODEL_NAMES,
   DEFAULT_MODEL_NAME,
   HAS_EMPTY_THREADS_CLEARED_COOKIE,
   THREAD_ID_COOKIE_NAME,
 } from "@/constants";
 import { getCookie, setCookie } from "@/lib/cookies";
 import { api } from "@/trpc/react";
-import { Metadata, Thread } from "@langchain/langgraph-sdk";
+import type { Metadata, Thread } from "@langchain/langgraph-sdk";
 import { useState } from "react";
 
 function threadResponseToThread(

@@ -1,5 +1,5 @@
 import { useGraphContext } from "@/contexts/GraphContext";
-import { Thread } from "@langchain/langgraph-sdk";
+import type { Thread } from "@langchain/langgraph-sdk";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { Button } from "@v1/ui/button";
 import { TighterText } from "@v1/ui/header";

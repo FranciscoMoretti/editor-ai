@@ -1,5 +1,5 @@
-import { ArtifactMarkdownV3 } from "@/types";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import type { ArtifactMarkdownV3 } from "@/types";
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
 import "@blocknote/core/fonts/inter.css";
 import {
   SuggestionMenuController,

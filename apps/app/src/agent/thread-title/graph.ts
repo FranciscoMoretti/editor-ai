@@ -10,7 +10,7 @@ import { prisma } from "@v1/supabase/lib/prisma";
 import { z } from "zod";
 import { isArtifactMarkdownContent } from "../../lib/artifact_content_types";
 import { TITLE_SYSTEM_PROMPT, TITLE_USER_PROMPT } from "./prompts";
-import { TitleGenerationAnnotation, TitleGenerationReturnType } from "./state";
+import { TitleGenerationAnnotation, type TitleGenerationReturnType } from "./state";
 
 export const generateTitle = async (
   state: typeof TitleGenerationAnnotation.State,

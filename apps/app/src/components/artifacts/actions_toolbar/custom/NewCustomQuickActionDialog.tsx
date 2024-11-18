@@ -1,6 +1,6 @@
 import { useStore } from "@/hooks/useStore";
-import { CustomQuickAction } from "@/types";
-import { User } from "@supabase/supabase-js";
+import type { CustomQuickAction } from "@/types";
+import type { User } from "@supabase/supabase-js";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { Button } from "@v1/ui/button";
 import { Checkbox } from "@v1/ui/checkbox";
@@ -19,9 +19,9 @@ import { Textarea } from "@v1/ui/textarea";
 import { useToast } from "@v1/ui/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
+  type Dispatch,
+  type FormEvent,
+  type SetStateAction,
   useEffect,
   useState,
 } from "react";

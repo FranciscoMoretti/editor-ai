@@ -1,5 +1,5 @@
 import { Client } from "langsmith";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY = 5000; // 5 seconds

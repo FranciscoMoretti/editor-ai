@@ -1,6 +1,6 @@
-import { GraphInput } from "@/contexts/GraphContext";
+import type { GraphInput } from "@/contexts/GraphContext";
 import { cn } from "@/lib/utils";
-import { ProgrammingLanguageOptions } from "@/types";
+import type { ProgrammingLanguageOptions } from "@/types";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { BookA, Bug, Code, MessageCircleCode, ScrollText } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

@@ -2,13 +2,13 @@ import { getStoreMemoriesNamespace } from "@/agent/getStoreNamespace";
 import { getArtifactContent } from "@/contexts/utils";
 import { storeGetReflection } from "@/server/api/routers/store.router";
 import { getEnhancedPrismaWithUser } from "@/server/db/enhanced";
-import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import type { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { isArtifactMarkdownContent } from "../../../lib/artifact_content_types";
 import { Reflections } from "../../../types";
 import { getModelFromConfig } from "../../utils";
 import { formatReflections } from "../../utils";
 import { FOLLOWUP_ARTIFACT_PROMPT } from "../prompts";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import type { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
 
 /**
  * Generate a followup message after generating or updating an artifact.

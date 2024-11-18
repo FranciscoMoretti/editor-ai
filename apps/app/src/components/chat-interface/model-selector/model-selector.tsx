@@ -2,7 +2,7 @@
 
 import LLMIcon from "@/components/icons/svg/LLMIcon.svg";
 import {
-  ALL_MODEL_NAMES,
+  type ALL_MODEL_NAMES,
   ANTHROPIC_MODELS,
   AZURE_MODELS,
   FIREWORKS_MODELS,
@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@v1/ui/select";
 import NextImage from "next/image";
-import { Dispatch, SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import { AlertNewModelSelectorFeature } from "./alert-new-model-selector";
 import { IsNewBadge } from "./new-badge";
 

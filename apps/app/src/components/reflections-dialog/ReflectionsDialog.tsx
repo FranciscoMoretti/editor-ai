@@ -1,5 +1,5 @@
 import { useStore } from "@/hooks/useStore";
-import { Assistant } from "@langchain/langgraph-sdk";
+import type { Assistant } from "@langchain/langgraph-sdk";
 import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { Badge } from "@v1/ui/badge";
 import { Button } from "@v1/ui/button";

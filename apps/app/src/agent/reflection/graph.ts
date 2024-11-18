@@ -16,7 +16,7 @@ import { isArtifactMarkdownContent } from "../../lib/artifact_content_types";
 import { getStoreMemoriesNamespace } from "../getStoreNamespace";
 import { formatReflections } from "../utils";
 import { REFLECT_SYSTEM_PROMPT, REFLECT_USER_PROMPT } from "./prompts";
-import { ReflectionGraphAnnotation, ReflectionGraphReturnType } from "./state";
+import { ReflectionGraphAnnotation, type ReflectionGraphReturnType } from "./state";
 
 export const reflect = async (
   state: typeof ReflectionGraphAnnotation.State,

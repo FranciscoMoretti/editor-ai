@@ -6,7 +6,7 @@ import { TooltipIconButton } from "@v1/ui/assistant-ui/tooltip-icon-button";
 import { TighterText } from "@v1/ui/header";
 import { AnimatePresence, motion } from "framer-motion";
 import { Users, X } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { type Dispatch, type SetStateAction, useEffect } from "react";
 
 export const AlertNewAssistantsFeature = ({
   shouldRender,

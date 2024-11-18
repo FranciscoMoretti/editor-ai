@@ -1,5 +1,5 @@
-import { Client, Feedback } from "langsmith";
-import { NextRequest, NextResponse } from "next/server";
+import { Client, type Feedback } from "langsmith";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
