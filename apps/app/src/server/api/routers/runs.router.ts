@@ -99,6 +99,7 @@ export default function createRouter() {
                   ...input.config.configurable,
                   thread_id: input.thread_id,
                 },
+                runId: run.run_id,
                 version: "v1",
               },
             );
